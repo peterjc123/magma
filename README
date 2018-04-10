@@ -1,0 +1,44 @@
+===================
+MAGMA README FILE
+===================
+
+--------------------------------------------------------------------------------
+* Quick start
+
+    Create a make.inc file to indicate your C/C++ compiler, Fortran compiler,
+    and where CUDA, CPU BLAS, and LAPACK are installed on your system.
+    Examples are given in the make.inc-examples directory for various
+    libraries and operating systems. The examples rely on paths such as $CUDADIR
+    and $MKLROOT being set in your environment.
+
+    To compile shared and static libraries in lib, and testers in testing and
+    sparse/testing:
+    	make
+	or:
+		make lib
+		make test
+		make sparse-lib
+		make sparse-test
+
+	To install libraries and headers:
+		make install prefix=/usr/local/magma
+
+* Detailed installation instructions and further documentation is provided in
+  	docs/html/index.html or
+  	http://icl.utk.edu/projectsfiles/magma/doxygen/
+
+* There is also a CMake option, especially useful for building on Windows.
+  See README-Windows.
+
+--------------------------------------------------------------------------------
+* Forum
+
+    For more information, please refer to the MAGMA homepage and user forum:
+
+        http://icl.utk.edu/magma/
+        http://icl.utk.edu/magma/forum/
+
+    The MAGMA project supports the package in the sense that reports of
+    errors or poor performance will gain immediate attention from the
+    developers. Such reports, descriptions of interesting applications,
+    and other comments should be posted on the MAGMA user forum.
