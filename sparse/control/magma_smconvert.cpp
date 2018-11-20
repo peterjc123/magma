@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmconvert.cpp, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zmconvert.cpp, normal z -> s, Mon Jun 25 18:24:30 2018
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"
@@ -92,7 +92,7 @@ magma_s_csr_compressor(
     nnz_new = 0;
     for( i=0; i<*n; i++ ) {
         for( j=(*row)[i]; j<(*row)[i+1]; j++ ) {
-            if ( MAGMA_S_REAL((*val)[j]) != 0 ) {
+            if ( (MAGMA_S_REAL((*val)[j]) != 0) || (MAGMA_S_IMAG((*val)[j]) != 0) ) {
                 (*valn)[nnz_new]= (*val)[j];
                 (*coln)[nnz_new]= (*col)[j];
                 nnz_new++;
@@ -171,6 +171,7 @@ magma_smconvert(
     
     // make sure the target structure is empty
     magma_smfree( B, queue );
+    B->ownership = MagmaTrue;
 
     B->val = NULL;
     B->col = NULL;
@@ -1541,7 +1542,7 @@ magma_smconvert(
 
                 B->nnz=0;
                 for( magma_int_t i=0; i<(A.num_rows)*(A.num_cols); i++ ) {
-                    if ( MAGMA_S_REAL(A.val[i]) != 0.0 )
+                    if ( MAGMA_S_REAL(A.val[i]) != 0.0 || MAGMA_S_IMAG(A.val[i]) != 0.0 )
                         (B->nnz)++;
                 }
                 CHECK( magma_smalloc_cpu( &B->val, B->nnz));
@@ -1559,7 +1560,7 @@ magma_smconvert(
                         (B->row)[k] = j;
                         k++;
                     }
-                    if ( MAGMA_S_REAL(A.val[i]) != 0 )
+                    if ( MAGMA_S_REAL(A.val[i]) != 0 || MAGMA_S_IMAG(A.val[i]) != 0)
                     {
                         (B->val)[j] = A.val[i];
                         (B->col)[j] = i%(B->num_cols);

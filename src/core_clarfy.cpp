@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Azzam Haidar
   
-       @generated from src/core_zlarfy.cpp, normal z -> c, Wed Nov 15 00:34:20 2017
+       @generated from src/core_zlarfy.cpp, normal z -> c, Mon Jun 25 18:24:08 2018
 */
 #include "magma_internal.h"
 #include "magma_bulge.h"
@@ -61,10 +61,10 @@ magma_clarfy(
     work (workspace) float complex array, dimension n
     */
 
-    static magma_int_t ione = 1;
-    static magmaFloatComplex c_zero   =  MAGMA_C_ZERO;
-    static magmaFloatComplex c_neg_one=  MAGMA_C_NEG_ONE;
-    static magmaFloatComplex c_half   =  MAGMA_C_HALF;
+    const magma_int_t ione = 1;
+    const magmaFloatComplex c_zero   =  MAGMA_C_ZERO;
+    const magmaFloatComplex c_neg_one=  MAGMA_C_NEG_ONE;
+    const magmaFloatComplex c_half   =  MAGMA_C_HALF;
     magmaFloatComplex dtmp;
 
     /* X = AVtau */

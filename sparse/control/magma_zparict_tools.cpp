@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -203,7 +203,11 @@ magma_zparict_candidates(
 
     #pragma omp parallel
     {
+#ifdef _OPENMP
         magma_int_t id = omp_get_thread_num();
+#else
+        magma_int_t id = 0;
+#endif
         if( id == 0 ){
             for( magma_int_t i = 0; i<L.num_rows; i++ ){
                 L_new->nnz = L_new->nnz + L_new->row[ i+1 ];
@@ -409,7 +413,7 @@ cleanup:
 
 
 extern "C" magma_int_t
-magma_zparic_sweep_sync(
+magma_zparict_sweep_sync(
     magma_z_matrix *A,
     magma_z_matrix *L,
     magma_queue_t queue )

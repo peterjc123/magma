@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.3.0) --
+#   -- MAGMA (version 2.4.0) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date November 2017
+#      @date June 2018
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -136,6 +136,7 @@ testing_src += \
 	$(cdir)/testing_zgeqlf.cpp	\
 	$(cdir)/testing_zgeqp3.cpp	\
 	$(cdir)/testing_zgeqrf.cpp	\
+        $(cdir)/testing_zgglse.cpp      \
 	$(cdir)/testing_zunglq.cpp	\
 	$(cdir)/testing_zungqr.cpp	\
 	$(cdir)/testing_zunmlq.cpp	\

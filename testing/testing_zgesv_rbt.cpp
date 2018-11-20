@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> c d s
        @author Mark Gates
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
             /* Initialize the matrices */
             //sizeA = lda*N;
             sizeB = ldb*nrhs;
-            magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda );
             lapackf77_zlarnv( &ione, ISEED, &sizeB, h_B );
             
             // copy A to LU and B to X; save A and B for residual

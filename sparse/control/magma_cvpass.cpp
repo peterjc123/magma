@@ -1,16 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zvpass.cpp, normal z -> c, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zvpass.cpp, normal z -> c, Mon Jun 25 18:24:28 2018
        @author Hartwig Anzt
 */
-
-//  in this file, many routines are taken from
-//  the IO functions provided by MatrixMarket
 
 #include "magmasparse_internal.h"
 
@@ -64,6 +61,7 @@ magma_cvset(
     v->val = val;
     v->major = MagmaColMajor;
     v->storage_type = Magma_DENSE;
+    v->ownership = MagmaFalse;
 
     return MAGMA_SUCCESS;
 }
@@ -73,7 +71,8 @@ magma_cvset(
     Purpose
     -------
 
-    Passes a MAGMA vector back.
+    Passes a MAGMA vector back. This function requires the array val to be 
+    already allocated (of size m x n).
 
     Arguments
     ---------
@@ -92,7 +91,7 @@ magma_cvset(
 
     @param[out]
     val         magmaFloatComplex*
-                array containing vector entries
+                array of size m x n the vector entries are copied into
 
     @param[in]
     queue       magma_queue_t
@@ -103,10 +102,10 @@ magma_cvset(
 
 extern "C"
 magma_int_t
-magma_cvget(
+magma_cvcopy(
     magma_c_matrix v,
     magma_int_t *m, magma_int_t *n,
-    magmaFloatComplex **val,
+    magmaFloatComplex *val,
     magma_queue_t queue )
 {
     magma_c_matrix v_CPU={Magma_CSR};
@@ -115,10 +114,12 @@ magma_cvget(
     if ( v.memory_location == Magma_CPU ) {
         *m = v.num_rows;
         *n = v.num_cols;
-        *val = v.val;
+        for (magma_int_t i=0; i<v.num_rows*v.num_cols; i++) {
+            val[i] = v.val[i];
+        }
     } else {
         CHECK( magma_cmtransfer( v, &v_CPU, v.memory_location, Magma_CPU, queue ));
-        CHECK( magma_cvget( v_CPU, m, n, val, queue ));
+        CHECK( magma_cvcopy( v_CPU, m, n, val, queue ));
     }
     
 cleanup:

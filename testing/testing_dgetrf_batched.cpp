@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.3.0) --
+   -- MAGMA (version 2.4.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date November 2017
+   @date June 2018
 
    @author Azzam Haidar
    @author Tingxing Dong
 
-   @generated from testing/testing_zgetrf_batched.cpp, normal z -> d, Wed Nov 15 00:34:24 2017
+   @generated from testing/testing_zgetrf_batched.cpp, normal z -> d, Mon Jun 25 18:24:22 2018
  */
 // includes, system
 #include <stdlib.h>
@@ -244,7 +244,7 @@ int main( int argc, char** argv)
                     }
                     
                     double err = get_LU_error( M, N, h_R + i * lda*N, lda, h_Amagma + i * lda*N, ipiv + i * min_mn);
-                    if ( isnan(err) || isinf(err) ) {
+                    if (std::isnan(err) || std::isinf(err)) {
                         error = err;
                         break;
                     }

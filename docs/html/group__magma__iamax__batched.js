@@ -1,7 +1,7 @@
 var group__magma__iamax__batched =
 [
-    [ "magma_icamax_batched", "group__magma__iamax__batched.html#ga8388255fb3db969213145093388e5744", null ],
-    [ "magma_idamax_batched", "group__magma__iamax__batched.html#ga402f2b5e6f7e7423a84b360c67fb61dc", null ],
-    [ "magma_isamax_batched", "group__magma__iamax__batched.html#ga86a3cd4680d9a9df4f33eb567f1f52ff", null ],
-    [ "magma_izamax_batched", "group__magma__iamax__batched.html#ga94e92bbbcc01f7383a2942f158c59c5b", null ]
+    [ "magma_icamax_batched", "group__magma__iamax__batched.html#gaaaac855a6404f5e4f2e7d6c76f37cabd", null ],
+    [ "magma_idamax_batched", "group__magma__iamax__batched.html#gacc38ea5ee2760d730c7c5d80fb7f9bab", null ],
+    [ "magma_isamax_batched", "group__magma__iamax__batched.html#gaf72a124f7529044dc4cbb17fd146ba2b", null ],
+    [ "magma_izamax_batched", "group__magma__iamax__batched.html#gac2985563a9385fadab60c9cb602e3074", null ]
 ];

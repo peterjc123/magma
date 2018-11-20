@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Hartwig Anzt
 
-       @generated from sparse/src/zparict.cpp, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from sparse/src/zparict.cpp, normal z -> s, Mon Jun 25 18:24:31 2018
 */
 
 #include "magmasparse_internal.h"
@@ -127,9 +127,9 @@ magma_sparict(
         num_rmL = max( (L_new.nnz-L0nnz*(1+precond->atol*(iters+1)/precond->sweeps)), 0 );
         start = magma_sync_wtime( queue );
         magma_smfree(&LT, queue );
-        magma_sparilut_transpose( L, &LT, queue );
+        magma_scsrcoo_transpose( L, &LT, queue );
         end = magma_sync_wtime( queue ); t_transpose1+=end-start;
-        start = magma_sync_wtime( queue );
+        start = magma_sync_wtime( queue ); 
         magma_sparict_candidates( L0, L, LT, &hL, queue );
         #pragma omp parallel        
         for(int row=0; row<hL.num_rows; row++){
@@ -141,7 +141,7 @@ magma_sparict(
         magma_sparilut_residuals( hA, L, L, &hL, queue );
         end = magma_sync_wtime( queue ); t_res=+end-start;
         start = magma_sync_wtime( queue );
-        magma_sparilut_elementsum( hL, &sumL, queue );
+        magma_smatrix_abssum( hL, &sumL, queue );
         sum = sumL*2;
         end = magma_sync_wtime( queue ); t_nrm+=end-start;
         
@@ -151,7 +151,7 @@ magma_sparict(
         magma_smfree( &hL, queue );
        
         start = magma_sync_wtime( queue );
-         CHECK( magma_sparic_sweep_sync( &A0, &L_new, queue ) );
+         CHECK( magma_sparict_sweep_sync( &A0, &L_new, queue ) );
         end = magma_sync_wtime( queue ); t_sweep1+=end-start;
         num_rmL = max( (L_new.nnz-L0nnz*(1+(precond->atol-1.)*(iters+1)/precond->sweeps)), 0 );
         start = magma_sync_wtime( queue );
@@ -173,7 +173,7 @@ magma_sparict(
         end = magma_sync_wtime( queue ); t_rm=end-start;
         
         start = magma_sync_wtime( queue );
-        CHECK( magma_sparic_sweep_sync( &A0, &L, queue ) );
+        CHECK( magma_sparict_sweep_sync( &A0, &L, queue ) );
         end = magma_sync_wtime( queue ); t_sweep2+=end-start;
 
         if( timing == 1 ){

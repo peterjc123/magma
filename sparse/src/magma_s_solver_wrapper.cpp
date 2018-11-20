@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/src/magma_z_solver_wrapper.cpp, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from sparse/src/magma_z_solver_wrapper.cpp, normal z -> s, Mon Jun 25 18:24:32 2018
        @author Hartwig Anzt
 
 */
@@ -16,7 +16,19 @@
     Purpose
     -------
 
-    Allows the user to choose a solver.
+    This is an interface that allows to use any iterative solver on the linear
+    system Ax = b. All linear algebra objects are expected to be on the device,
+    the linear algebra objects are MAGMA-sparse specific structures 
+    (dense matrix b, dense matrix x, sparse/dense matrix A).
+    The additional parameter zopts contains information about the solver
+    and the preconditioner.
+    * the type of solver
+    * the relative / absolute stopping criterion
+    * the maximum number of iterations
+    * the preconditioner type
+    * ...
+    Please see magmasparse_types.h for details about the fields and
+    magma_sutil_sparse.cpp for the possible options.
 
     Arguments
     ---------

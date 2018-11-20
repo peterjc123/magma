@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 */
 
 #ifndef MAGMA_VBATCHED_H
@@ -47,7 +47,7 @@ magma_trsm_vbatched_checker(
 
 magma_int_t 
 magma_syrk_vbatched_checker(
-        magma_int_t complex, 
+        magma_int_t icomplex, 
         magma_uplo_t uplo, magma_trans_t trans, 
         magma_int_t *n, magma_int_t *k, 
         magma_int_t *ldda, magma_int_t *lddc, 
@@ -62,7 +62,7 @@ magma_herk_vbatched_checker(
 
 magma_int_t 
 magma_syr2k_vbatched_checker(
-        magma_int_t complex, 
+        magma_int_t icomplex, 
         magma_uplo_t uplo, magma_trans_t trans, 
         magma_int_t *n, magma_int_t *k, 
         magma_int_t *ldda, magma_int_t *lddb, magma_int_t *lddc, 

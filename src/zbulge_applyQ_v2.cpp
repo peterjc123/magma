@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Azzam Haidar
        @author Stan Tomov
@@ -120,7 +120,7 @@ magma_zbulge_applyQ_v2(
 
     if (MAGMA_SUCCESS != magma_zmalloc( &dwork, 2*dworksiz + 2*dwVTsiz +  2*Vchunksiz* (Vblksiz* (lddv+lddt)) )) {
         printf ("!!!!  magma_zbulge_applyQ magma_alloc failed for: dwork\n" );
-        exit(-1);
+        return MAGMA_ERR_ALLOCATION;
     }
     dwork0 = dwork;               // size = dworksiz;
     dwork1 = dwork0 + dworksiz;   // size = dworksiz;

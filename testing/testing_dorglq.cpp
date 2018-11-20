@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from testing/testing_zunglq.cpp, normal z -> d, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zunglq.cpp, normal z -> d, Mon Jun 25 18:24:21 2018
 
        @author Stan Tomov
        @author Mathieu Faverge
@@ -80,7 +80,7 @@ int main( int argc, char** argv )
             TESTING_CHECK( magma_dmalloc( &dA,     ldda*n ));
             TESTING_CHECK( magma_dmalloc( &dT,     ( 2*min_mn + magma_roundup( n, 32 ) )*nb ));
             
-            magma_generate_matrix( opts, m, n, nullptr, hA, lda );
+            magma_generate_matrix( opts, m, n, hA, lda );
             lapackf77_dlacpy( MagmaFullStr, &m, &n, hA, &lda, hR, &lda );
             
             Anorm = lapackf77_dlange("f", &m, &n, hA, &lda, work );

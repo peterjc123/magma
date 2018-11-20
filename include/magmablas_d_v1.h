@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from include/magmablas_z_v1.h, normal z -> d, Wed Nov 15 00:34:25 2017
+       @generated from include/magmablas_z_v1.h, normal z -> d, Mon Jun 25 18:24:32 2018
 */
 
 #ifndef MAGMABLAS_D_V1_H
@@ -18,7 +18,7 @@
 #include "magma_types.h"
 #include "magma_copy_v1.h"
 
-#define REAL
+#define MAGMA_REAL
 
 #ifdef __cplusplus
 extern "C" {
@@ -738,7 +738,7 @@ magma_drot_v1(
     magmaDouble_ptr dy, magma_int_t incy,
     double dc, double ds );
 
-#ifdef REAL
+#ifdef MAGMA_REAL
 void
 magma_drotm_v1(
     magma_int_t n,
@@ -751,7 +751,7 @@ magma_drotmg_v1(
     magmaDouble_ptr d1, magmaDouble_ptr       d2,
     magmaDouble_ptr x1, magmaDouble_const_ptr y1,
     magmaDouble_ptr param );
-#endif
+#endif  // MAGMA_REAL
 
 void
 magma_dscal_v1(
@@ -933,6 +933,6 @@ magma_dtrsm_v1(
 }
 #endif
 
-#undef REAL
+#undef MAGMA_REAL
 
 #endif // MAGMABLAS_D_H

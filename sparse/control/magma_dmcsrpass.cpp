@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmcsrpass.cpp, normal z -> d, Wed Nov 15 00:34:24 2017
+       @generated from sparse/control/magma_zmcsrpass.cpp, normal z -> d, Mon Jun 25 18:24:25 2018
        @author Hartwig Anzt
 */
 
@@ -78,6 +78,7 @@ magma_dcsrset(
     A->col = col;
     A->row = row;
     A->fill_mode = MagmaFull;
+    A->ownership = MagmaFalse;
 
     return MAGMA_SUCCESS;
 }
@@ -144,6 +145,7 @@ magma_dcsrget(
         *val = A.val;
         *col = A.col;
         *row = A.row;
+        A.ownership = MagmaFalse;
     } else {
         CHECK( magma_dmtransfer( A, &A_CPU, A.memory_location, Magma_CPU, queue ));
         CHECK( magma_dmconvert( A_CPU, &A_CSR, A_CPU.storage_type, Magma_CSR, queue ));

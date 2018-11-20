@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
 
@@ -136,7 +136,7 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_dmalloc_pinned( &h_work, lwork2 ));
             
             /* Initialize the matrix */
-            magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda );
             lapackf77_dlacpy( MagmaFullStr, &N, &N, h_A, &lda, h_R, &lda );
             
             /* ====================================================================
@@ -303,7 +303,7 @@ int main( int argc, char** argv)
                 double *LRE, DUM;
                 TESTING_CHECK( magma_dmalloc_pinned( &LRE, n2 ));
                 
-                magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+                magma_generate_matrix( opts, N, N, h_A, lda );
                 lapackf77_dlacpy( MagmaFullStr, &N, &N, h_A, &lda, h_R, &lda );
                 
                 // ----------

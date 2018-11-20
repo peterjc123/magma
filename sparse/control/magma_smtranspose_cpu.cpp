@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmtranspose_cpu.cpp, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zmtranspose_cpu.cpp, normal z -> s, Mon Jun 25 18:24:27 2018
        @author Hartwig Anzt
 
 */
@@ -33,6 +33,8 @@ magma_s_mtrans_template(
     
     // magma_int_t num_threads;
     // magma_int_t el_per_block;
+    magma_smfree( B, queue );
+    B->ownership = MagmaTrue;
     
     B->storage_type = A.storage_type;
     B->memory_location = A.memory_location;
@@ -118,6 +120,8 @@ cleanup:
 }
 
 
+inline void cpy(const float &from, float &to) { to = from; }
+
 /**
     Purpose
     -------
@@ -140,9 +144,6 @@ cleanup:
 
     @ingroup magmasparse_saux
     ********************************************************************/
-    
-inline void cpy(const float &from, float &to) { to = from; }
-
 extern "C" magma_int_t
 magma_smtranspose_cpu(
     magma_s_matrix A, 
@@ -158,6 +159,7 @@ cleanup:
 }
 
 
+inline void conjop(const float &from, float &to) { to = MAGMA_S_CONJ(from); }
 
 /**
     Purpose
@@ -181,9 +183,6 @@ cleanup:
 
     @ingroup magmasparse_saux
     ********************************************************************/
-    
-inline void conjop(const float &from, float &to) { to = MAGMA_S_CONJ(from); }
-
 extern "C" magma_int_t
 magma_smtransposeconj_cpu(
     magma_s_matrix A, 
@@ -199,6 +198,7 @@ cleanup:
 }
 
 
+inline void pass(const float &from, float &to) { }
 
 /**
     Purpose
@@ -222,9 +222,6 @@ cleanup:
 
     @ingroup magmasparse_saux
     ********************************************************************/
-    
-inline void pass(const float &from, float &to) { }
-
 extern "C" magma_int_t
 magma_smtransposestruct_cpu(
     magma_s_matrix A, 
@@ -240,6 +237,7 @@ cleanup:
 }
 
 
+inline void absval(const float &from, float &to) { to = MAGMA_S_MAKE(MAGMA_S_ABS(from), 0.0 ); }
 
 /**
     Purpose
@@ -263,9 +261,6 @@ cleanup:
 
     @ingroup magmasparse_saux
     ********************************************************************/
-    
-inline void absval(const float &from, float &to) { to = MAGMA_S_MAKE(MAGMA_S_ABS(from), 0.0 ); }
-
 extern "C" magma_int_t
 magma_smtransposeabs_cpu(
     magma_s_matrix A, 

@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Azzam Haidar
   
-       @generated from src/core_zlarfy.cpp, normal z -> d, Wed Nov 15 00:34:20 2017
+       @generated from src/core_zlarfy.cpp, normal z -> d, Mon Jun 25 18:24:08 2018
 */
 #include "magma_internal.h"
 #include "magma_bulge.h"
@@ -61,10 +61,10 @@ magma_dlarfy(
     work (workspace) double real array, dimension n
     */
 
-    static magma_int_t ione = 1;
-    static double c_zero   =  MAGMA_D_ZERO;
-    static double c_neg_one=  MAGMA_D_NEG_ONE;
-    static double c_half   =  MAGMA_D_HALF;
+    const magma_int_t ione = 1;
+    const double c_zero   =  MAGMA_D_ZERO;
+    const double c_neg_one=  MAGMA_D_NEG_ONE;
+    const double c_half   =  MAGMA_D_HALF;
     double dtmp;
 
     /* X = AVtau */

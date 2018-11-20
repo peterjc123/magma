@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -268,7 +268,7 @@ magma_z_cucsrtranspose(
         B->num_cols        = A.num_rows;  // transposed
         B->nnz             = A.nnz;
         B->true_nnz = A.true_nnz;
-        
+        B->ownership = MagmaTrue;
         if ( A.fill_mode == MagmaFull ) {
             B->fill_mode = MagmaFull;
         }
@@ -379,6 +379,7 @@ magma_zmtransposeconjugate(
         B->num_cols        = A.num_rows;  // transposed
         B->nnz             = A.nnz;
         B->true_nnz = A.true_nnz;
+        B->ownership = MagmaTrue;
         if ( A.fill_mode == MagmaFull ) {
             B->fill_mode = MagmaFull;
         }

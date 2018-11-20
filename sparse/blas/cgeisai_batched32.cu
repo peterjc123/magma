@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
        
        @author Hartwig Anzt
        @author Goran Flegar
 
-       @generated from sparse/blas/zgeisai_batched32.cu, normal z -> c, Wed Nov 15 00:34:24 2017
+       @generated from sparse/blas/zgeisai_batched32.cu, normal z -> c, Mon Jun 25 18:24:26 2018
 
 */
 #include "magmasparse_internal.h"
@@ -29,289 +29,6 @@
 
 
 const int MaxBlockSize = 32;
-
-
-template <int block_size>
-__device__ void
-magma_clowerisai_regs_kernel(
-magma_int_t num_rows,
-const magma_index_t * __restrict__ Arow,
-const magma_index_t * __restrict__ Acol,
-const magmaFloatComplex * __restrict__ Aval,
-magma_index_t *Mrow,
-magma_index_t *Mcol,
-magmaFloatComplex *Mval )
-{
-#if (defined( REAL ) && ( __CUDA_ARCH__ >= 300 ))
-    int tid = threadIdx.x;
-    int row = gridDim.x*blockIdx.y*blockDim.y + blockIdx.x*blockDim.y + threadIdx.y;
-
-    if( tid >= block_size )
-        return;
-
-    if( row >= num_rows )
-        return;
-
-    // only if within the size
-    int mstart = Mrow[ row ];
-    int mlim = Mrow[ row+1 ];
-
-    magmaFloatComplex rB;      // registers for trsv
-    magmaFloatComplex dA[ block_size ];  // registers for trisystem
-    magmaFloatComplex rA;
-
-    // set dA to 0
-    #pragma unroll
-    for( int j = 0; j < block_size; j++ ){
-        dA[ j ] = MAGMA_C_ZERO;
-    }
-
-    // generate the triangular systems
-    int t = Mcol[ mstart + tid ];
-    int k = Arow[ t ];
-    int alim = Arow[ t+1 ];
-    int l = mstart;
-    int idx = 0;
-    while( k < alim && l < mlim ){ // stop once this column is done
-        int mcol =  Mcol[ l ];
-        int acol = Acol[k];
-        if( mcol == acol ){ //match
-            dA[ idx ] = Aval[ k ];
-            k++;
-            l++;
-            idx++;
-        } else if( acol < mcol ){// need to check next element
-            k++;
-        } else { // element does not exist, i.e. l < LC.col[k]
-            l++; // check next elment in the sparsity pattern
-            idx++; // leave this element equal zero
-        }
-    }
-
-    // second: solve the triangular systems - in registers
-    // we know how RHS looks like
-    rB = ( tid == 0 ) ? MAGMA_C_ONE : MAGMA_C_ZERO;
-
-
-        // Triangular solve in regs.
-    #pragma unroll
-    for (int k = 0; k < block_size; k++)
-    {
-        rA = dA[ k ];
-        if (k % block_size == tid)
-            rB /= rA;
-        magmaFloatComplex top = magmablas_cshfl(rB, k % block_size);
-        if ( tid > k)
-            rB -= (top*rA);
-    }
-
-    // Drop B to dev memory - in ISAI preconditioner M
-    Mval[ mstart + tid ] = rB;
-
-#endif
-
-}
-
-
-template <int block_size>
-__device__ __forceinline__ void
-magma_clowerisai_regs_select(
-int N,
-magma_int_t num_rows,
-const magma_index_t * __restrict__ Arow,
-const magma_index_t * __restrict__ Acol,
-const magmaFloatComplex * __restrict__ Aval,
-magma_index_t *Mrow,
-magma_index_t *Mcol,
-magmaFloatComplex *Mval )
-{
-    if (N == block_size) {
-        magma_clowerisai_regs_kernel<block_size>(
-                num_rows, Arow, Acol, Aval, Mrow, Mcol, Mval);
-    } else {
-        magma_clowerisai_regs_select<block_size-1>(
-                N, num_rows, Arow, Acol, Aval, Mrow, Mcol, Mval);
-    }
-}
-
-
-template <>
-__device__ __forceinline__ void
-magma_clowerisai_regs_select<0>(
-int N,
-magma_int_t num_rows,
-const magma_index_t * __restrict__ Arow,
-const magma_index_t * __restrict__ Acol,
-const magmaFloatComplex * __restrict__ Aval,
-magma_index_t *Mrow,
-magma_index_t *Mcol,
-magmaFloatComplex *Mval )
-{
-    // TODO(Hartwig): Are you soure we want to have printfs called from the
-    //                device?
-    printf("%% error: size out of range: %d\n", N);
-}
-
-
-__global__ void
-magma_clowerisai_regs_switch(
-magma_int_t num_rows,
-const magma_index_t * __restrict__ Arow,
-const magma_index_t * __restrict__ Acol,
-const magmaFloatComplex * __restrict__ Aval,
-magma_index_t *Mrow,
-magma_index_t *Mcol,
-magmaFloatComplex *Mval )
-{
-    int row = gridDim.x*blockIdx.y*blockDim.y + blockIdx.x*blockDim.y + threadIdx.y;
-    if( row < num_rows ){
-        int N = Mrow[ row+1 ] - Mrow[ row ];
-        //Switcher<MaxBlockSize, magma_clowerisai_regs_kernel>::switch_func(
-        magma_clowerisai_regs_select<MaxBlockSize>(
-                N, num_rows, Arow, Acol, Aval, Mrow, Mcol, Mval);
-    }
-}
-
-
-template <int block_size>
-__device__ void
-magma_cupperisai_regs_kernel(
-magma_int_t num_rows,
-const magma_index_t * __restrict__ Arow,
-const magma_index_t * __restrict__ Acol,
-const magmaFloatComplex * __restrict__ Aval,
-magma_index_t *Mrow,
-magma_index_t *Mcol,
-magmaFloatComplex *Mval )
-{
-#if (defined( REAL ) && ( __CUDA_ARCH__ >= 300 ))
-    int tid = threadIdx.x;
-    int row = gridDim.x*blockIdx.y*blockDim.y + blockIdx.x*blockDim.y + threadIdx.y;
-
-    if( tid >= block_size )
-        return;
-
-    if( row >= num_rows )
-        return;
-
-    // only if within the size
-    int mstart = Mrow[ row ];
-    int mlim = Mrow[ row+1 ];
-
-    magmaFloatComplex rB;      // registers for trsv
-    magmaFloatComplex dA[ block_size ];  // registers for trisystem
-    magmaFloatComplex rA;
-
-    // set dA to 0
-    #pragma unroll
-    for( int j = 0; j < block_size; j++ ){
-        dA[ j ] = MAGMA_C_ZERO;
-    }
-
-    // generate the triangular systems
-    int t = Mcol[ mstart + tid ];
-    int k = Arow[ t ];
-    int alim = Arow[ t+1 ];
-    int l = mstart;
-    int idx = 0;
-    while( k < alim && l < mlim ){ // stop once this column is done
-        int mcol =  Mcol[ l ];
-        int acol = Acol[k];
-        if( mcol == acol ){ //match
-            dA[ idx ] = Aval[ k ];
-            k++;
-            l++;
-            idx++;
-        } else if( acol < mcol ){// need to check next element
-            k++;
-        } else { // element does not exist, i.e. l < LC.col[k]
-            l++; // check next elment in the sparsity pattern
-            idx++; // leave this element equal zero
-        }
-    }
-
-    // second: solve the triangular systems - in registers
-    // we know how RHS looks like
-    rB = ( tid == block_size-1 ) ? MAGMA_C_ONE : MAGMA_C_ZERO;
-
-
-        // Triangular solve in regs.
-    #pragma unroll
-    for (int k = block_size-1; k >-1; k--)
-    {
-        rA = dA[ k ];
-        if (k%block_size == tid)
-            rB /= rA;
-        magmaFloatComplex bottom = magmablas_cshfl(rB, k%block_size);
-        if ( tid < k)
-            rB -= (bottom*rA);
-    }
-
-    // Drop B to dev memory - in ISAI preconditioner M
-    Mval[ mstart + tid ] = rB;
-
-#endif
-
-}
-
-
-template <int block_size>
-__device__ __forceinline__ void
-magma_cupperisai_regs_select(
-int N,
-magma_int_t num_rows,
-const magma_index_t * __restrict__ Arow,
-const magma_index_t * __restrict__ Acol,
-const magmaFloatComplex * __restrict__ Aval,
-magma_index_t *Mrow,
-magma_index_t *Mcol,
-magmaFloatComplex *Mval )
-{
-    if (N == block_size) {
-        magma_cupperisai_regs_kernel<block_size>(
-                num_rows, Arow, Acol, Aval, Mrow, Mcol, Mval);
-    } else {
-        magma_cupperisai_regs_select<block_size-1>(
-                N, num_rows, Arow, Acol, Aval, Mrow, Mcol, Mval);
-    }
-}
-
-
-template <>
-__device__ __forceinline__ void
-magma_cupperisai_regs_select<0>(
-int N,
-magma_int_t num_rows,
-const magma_index_t * __restrict__ Arow,
-const magma_index_t * __restrict__ Acol,
-const magmaFloatComplex * __restrict__ Aval,
-magma_index_t *Mrow,
-magma_index_t *Mcol,
-magmaFloatComplex *Mval )
-{
-    // TODO(Hartwig): Are you soure we want to have printfs called from the
-    //                device?
-    printf("%% error: size out of range: %d\n", N);
-}
-
-
-__global__ void
-magma_cupperisai_regs_switch(
-magma_int_t num_rows,
-const magma_index_t * __restrict__ Arow,
-const magma_index_t * __restrict__ Acol,
-const magmaFloatComplex * __restrict__ Aval,
-magma_index_t *Mrow,
-magma_index_t *Mcol,
-magmaFloatComplex *Mval )
-{
-    int row = gridDim.x*blockIdx.y*blockDim.y + blockIdx.x*blockDim.y + threadIdx.y;
-    if( row < num_rows ){
-        int N = Mrow[ row+1 ] - Mrow[ row ];
-        magma_cupperisai_regs_select<MaxBlockSize>(
-                N, num_rows, Arow, Acol, Aval, Mrow, Mcol, Mval);
-    }
-}
 
 
 template <int block_size>
@@ -339,7 +56,7 @@ magmaFloatComplex *Mval )
     int mstart = Mrow[ row ];
     int mlim = Mrow[ row ]-1;
 
-    magmaFloatComplex rB;      // registers for trsv
+    magmaFloatComplex rB;                // registers for trsv
     magmaFloatComplex dA[ block_size ];  // registers for trisystem
     magmaFloatComplex rA;
 
@@ -429,9 +146,9 @@ magma_index_t *Mrow,
 magma_index_t *Mcol,
 magmaFloatComplex *Mval )
 {
-    // TODO(Hartwig): Are you soure we want to have printfs called from the
-    //                device?
-    printf("%% error: size out of range: %d\n", N);
+    ;
+    // out of range - do nothing.
+    // printf("%% error: size out of range: %d\n", N);
 }
 
 
@@ -479,7 +196,7 @@ magmaFloatComplex *Mval )
     int mstart = Mrow[ row ];
     int mlim = Mrow[ row ]-1;
 
-    magmaFloatComplex rB;      // registers for trsv
+    magmaFloatComplex rB;                // registers for trsv
     magmaFloatComplex dA[ block_size ];  // registers for trisystem
     magmaFloatComplex rA;
 
@@ -568,9 +285,9 @@ magma_index_t *Mrow,
 magma_index_t *Mcol,
 magmaFloatComplex *Mval )
 {
-    // TODO(Hartwig): Are you soure we want to have printfs called from the
-    //                device?
-    printf("%% error: size out of range: %d\n", N);
+    ;
+    // out of range - do nothing.
+    // printf("%% error: size out of range: %d\n", N);
 }
 
 
@@ -624,22 +341,6 @@ magmaFloatComplex *Mval )
     @param[in,out]
     M           magma_c_matrix*
                 SPAI preconditioner CSR col-major
-
-    @param[out]
-    sizes       magma_int_t*
-                Number of Elements that are replaced.
-
-    @param[out]
-    locations   magma_int_t*
-                Array indicating the locations.
-
-    @param[out]
-    trisystems  magmaFloatComplex*
-                trisystems
-
-    @param[out]
-    rhs         magmaFloatComplex*
-                right-hand sides
 
     @param[in]
     queue       magma_queue_t

@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Azzam Haidar
        @author Ahmad Abdelfattah
 
-       @generated from magmablas/zgetrf_batched_smallsq_noshfl.cu, normal z -> d, Wed Nov 15 00:34:23 2017
+       @generated from magmablas/zgetrf_batched_smallsq_noshfl.cu, normal z -> d, Mon Jun 25 18:24:14 2018
 */
 
 #include "magma_internal.h"

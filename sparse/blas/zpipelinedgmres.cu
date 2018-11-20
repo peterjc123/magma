@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> c d s
        @author Hartwig Anzt
@@ -174,7 +174,7 @@ magma_zpipelinedscale(
     v           magmaDoubleComplex_ptr 
                 vector of length n
                 
-    @param[in]  
+    @param[in]
     skp         magmaDoubleComplex_ptr 
                 array of parameters
 

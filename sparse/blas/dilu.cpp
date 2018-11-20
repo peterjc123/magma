@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Hartwig Anzt
 
-       @generated from sparse/blas/zilu.cpp, normal z -> d, Wed Nov 15 00:34:24 2017
+       @generated from sparse/blas/zilu.cpp, normal z -> d, Mon Jun 25 18:24:26 2018
 */
 #include "magmasparse_internal.h"
 #include <cuda.h>  // for CUDA_VERSION
@@ -822,7 +822,7 @@ magma_dcumiccsetup(
     CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &(precond->cuinfo) ));
     // use kernel to manually check for zeros n the diagonal
     CHECK( magma_ddiagcheck( precond->M, queue ) );
-        
+ /*      
 #if CUDA_VERSION >= 7000
     // this version has the bug fixed where a zero on the diagonal causes a crash
     CHECK_CUSPARSE( cusparseCreateCsric02Info(&info_M) );
@@ -854,7 +854,7 @@ magma_dcumiccsetup(
                          precond->M.dval, precond->M.drow, precond->M.dcol,
                          info_M, CUSPARSE_SOLVE_POLICY_NO_LEVEL, pBuffer) );    
 
-#else
+#else*/
     // this version contains the bug but is needed for backward compability
     CHECK_CUSPARSE( cusparseSetMatType( descrA, CUSPARSE_MATRIX_TYPE_SYMMETRIC ));
     CHECK_CUSPARSE( cusparseSetMatDiagType( descrA, CUSPARSE_DIAG_TYPE_NON_UNIT ));
@@ -872,43 +872,26 @@ magma_dcumiccsetup(
                       precond->M.drow,
                       precond->M.dcol,
                       precond->cuinfo ));
-#endif
+//#endif
 
-    CHECK_CUSPARSE( cusparseCreateMatDescr( &descrL ));
-    CHECK_CUSPARSE( cusparseSetMatType( descrL, CUSPARSE_MATRIX_TYPE_TRIANGULAR ));
-    CHECK_CUSPARSE( cusparseSetMatDiagType( descrL, CUSPARSE_DIAG_TYPE_NON_UNIT ));
-    CHECK_CUSPARSE( cusparseSetMatIndexBase( descrL, CUSPARSE_INDEX_BASE_ZERO ));
-    CHECK_CUSPARSE( cusparseSetMatFillMode( descrL, CUSPARSE_FILL_MODE_LOWER ));
-    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &precond->cuinfoL ));
-    CHECK_CUSPARSE( cusparseDcsrsm_analysis( cusparseHandle,
-        CUSPARSE_OPERATION_NON_TRANSPOSE, precond->M.num_rows,
-        precond->M.nnz, descrL,
-        precond->M.dval, precond->M.drow, precond->M.dcol, precond->cuinfoL ));
-    CHECK_CUSPARSE( cusparseCreateMatDescr( &descrU ));
-    CHECK_CUSPARSE( cusparseSetMatType( descrU, CUSPARSE_MATRIX_TYPE_TRIANGULAR ));
-    CHECK_CUSPARSE( cusparseSetMatDiagType( descrU, CUSPARSE_DIAG_TYPE_NON_UNIT ));
-    CHECK_CUSPARSE( cusparseSetMatIndexBase( descrU, CUSPARSE_INDEX_BASE_ZERO ));
-    CHECK_CUSPARSE( cusparseSetMatFillMode( descrU, CUSPARSE_FILL_MODE_LOWER ));
-    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &precond->cuinfoU ));
-    CHECK_CUSPARSE( cusparseDcsrsm_analysis( cusparseHandle,
-        CUSPARSE_OPERATION_TRANSPOSE, precond->M.num_rows,
-        precond->M.nnz, descrU,
-        precond->M.dval, precond->M.drow, precond->M.dcol, precond->cuinfoU ));
+    CHECK( magma_dmtransfer( precond->M, &precond->L, 
+        Magma_DEV, Magma_DEV, queue ));
+    CHECK( magma_dmtranspose(precond->M, &precond->U, queue ));
 
-    if( precond->trisolver != 0 && precond->trisolver != Magma_CUSOLVE ){
+    if (precond->trisolver == 0 || precond->trisolver == Magma_CUSOLVE) {
+        CHECK(magma_dcumicgeneratesolverinfo(precond, queue));
+    } else {
         //prepare for iterative solves
-        
-        // copy the matrix to precond->L and (transposed) to precond->U
-        CHECK( magma_dmtransfer(precond->M, &(precond->L), Magma_DEV, Magma_DEV, queue ));
-        CHECK( magma_dmtranspose( precond->L, &(precond->U), queue ));
-        
+
         // extract the diagonal of L into precond->d
-        CHECK( magma_djacobisetup_diagscal( precond->L, &precond->d, queue ));
-        CHECK( magma_dvinit( &precond->work1, Magma_DEV, hA.num_rows, 1, MAGMA_D_ZERO, queue ));
-        
+        CHECK(magma_djacobisetup_diagscal(precond->L, &precond->d, queue));
+        CHECK(magma_dvinit(&precond->work1, Magma_DEV, hA.num_rows, 1, 
+            MAGMA_D_ZERO, queue));
+
         // extract the diagonal of U into precond->d2
-        CHECK( magma_djacobisetup_diagscal( precond->U, &precond->d2, queue ));
-        CHECK( magma_dvinit( &precond->work2, Magma_DEV, hA.num_rows, 1, MAGMA_D_ZERO, queue ));
+        CHECK(magma_djacobisetup_diagscal(precond->U, &precond->d2, queue));
+        CHECK(magma_dvinit(&precond->work2, Magma_DEV, hA.num_rows, 1, 
+            MAGMA_D_ZERO, queue));
     }
 
 
@@ -1193,3 +1176,110 @@ cleanup:
     cusparseDestroy( cusparseHandle );
     return info; 
 }
+
+
+
+/**
+    Purpose
+    -------
+
+    Performs the left triangular solves using the IC preconditioner via Jacobi.
+
+    Arguments
+    ---------
+
+    @param[in]
+    b           magma_d_matrix
+                RHS
+
+    @param[out]
+    x           magma_d_matrix*
+                vector to precondition
+
+    @param[in]
+    precond     magma_d_preconditioner*
+                preconditioner parameters
+                
+    @param[in]
+    queue       magma_queue_t
+                Queue to execute in.
+
+    @ingroup magmasparse_dgepr
+    ********************************************************************/
+extern "C"
+magma_int_t
+magma_dapplyiteric_l(
+    magma_d_matrix b,
+    magma_d_matrix *x,
+    magma_d_preconditioner *precond,
+    magma_queue_t queue )
+{
+    magma_int_t info = 0;
+    
+    magma_int_t dofs = precond->L.num_rows;
+    magma_d_solver_par jacobiiter_par;
+    jacobiiter_par.maxiter = precond->maxiter;
+
+    // compute c = D^{-1}b and copy c as initial guess to x
+    CHECK( magma_djacobisetup_vector_gpu( dofs, b, precond->d,
+                                                precond->work1, x, queue ));
+    // Jacobi iterator
+    CHECK( magma_djacobiiter_precond( precond->L, x, &jacobiiter_par, precond , queue ));
+
+cleanup:
+    return info;
+}
+
+
+/**
+    Purpose
+    -------
+
+    Performs the right triangular solves using the IC preconditioner via Jacobi.
+
+    Arguments
+    ---------
+
+    @param[in]
+    b           magma_d_matrix
+                RHS
+
+    @param[out]
+    x           magma_d_matrix*
+                vector to precondition
+
+    @param[in]
+    precond     magma_d_preconditioner*
+                preconditioner parameters
+                
+    @param[in]
+    queue       magma_queue_t
+                Queue to execute in.
+
+    @ingroup magmasparse_dgepr
+    ********************************************************************/
+extern "C"
+magma_int_t
+magma_dapplyiteric_r(
+    magma_d_matrix b,
+    magma_d_matrix *x,
+    magma_d_preconditioner *precond,
+    magma_queue_t queue )
+{
+    magma_int_t info = 0;
+
+    magma_int_t dofs = precond->U.num_rows;
+    magma_d_solver_par jacobiiter_par;
+    jacobiiter_par.maxiter = precond->maxiter;
+
+    // compute c = D^{-1}b and copy c as initial guess to x
+    CHECK( magma_djacobisetup_vector_gpu( dofs, b, precond->d,
+                                                precond->work1, x, queue ));
+
+    // Jacobi iterator
+    CHECK( magma_djacobiiter_precond( precond->U, x, &jacobiiter_par, precond , queue ));
+    
+cleanup:
+    return info;
+}
+

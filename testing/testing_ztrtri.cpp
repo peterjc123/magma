@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
   
        @precisions normal z -> c d s
        
@@ -65,7 +65,7 @@ int main( int argc, char** argv)
             /* Factor A into LU to get well-conditioned triangular matrix.
              * Copy L to U, since L seems okay when used with non-unit diagonal
              * (i.e., from U), while U fails when used with unit diagonal. */
-            magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda );
             lapackf77_zgetrf( &N, &N, h_A, &lda, ipiv, &info );
             for (int j = 0; j < N; ++j) {
                 for (int i = 0; i < j; ++i) {

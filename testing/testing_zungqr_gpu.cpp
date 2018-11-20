@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> s d c
        
@@ -77,7 +77,7 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_zmalloc( &dA,     ldda*n ));
             TESTING_CHECK( magma_zmalloc( &dT,     ( 2*min_mn + magma_roundup( n, 32 ) )*nb ));
             
-            magma_generate_matrix( opts, m, n, nullptr, hA, lda );
+            magma_generate_matrix( opts, m, n, hA, lda );
             lapackf77_zlacpy( MagmaFullStr, &m, &n, hA, &lda, hR, &lda );
             
             Anorm = lapackf77_zlange("f", &m, &n, hA, &lda, work );

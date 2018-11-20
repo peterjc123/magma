@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
 
-       @generated from testing/testing_dgeev.cpp, normal d -> s, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_dgeev.cpp, normal d -> s, Mon Jun 25 18:24:23 2018
 
 */
 
@@ -136,7 +136,7 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_smalloc_pinned( &h_work, lwork2 ));
             
             /* Initialize the matrix */
-            magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda );
             lapackf77_slacpy( MagmaFullStr, &N, &N, h_A, &lda, h_R, &lda );
             
             /* ====================================================================
@@ -303,7 +303,7 @@ int main( int argc, char** argv)
                 float *LRE, DUM;
                 TESTING_CHECK( magma_smalloc_pinned( &LRE, n2 ));
                 
-                magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+                magma_generate_matrix( opts, N, N, h_A, lda );
                 lapackf77_slacpy( MagmaFullStr, &N, &N, h_A, &lda, h_R, &lda );
                 
                 // ----------

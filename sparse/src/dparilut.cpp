@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Hartwig Anzt
 
-       @generated from sparse/src/zparilut.cpp, normal z -> d, Wed Nov 15 00:34:25 2017
+       @generated from sparse/src/zparilut.cpp, normal z -> d, Mon Jun 25 18:24:32 2018
 */
 
 #include "magmasparse_internal.h"
@@ -168,7 +168,7 @@ magma_dparilut(
         start = magma_sync_wtime( queue );
         magma_dmfree(&UT, queue );
         //magma_dmtransposestruct_cpu( U, &UT, queue );
-        magma_dparilut_transpose( U, &UT, queue );
+        magma_dcsrcoo_transpose( U, &UT, queue );
         end = magma_sync_wtime( queue ); t_transpose1+=end-start;
         start = magma_sync_wtime( queue );
         magma_dparilut_candidates( L0, U0, L, UT, &hL, &hU, queue );
@@ -181,8 +181,8 @@ magma_dparilut(
             magma_dparilut_residuals( hA, L, U, &hU, queue );
             end = magma_sync_wtime( queue ); t_res=+end-start;
             start = magma_sync_wtime( queue );
-            magma_dparilut_elementsum( hL, &sumL, queue );
-            magma_dparilut_elementsum( hU, &sumU, queue );
+            magma_dmatrix_abssum( hL, &sumL, queue );
+            magma_dmatrix_abssum( hU, &sumU, queue );
             sum = sumL + sumU;
             end = magma_sync_wtime( queue ); t_nrm+=end-start;
             
@@ -200,8 +200,8 @@ magma_dparilut(
             magma_dparilut_residuals( hA, L, U, &hU, queue );
             end = magma_sync_wtime( queue ); t_res=+end-start;
             start = magma_sync_wtime( queue );
-            magma_dparilut_elementsum( hL, &sumL, queue );
-            magma_dparilut_elementsum( hU, &sumU, queue );
+            magma_dmatrix_abssum( hL, &sumL, queue );
+            magma_dmatrix_abssum( hU, &sumU, queue );
             sum = sumL + sumU;
             end = magma_sync_wtime( queue ); t_nrm+=end-start;
             CHECK( magma_dmatrix_swap(  &hL, &oneL, queue) );
@@ -216,7 +216,7 @@ magma_dparilut(
                 for(magma_int_t z=0; z<hU.nnz; z++)
                     hU.val[z] = MAGMA_D_ZERO;
             }
-            magma_dparilut_transpose( hU, &oneU, queue );
+            magma_dcsrcoo_transpose( hU, &oneU, queue );
             end = magma_sync_wtime( queue ); t_transpose2+=end-start;
             magma_dmfree(&hU, queue );
             magma_dmfree(&UT, queue );
@@ -228,8 +228,8 @@ magma_dparilut(
             magma_dparilut_residuals( hA, L, U, &hU, queue );
             end = magma_sync_wtime( queue ); t_res=+end-start;
             start = magma_sync_wtime( queue );
-            magma_dparilut_elementsum( hL, &sumL, queue );
-            magma_dparilut_elementsum( hU, &sumU, queue );
+            magma_dmatrix_abssum( hL, &sumL, queue );
+            magma_dmatrix_abssum( hU, &sumU, queue );
             sum = sumL + sumU;
             end = magma_sync_wtime( queue ); t_nrm+=end-start;
             
@@ -423,7 +423,7 @@ magma_dparilut(
 
     // for CUSPARSE
     CHECK( magma_dmtransfer( L, &precond->L, Magma_CPU, Magma_DEV , queue ));
-    magma_dparilut_transpose( U, &UT, queue );
+    magma_dcsrcoo_transpose( U, &UT, queue );
     //magma_dmtranspose(U, &UT, queue );
     CHECK( magma_dmtransfer( UT, &precond->U, Magma_CPU, Magma_DEV , queue ));
 

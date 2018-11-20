@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.3.0) --
+   -- MAGMA (version 2.4.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date November 2017
+   @date June 2018
 
    @author Azzam Haidar
    @author Tingxing Dong
 
-   @generated from testing/testing_zpotrf_batched.cpp, normal z -> d, Wed Nov 15 00:34:24 2017
+   @generated from testing/testing_zpotrf_batched.cpp, normal z -> d, Mon Jun 25 18:24:22 2018
 */
 // includes, system
 #include <stdlib.h>
@@ -162,7 +162,7 @@ int main( int argc, char** argv)
                     Anorm = safe_lapackf77_dlansy("f", uplo, &N, h_A + i * lda*N, &lda, work);
                     err   = safe_lapackf77_dlansy("f", uplo, &N, h_R + i * lda*N, &lda, work)
                           / Anorm;
-                    if ( isnan(err) || isinf(err) ) {
+                    if (std::isnan(err) || std::isinf(err)) {
                         error = err;
                         break;
                     }

@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Raffaele Solca
        @author Azzam Haidar
 
-       @generated from src/zhegst_m.cpp, normal z -> d, Wed Nov 15 00:34:20 2017
+       @generated from src/zhegst_m.cpp, normal z -> d, Mon Jun 25 18:24:10 2018
 */
 #include "magma_internal.h"
 

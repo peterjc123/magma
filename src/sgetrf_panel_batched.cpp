@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.3.0) --
+   -- MAGMA (version 2.4.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date November 2017
+   @date June 2018
 
    @author Azzam Haidar
    @author Tingxing Dong
 
-   @generated from src/zgetrf_panel_batched.cpp, normal z -> s, Wed Nov 15 00:34:20 2017
+   @generated from src/zgetrf_panel_batched.cpp, normal z -> s, Mon Jun 25 18:24:10 2018
 */
 #include "magma_internal.h"
 
@@ -66,40 +66,6 @@
     @param[out]
     dpivinfo_array  Array of pointers, dimension (batchCount), for internal use.
 
-    @param[in,out]
-    dX_array       Array of pointers, dimension (batchCount).
-             Each is a REAL array X of dimension ( lddx, n ).
-             On entry, should be set to 0
-             On exit, the solution matrix X
-
-    @param[in]
-    dX_length    INTEGER.
-                 The size of each workspace matrix dX
-
-    @param[in,out]
-    dinvA_array    Array of pointers, dimension (batchCount).
-            Each is a REAL array dinvA, a workspace on device.
-            If side == MagmaLeft,  dinvA must be of size >= ceil(m/STRTRI_BATCHED_NB)*STRTRI_BATCHED_NB*STRTRI_BATCHED_NB,
-            If side == MagmaRight, dinvA must be of size >= ceil(n/STRTRI_BATCHED_NB)*STRTRI_BATCHED_NB*STRTRI_BATCHED_NB,
-
-    @param[in]
-    dinvA_length    INTEGER
-                   The size of each workspace matrix dinvA
-    @param[in]
-    dW1_displ  Workspace array of pointers, for internal use.
-
-    @param[in]
-    dW2_displ  Workspace array of pointers, for internal use.
-
-    @param[in]
-    dW3_displ  Workspace array of pointers, for internal use.
-
-    @param[in]
-    dW4_displ  Workspace array of pointers, for internal use.
-
-    @param[in]
-    dW5_displ  Workspace array of pointers, for internal use.
-
     @param[out]
     info_array  Array of INTEGERs, dimension (batchCount), for corresponding matrices.
       -     = 0:  successful exit
@@ -126,118 +92,97 @@
 *******************************************************************************/
 extern "C" magma_int_t
 magma_sgetrf_recpanel_batched(
-    magma_int_t m, magma_int_t n, magma_int_t min_recpnb,    
-    float** dA_array,    magma_int_t ldda,
+    magma_int_t m, magma_int_t n, magma_int_t min_recpnb, 
+    float** dA_array, magma_int_t ai, magma_int_t aj, magma_int_t ldda,
     magma_int_t** dipiv_array, magma_int_t** dpivinfo_array,
-    float** dX_array,    magma_int_t dX_length,
-    float** dinvA_array, magma_int_t dinvA_length,
-    float** dW1_displ, float** dW2_displ,  
-    float** dW3_displ, float** dW4_displ,
-    float** dW5_displ,
     magma_int_t *info_array, magma_int_t gbstep,  
     magma_int_t batchCount,  magma_queue_t queue)
 {
-    //magma_int_t DEBUG = 3;
-    // Quick return if possible
-    if (m == 0 || n == 0) {
-        return 0;
+#define dAarray(i,j)    dA_array, i, j
+#define ipiv_array(i)   dipiv_array, i
+
+    magma_int_t arginfo = 0;
+    if (m < 0) {
+        arginfo = -1;
+    } else if (n < 0 ) {
+        arginfo = -2;
+    } else if (ai < 0) {
+        arginfo = -4;
+    } else if (aj < 0 || aj != ai) {
+        arginfo = -5;
+    } else if (ldda < max(1,m)) {
+        arginfo = -6;
     }
 
+    if (arginfo != 0) {
+        magma_xerbla( __func__, -(arginfo) );
+        return arginfo;
+    }
 
-    float **dA_displ  = NULL;
-    magma_malloc((void**)&dA_displ,   batchCount * sizeof(*dA_displ));
-    magma_int_t **dipiv_displ = NULL;
-    magma_malloc((void**)&dipiv_displ, batchCount * sizeof(*dipiv_displ));
-    
-    magma_int_t panel_nb = n;
-    if (panel_nb <= min_recpnb) {
-        //if (DEBUG > 0)printf("calling bottom panel recursive with m=%d nb=%d\n",m,n);
-        //  panel factorization
-        //magma_sdisplace_pointers(dA_displ, dA_array, ldda, 0, 0, batchCount);
-        magma_sgetf2_batched(m, panel_nb,
-                           dA_array, ldda,
-                           dW1_displ, dW2_displ, dW3_displ,
-                           dipiv_array, info_array, gbstep, batchCount, queue);
+    if (n <= min_recpnb) {
+        magma_sgetf2_batched(m, n,
+                dAarray(ai,aj), ldda,
+                dipiv_array, dpivinfo_array, 
+                info_array, gbstep, batchCount, queue);
     }
     else {
-        // split A over two [A A2]
-        // panel on A1, update on A2 then panel on A1    
-        magma_int_t n1 = n/2;
-        magma_int_t n2 = n-n1;
-        magma_int_t m1 = m;
-        magma_int_t m2 = m-n1;
-        magma_int_t p1 = 0;
-        magma_int_t p2 = n1;
-        // panel on A1
-        //if (DEBUG > 0)printf("calling recursive panel on A1 with m=%d nb=%d min_recpnb %d\n",m1,n1,min_recpnb);
-        magma_sdisplace_pointers(dA_displ, dA_array, ldda, p1, p1, batchCount, queue); 
-        magma_idisplace_pointers(dipiv_displ, dipiv_array, 1, p1, 0, batchCount, queue);
+        magma_int_t n1 = n / 2;
+        magma_int_t n2 = n - n1;
+
+        // panel
         magma_sgetrf_recpanel_batched(
-                           m1, n1, min_recpnb,
-                           dA_displ, ldda,
-                           dipiv_displ, dpivinfo_array,
-                           dX_array, dX_length,
-                           dinvA_array, dinvA_length,
-                           dW1_displ, dW2_displ,
-                           dW3_displ, dW4_displ, dW5_displ,
-                           info_array, gbstep, batchCount, queue);
+                m, n1, min_recpnb, 
+                dAarray(ai, aj), ldda, 
+                dipiv_array, dpivinfo_array, 
+                info_array, gbstep, batchCount, queue);
 
-        // update A2
-        //if (DEBUG > 0)printf("calling TRSM  with             m=%d n=%d\n",m1,n2);
-        
-        // setup pivinfo 
-        setup_pivinfo_batched(dpivinfo_array, dipiv_displ, m1, n1, batchCount, queue);
-        magma_sdisplace_pointers(dW5_displ, dA_array, ldda, p1, p2, batchCount, queue); 
-        magma_slaswp_rowparallel_batched( n2, dW5_displ, ldda,
-                           dX_array, n1,
-                           0, n1,
-                           dpivinfo_array, batchCount, queue );
-        magmablas_strsm_outofplace_batched( MagmaLeft, MagmaLower, MagmaNoTrans, MagmaUnit, 1,
-                              n1, n2,
-                              MAGMA_S_ONE,
-                              dA_displ,    ldda, // dA
-                              dX_array,  n1, // dB
-                              dW5_displ,   ldda, // dX
-                              dinvA_array, dinvA_length,
-                              dW1_displ,   dW2_displ, 
-                              dW3_displ,   dW4_displ,
-                              0, batchCount, queue );
+        // swap right
+        setup_pivinfo_batched(dpivinfo_array, ipiv_array(ai), m, n1, batchCount, queue);
+        magma_slaswp_rowparallel_batched(
+                n2, 
+                dAarray(ai,aj+n1), ldda, 
+                dAarray(ai,aj+n1), ldda, 
+                0, n1, dpivinfo_array, 
+                batchCount, queue);
 
-        magma_sdisplace_pointers(dW1_displ, dA_array, ldda, p2, 0, batchCount, queue); 
-        magma_sdisplace_pointers(dA_displ, dA_array, ldda, p2, p2, batchCount, queue); 
+        // trsm
+        magmablas_strsm_recursive_batched(
+                MagmaLeft, MagmaLower, MagmaNoTrans, MagmaUnit, 
+                n1, n2, MAGMA_S_ONE, 
+                dAarray(ai,   aj), ldda, 
+                dAarray(ai,aj+n1), ldda,  
+                batchCount, queue );
 
-        //if (DEBUG > 0)printf("calling update A2(%d,%d) -= A(%d,%d)*A(%d,%d)  with             m=%d n=%d k=%d ldda %d\n",p2,p2,p2,0,p1,p2,m2,n2,n1,ldda);
+        // gemm
+        magma_sgemm_batched_core( 
+                MagmaNoTrans, MagmaNoTrans, 
+                m-n1, n2, n1, 
+                MAGMA_S_NEG_ONE, dAarray(ai+n1,    aj), ldda, 
+                                 dAarray(ai   , aj+n1), ldda, 
+                MAGMA_S_ONE,     dAarray(ai+n1, aj+n1), ldda, 
+                batchCount, queue );
 
-        magma_sgemm_batched( MagmaNoTrans, MagmaNoTrans, m2, n2, n1, 
-                             MAGMA_S_NEG_ONE, dW1_displ, ldda, 
-                             dW5_displ, ldda, 
-                             MAGMA_S_ONE,  dA_displ, ldda, 
-                             batchCount, queue );
-        // panel on A2
-        //if (DEBUG > 0)printf("calling recursive panel on A2 with m=%d nb=%d min_recpnb %d\n",m2,n2,min_recpnb);
-        magma_idisplace_pointers(dipiv_displ, dipiv_array, 1, p2, 0, batchCount, queue);
+        // panel 2
+        //printf("panel 2\n");
         magma_sgetrf_recpanel_batched(
-                           m2, n2, min_recpnb,
-                           dA_displ, ldda,
-                           dipiv_displ, dpivinfo_array,
-                           dX_array, dX_length,
-                           dinvA_array, dinvA_length,
-                           dW1_displ, dW2_displ,
-                           dW3_displ, dW4_displ, dW5_displ,
-                           info_array, gbstep+p2, batchCount, queue);
+                m-n1, n2, min_recpnb, 
+                dAarray(ai+n1, aj+n1), ldda, 
+                dipiv_array, dpivinfo_array, 
+                info_array, gbstep + n1, batchCount, queue);
 
-        // setup pivinfo
-        setup_pivinfo_batched(dpivinfo_array, dipiv_displ, m2, n2, batchCount, queue);
-        adjust_ipiv_batched(dipiv_displ, n2, n1, batchCount, queue);
-        
-        magma_sdisplace_pointers(dW1_displ, dA_array, ldda, p2, 0, batchCount, queue); // no need since it is above
-        magma_slaswp_rowparallel_batched( n1, dW1_displ, ldda,
-                           dW1_displ, ldda,
-                           n1, n,
-                           dpivinfo_array, batchCount, queue );
+        // swap left
+        setup_pivinfo_batched(dpivinfo_array, ipiv_array(ai+n1), m-n1, n2, batchCount, queue);
+        adjust_ipiv_batched(ipiv_array(ai+n1), n2, n1, batchCount, queue);
+        magma_slaswp_rowparallel_batched(
+                n1, 
+                dAarray(ai+n1,aj), ldda, 
+                dAarray(ai+n1,aj), ldda, 
+                n1, n, dpivinfo_array, 
+                batchCount, queue);
     }
 
-    magma_free(dA_displ);
-    magma_free(dipiv_displ);
     return 0;
+
+    #undef dAarray
+    #undef ipiv_array
 }

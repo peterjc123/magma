@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Azzam Haidar
        @author Tingxing Dong
        @author Ahmad Abdelfattah
 
-       @generated from include/magma_zvbatched.h, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from include/magma_zvbatched.h, normal z -> s, Mon Jun 25 18:24:32 2018
 */
 
 #ifndef MAGMA_SVBATCHED_H
@@ -17,7 +17,7 @@
 
 #include "magma_types.h"
 
-#define REAL
+#define MAGMA_REAL
 
 #ifdef __cplusplus
 extern "C" {
@@ -654,6 +654,6 @@ magma_int_t magma_get_spotrf_vbatched_crossover();
 }
 #endif
 
-#undef REAL
+#undef MAGMA_REAL
 
 #endif  /* MAGMA_SVBATCHED_H */

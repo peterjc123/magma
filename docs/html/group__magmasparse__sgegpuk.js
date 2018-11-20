@@ -1,9 +1,10 @@
 var group__magmasparse__sgegpuk =
 [
+    [ "magma_svalinit_gpu", "group__magmasparse__sgegpuk.html#gac5a42f29c0a785f6fa2086a7788bd23c", null ],
+    [ "magma_sindexinit_gpu", "group__magmasparse__sgegpuk.html#ga7da8b046f9284f3981836af54c5b6f98", null ],
     [ "magma_sbajac_csr", "group__magmasparse__sgegpuk.html#ga29d994816c56baae8738b23670757cac", null ],
     [ "magma_sbajac_csr_overlap", "group__magmasparse__sgegpuk.html#ga99c07c686260c9cb65f80a6633123464", null ],
     [ "magma_scompact", "group__magmasparse__sgegpuk.html#ga0090f53ff98caac8a9a7ad7329d45905", null ],
-    [ "magma_smprepare_batched_gpu", "group__magmasparse__sgegpuk.html#gabd2df6374c1fb0a6b515bccaa6a712a3", null ],
     [ "magma_sjacobisetup_vector_gpu", "group__magmasparse__sgegpuk.html#gab1f04da383440cbc560807c28dec0c9f", null ],
     [ "magma_slobpcg_maxpy", "group__magmasparse__sgegpuk.html#ga8f278cffaa1c23d3ac0f1374a12bdcc2", null ],
     [ "magma_sbicgstab_1", "group__magmasparse__sgegpuk.html#ga2c5a4fb05bcbbdee04fd3a1df4dd9177", null ],
@@ -39,5 +40,7 @@ var group__magmasparse__sgegpuk =
     [ "magma_stfqmr_4", "group__magmasparse__sgegpuk.html#gaf7d4e013c5565197b38fed09ef17c516", null ],
     [ "magma_stfqmr_5", "group__magmasparse__sgegpuk.html#ga93874a8103b1fe7d3f53afacd9786bf4", null ],
     [ "magma_sparic_csr", "group__magmasparse__sgegpuk.html#gace6a61d161fe9fe4381b2bb3be52f3d1", null ],
-    [ "magma_sparilu_csr", "group__magmasparse__sgegpuk.html#ga1e48c6cb1335018f749ab2941d2772fd", null ]
+    [ "magma_sparilu_csr", "group__magmasparse__sgegpuk.html#ga1e48c6cb1335018f749ab2941d2772fd", null ],
+    [ "magma_sparilut_sweep_gpu", "group__magmasparse__sgegpuk.html#gac6b1a24888318b83dbfe2fabd251bca5", null ],
+    [ "magma_sparilut_residuals_gpu", "group__magmasparse__sgegpuk.html#ga931253ac8cddfa9d1a57698e714fb2ee", null ]
 ];

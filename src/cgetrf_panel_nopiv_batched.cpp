@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.3.0) --
+   -- MAGMA (version 2.4.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date November 2017
+   @date June 2018
 
    @author Azzam Haidar
    @author Adrien Remy
 
-   @generated from src/zgetrf_panel_nopiv_batched.cpp, normal z -> c, Wed Nov 15 00:34:20 2017
+   @generated from src/zgetrf_panel_nopiv_batched.cpp, normal z -> c, Mon Jun 25 18:24:10 2018
 */
 
 #include "magma_internal.h"
@@ -45,13 +45,12 @@ magma_cgetrf_panel_nopiv_batched(
 #else
     arginfo = magma_cgetf2_nopiv_batched(
                        nb, nb,
-                       dA_array, ldda,
-                       dW1_displ, dW2_displ, dW3_displ,
+                       dA_array, 0, 0, ldda,
                        info_array, gbstep, batchCount, queue);
     if (arginfo != 0) return arginfo;
     if ((m-nb) > 0) {
         magma_cdisplace_pointers(dW0_displ, dA_array, ldda, nb, 0, batchCount, queue);
-        magmablas_ctrsm_work_batched( MagmaRight, MagmaUpper, MagmaNoTrans, MagmaNonUnit,
+        magmablas_ctrsm_inv_work_batched( MagmaRight, MagmaUpper, MagmaNoTrans, MagmaNonUnit,
                               1, m-nb, nb, 
                               MAGMA_C_ONE,
                               dA_array,    ldda, 
@@ -131,7 +130,7 @@ magma_cgetrf_recpanel_nopiv_batched(
         //printf("calling update A2 with             m=%d n=%d k=%d\n",m2,n2,n1);
         
         magma_cdisplace_pointers(dW5_displ, dA_array, ldda, p1, p2, batchCount, queue); 
-        magmablas_ctrsm_work_batched( MagmaLeft, MagmaLower, MagmaNoTrans, MagmaUnit, 1,
+        magmablas_ctrsm_inv_work_batched( MagmaLeft, MagmaLower, MagmaNoTrans, MagmaUnit, 1,
                               n1, n2,
                               MAGMA_C_ONE,
                               dA_displ,    ldda, // dA

@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Azzam Haidar
        @author Stan Tomov
        @author Raffaele Solca
 
-       @generated from src/zunmqr_2stage_gpu.cpp, normal z -> s, Wed Nov 15 00:34:20 2017
+       @generated from src/zunmqr_2stage_gpu.cpp, normal z -> s, Mon Jun 25 18:24:08 2018
 
 */
 #include "magma_internal.h"
@@ -143,12 +143,6 @@ magma_sormqr_2stage_gpu(
         *info = -10;
     }
 
-    // TODO alloc after xerbla & quick return, else memory leak
-    if (MAGMA_SUCCESS != magma_smalloc( &dwork, n*nb )) {
-        printf ("!!!! sorgqr_2stage magma_alloc failed for: dwork\n" );
-        exit(-1);
-    }
-
     if (*info != 0) {
         magma_xerbla( __func__, -(*info) );
         return *info;
@@ -157,6 +151,12 @@ magma_sormqr_2stage_gpu(
     /* Quick return if possible */
     if (m == 0 || n == 0 || k == 0) {
         return *info;
+    }
+
+    // TODO alloc after xerbla & quick return, else memory leak
+    if (MAGMA_SUCCESS != magma_smalloc( &dwork, n*nb )) {
+        printf ("!!!! sorgqr_2stage magma_alloc failed for: dwork\n" );
+        return MAGMA_ERR_ALLOCATION;
     }
 
     magma_queue_t queues[2];

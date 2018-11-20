@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
   
-       @generated from testing/testing_ztrtri_gpu.cpp, normal z -> c, Wed Nov 15 00:34:23 2017
+       @generated from testing/testing_ztrtri_gpu.cpp, normal z -> c, Mon Jun 25 18:24:19 2018
        
        @author Mark Gates
 */
@@ -68,7 +68,7 @@ int main( int argc, char** argv)
             /* Factor A into LU to get well-conditioned triangular matrix.
              * Copy L to U, since L seems okay when used with non-unit diagonal
              * (i.e., from U), while U fails when used with unit diagonal. */
-            magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda );
             lapackf77_cgetrf( &N, &N, h_A, &lda, ipiv, &info );
             for (int j = 0; j < N; ++j) {
                 for (int i = 0; i < j; ++i) {

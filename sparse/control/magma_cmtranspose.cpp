@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmtranspose.cpp, normal z -> c, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zmtranspose.cpp, normal z -> c, Mon Jun 25 18:24:28 2018
        @author Hartwig Anzt
        @author Mark Gates
 
@@ -268,7 +268,7 @@ magma_c_cucsrtranspose(
         B->num_cols        = A.num_rows;  // transposed
         B->nnz             = A.nnz;
         B->true_nnz = A.true_nnz;
-        
+        B->ownership = MagmaTrue;
         if ( A.fill_mode == MagmaFull ) {
             B->fill_mode = MagmaFull;
         }
@@ -379,6 +379,7 @@ magma_cmtransposeconjugate(
         B->num_cols        = A.num_rows;  // transposed
         B->nnz             = A.nnz;
         B->true_nnz = A.true_nnz;
+        B->ownership = MagmaTrue;
         if ( A.fill_mode == MagmaFull ) {
             B->fill_mode = MagmaFull;
         }

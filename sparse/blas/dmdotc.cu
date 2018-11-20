@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/blas/zmdotc.cu, normal z -> d, Wed Nov 15 00:34:24 2017
+       @generated from sparse/blas/zmdotc.cu, normal z -> d, Mon Jun 25 18:24:26 2018
        @author Hartwig Anzt
 
 */
@@ -158,11 +158,11 @@ magma_dmdotc1_kernel_2(
     n           int
                 length of v_i and w_i
 
-    @param[in]                             
+    @param[in]
     v0          magmaDouble_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w0          magmaDouble_ptr                 
                 input vector                           
 
@@ -422,19 +422,19 @@ magma_dmdotc2_kernel_2(
     n           int
                 length of v_i and w_i
 
-    @param[in]                             
+    @param[in]
     v0          magmaDouble_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w0          magmaDouble_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     v1          magmaDouble_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     w1          magmaDouble_ptr                 
                 input vector                             
 
@@ -702,27 +702,27 @@ magma_dmdotc3_kernel_2(
     n           int
                 length of v_i and w_i
 
-    @param[in]                             
+    @param[in]
     v0          magmaDouble_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w0          magmaDouble_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     v1          magmaDouble_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     w1          magmaDouble_ptr                 
                 input vector          
 
-    @param[in]                             
+    @param[in]
     v2          magmaDouble_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w2          magmaDouble_ptr                 
                 input vector                           
 
@@ -997,35 +997,35 @@ magma_dmdotc4_kernel_2(
     n           int
                 length of v_i and w_i
 
-    @param[in]                             
+    @param[in]
     v0          magmaDouble_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w0          magmaDouble_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     v1          magmaDouble_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     w1          magmaDouble_ptr                 
                 input vector          
 
-    @param[in]                             
+    @param[in]
     v2          magmaDouble_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w2          magmaDouble_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     v3          magmaDouble_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     w3          magmaDouble_ptr                 
                 input vector          
 

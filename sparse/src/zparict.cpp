@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Hartwig Anzt
 
@@ -127,9 +127,9 @@ magma_zparict(
         num_rmL = max( (L_new.nnz-L0nnz*(1+precond->atol*(iters+1)/precond->sweeps)), 0 );
         start = magma_sync_wtime( queue );
         magma_zmfree(&LT, queue );
-        magma_zparilut_transpose( L, &LT, queue );
+        magma_zcsrcoo_transpose( L, &LT, queue );
         end = magma_sync_wtime( queue ); t_transpose1+=end-start;
-        start = magma_sync_wtime( queue );
+        start = magma_sync_wtime( queue ); 
         magma_zparict_candidates( L0, L, LT, &hL, queue );
         #pragma omp parallel        
         for(int row=0; row<hL.num_rows; row++){
@@ -141,7 +141,7 @@ magma_zparict(
         magma_zparilut_residuals( hA, L, L, &hL, queue );
         end = magma_sync_wtime( queue ); t_res=+end-start;
         start = magma_sync_wtime( queue );
-        magma_zparilut_elementsum( hL, &sumL, queue );
+        magma_zmatrix_abssum( hL, &sumL, queue );
         sum = sumL*2;
         end = magma_sync_wtime( queue ); t_nrm+=end-start;
         
@@ -151,7 +151,7 @@ magma_zparict(
         magma_zmfree( &hL, queue );
        
         start = magma_sync_wtime( queue );
-         CHECK( magma_zparic_sweep_sync( &A0, &L_new, queue ) );
+         CHECK( magma_zparict_sweep_sync( &A0, &L_new, queue ) );
         end = magma_sync_wtime( queue ); t_sweep1+=end-start;
         num_rmL = max( (L_new.nnz-L0nnz*(1+(precond->atol-1.)*(iters+1)/precond->sweeps)), 0 );
         start = magma_sync_wtime( queue );
@@ -173,7 +173,7 @@ magma_zparict(
         end = magma_sync_wtime( queue ); t_rm=end-start;
         
         start = magma_sync_wtime( queue );
-        CHECK( magma_zparic_sweep_sync( &A0, &L, queue ) );
+        CHECK( magma_zparict_sweep_sync( &A0, &L, queue ) );
         end = magma_sync_wtime( queue ); t_sweep2+=end-start;
 
         if( timing == 1 ){

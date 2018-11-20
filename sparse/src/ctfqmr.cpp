@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Hartwig Anzt
 
-       @generated from sparse/src/ztfqmr.cpp, normal z -> c, Wed Nov 15 00:34:25 2017
+       @generated from sparse/src/ztfqmr.cpp, normal z -> c, Mon Jun 25 18:24:29 2018
 */
 
 #include "magmasparse_internal.h"
@@ -81,7 +81,7 @@ magma_ctfqmr(
     magma_c_matrix r={Magma_CSR}, r_tld={Magma_CSR}, pu_m={Magma_CSR},
                     d={Magma_CSR}, w={Magma_CSR}, v={Magma_CSR},
                     u_mp1={Magma_CSR}, u_m={Magma_CSR}, Au={Magma_CSR}, 
-                    Ad={Magma_CSR}, Au_new={Magma_CSR};
+                    Ad={Magma_CSR};
     CHECK( magma_cvinit( &r, Magma_DEV, A.num_rows, b.num_cols, c_zero, queue ));
     CHECK( magma_cvinit( &u_mp1,Magma_DEV, A.num_rows, b.num_cols, c_zero, queue ));
     CHECK( magma_cvinit( &r_tld,Magma_DEV, A.num_rows, b.num_cols, c_zero, queue ));
@@ -91,7 +91,6 @@ magma_ctfqmr(
     CHECK( magma_cvinit( &d, Magma_DEV, A.num_rows, b.num_cols, c_zero, queue ));
     CHECK( magma_cvinit( &w, Magma_DEV, A.num_rows, b.num_cols, c_one, queue ));
     CHECK( magma_cvinit( &Ad, Magma_DEV, A.num_rows, b.num_cols, c_zero, queue ));
-    CHECK( magma_cvinit( &Au_new, Magma_DEV, A.num_rows, b.num_cols, c_zero, queue ));
     CHECK( magma_cvinit( &Au, Magma_DEV, A.num_rows, b.num_cols, c_one, queue ));
     
     // solver setup
@@ -197,17 +196,17 @@ magma_ctfqmr(
             rho_l = rho;
             magma_ccopy( dofs, w.dval, 1, u_mp1.dval, 1, queue );  
             magma_caxpy( dofs, beta, u_m.dval, 1, u_mp1.dval, 1, queue );     // u_mp1 = w + beta*u_m;
+            magma_cscal( dofs, beta*beta, v.dval, 1, queue );                    
+            magma_caxpy( dofs, beta, Au.dval, 1, v.dval, 1, queue );            // v = beta*(Au+beta*v);
+            
         }
               
         magma_ccopy( dofs, u_mp1.dval, 1, pu_m.dval, 1, queue );  
-        CHECK( magma_c_spmv( c_one, A, pu_m, c_zero, Au_new, queue )); // Au_new = A pu_m
+        CHECK( magma_c_spmv( c_one, A, pu_m, c_zero, Au, queue )); // Au = A pu_m
         solver_par->spmv_count++;
         if( solver_par->numiter%2 == 0 ){
-            magma_cscal( dofs, beta*beta, v.dval, 1, queue );                    
-            magma_caxpy( dofs, beta, Au.dval, 1, v.dval, 1, queue );              
-            magma_caxpy( dofs, c_one, Au_new.dval, 1, v.dval, 1, queue );      // v = Au_new + beta*(Au+beta*v);
+            magma_caxpy( dofs, c_one, Au.dval, 1, v.dval, 1, queue );      // v = Au + v;
         }
-        magma_ccopy( dofs, Au_new.dval, 1, Au.dval, 1, queue );  
         magma_ccopy( dofs, u_mp1.dval, 1, u_m.dval, 1, queue );  
     }
     while ( solver_par->numiter+1 <= solver_par->maxiter );
@@ -259,7 +258,6 @@ cleanup:
     magma_cmfree(&u_mp1, queue );
     magma_cmfree(&d, queue );
     magma_cmfree(&Au, queue );
-    magma_cmfree(&Au_new, queue );
     magma_cmfree(&Ad, queue );
     
     solver_par->info = info;

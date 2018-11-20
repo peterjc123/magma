@@ -1,18 +1,18 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from include/magma_zbulge.h, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from include/magma_zbulge.h, normal z -> s, Mon Jun 25 18:24:32 2018
 */
 
 #ifndef MAGMA_SBULGE_H
 #define MAGMA_SBULGE_H
 
 #include "magma_types.h"
-#define REAL
+#define MAGMA_REAL
 
 #ifdef __cplusplus
 extern "C" {
@@ -159,7 +159,7 @@ void
 magma_ssyevdx_getworksize(magma_int_t n, magma_int_t threads,
         magma_int_t wantz, 
         magma_int_t *lwmin, 
-        #ifdef COMPLEX
+        #ifdef MAGMA_COMPLEX
         magma_int_t *lrwmin, 
         #endif
         magma_int_t *liwmin);
@@ -187,5 +187,5 @@ magma_sorgqr_2stage_gpu(
 #ifdef __cplusplus
 }
 #endif
-#undef REAL
+#undef MAGMA_REAL
 #endif /* MAGMA_SBULGE_H */

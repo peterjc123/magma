@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> c d s
        @author Chongxiao Cao
@@ -170,7 +170,7 @@ int main( int argc, char** argv)
 
             magma_time = magma_sync_wtime( opts.queue );
             if (opts.version == 1) {
-                magmablas_ztrsm_outofplace_batched(
+                magmablas_ztrsm_inv_outofplace_batched(
                     opts.side, opts.uplo, opts.transA, opts.diag, 1,
                     M, N, alpha,
                     d_A_array,    ldda, // dA

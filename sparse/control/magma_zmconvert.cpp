@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -92,7 +92,7 @@ magma_z_csr_compressor(
     nnz_new = 0;
     for( i=0; i<*n; i++ ) {
         for( j=(*row)[i]; j<(*row)[i+1]; j++ ) {
-            if ( MAGMA_Z_REAL((*val)[j]) != 0 ) {
+            if ( (MAGMA_Z_REAL((*val)[j]) != 0) || (MAGMA_Z_IMAG((*val)[j]) != 0) ) {
                 (*valn)[nnz_new]= (*val)[j];
                 (*coln)[nnz_new]= (*col)[j];
                 nnz_new++;
@@ -171,6 +171,7 @@ magma_zmconvert(
     
     // make sure the target structure is empty
     magma_zmfree( B, queue );
+    B->ownership = MagmaTrue;
 
     B->val = NULL;
     B->col = NULL;
@@ -1541,7 +1542,7 @@ magma_zmconvert(
 
                 B->nnz=0;
                 for( magma_int_t i=0; i<(A.num_rows)*(A.num_cols); i++ ) {
-                    if ( MAGMA_Z_REAL(A.val[i]) != 0.0 )
+                    if ( MAGMA_Z_REAL(A.val[i]) != 0.0 || MAGMA_Z_IMAG(A.val[i]) != 0.0 )
                         (B->nnz)++;
                 }
                 CHECK( magma_zmalloc_cpu( &B->val, B->nnz));
@@ -1559,7 +1560,7 @@ magma_zmconvert(
                         (B->row)[k] = j;
                         k++;
                     }
-                    if ( MAGMA_Z_REAL(A.val[i]) != 0 )
+                    if ( MAGMA_Z_REAL(A.val[i]) != 0 || MAGMA_Z_IMAG(A.val[i]) != 0)
                     {
                         (B->val)[j] = A.val[i];
                         (B->col)[j] = i%(B->num_cols);

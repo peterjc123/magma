@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zvio.cpp, normal z -> d, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zvio.cpp, normal z -> d, Mon Jun 25 18:24:28 2018
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"
@@ -145,6 +145,7 @@ magma_dvread(
     
     // make sure the target structure is empty
     magma_dmfree( x, queue );
+    x->ownership = MagmaTrue;
     
     x->memory_location = Magma_CPU;
     x->storage_type = Magma_DENSE;
@@ -276,6 +277,8 @@ magma_dvspread(
     
     magma_d_matrix A={Magma_CSR}, B={Magma_CSR};
     magma_int_t entry=0;
+    magma_dmfree( x, queue );
+    x->ownership = MagmaTrue;
      //   char *vfilename[] = {"/mnt/sparse_matrices/mtx/rail_79841_B.mtx"};
     CHECK( magma_d_csr_mtx( &A,  filename, queue  ));
     CHECK( magma_dmconvert( A, &B, Magma_CSR, Magma_DENSE, queue ));

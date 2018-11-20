@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/src/zresidual.cpp, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from sparse/src/zresidual.cpp, normal z -> s, Mon Jun 25 18:24:31 2018
        @author Hartwig Anzt
 
 */
@@ -101,11 +101,11 @@ cleanup:
     Arguments
     ---------
 
-    @param[in]          
+    @param[in]
     start       magma_int_t
                 start of slice (row-index)
                 
-    @param[in]          
+    @param[in]
     end         magma_int_t
                 end of slice (row-index)
                 

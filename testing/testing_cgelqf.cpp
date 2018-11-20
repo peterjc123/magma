@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from testing/testing_zgelqf.cpp, normal z -> c, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zgelqf.cpp, normal z -> c, Mon Jun 25 18:24:20 2018
 
 */
 
@@ -73,7 +73,7 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_cmalloc_pinned( &h_work, lwork  ));
             
             /* Initialize the matrix */
-            magma_generate_matrix( opts, M, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, M, N, h_A, lda );
             lapackf77_clacpy( MagmaFullStr, &M, &N, h_A, &lda, h_R,  &lda );
             
             /* ====================================================================

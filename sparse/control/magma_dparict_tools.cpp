@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zparict_tools.cpp, normal z -> d, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zparict_tools.cpp, normal z -> d, Mon Jun 25 18:24:28 2018
        @author Hartwig Anzt
 
 */
@@ -203,7 +203,11 @@ magma_dparict_candidates(
 
     #pragma omp parallel
     {
+#ifdef _OPENMP
         magma_int_t id = omp_get_thread_num();
+#else
+        magma_int_t id = 0;
+#endif
         if( id == 0 ){
             for( magma_int_t i = 0; i<L.num_rows; i++ ){
                 L_new->nnz = L_new->nnz + L_new->row[ i+1 ];
@@ -409,7 +413,7 @@ cleanup:
 
 
 extern "C" magma_int_t
-magma_dparic_sweep_sync(
+magma_dparict_sweep_sync(
     magma_d_matrix *A,
     magma_d_matrix *L,
     magma_queue_t queue )

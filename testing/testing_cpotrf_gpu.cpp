@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from testing/testing_zpotrf_gpu.cpp, normal z -> c, Wed Nov 15 00:34:23 2017
+       @generated from testing/testing_zpotrf_gpu.cpp, normal z -> c, Mon Jun 25 18:24:18 2018
 */
 // includes, system
 #include <stdlib.h>
@@ -63,7 +63,7 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_cmalloc( &d_A, ldda*N ));
             
             /* Initialize the matrix */
-            magma_generate_matrix( opts, N, N, sigma, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda, sigma );
             lapackf77_clacpy( MagmaFullStr, &N, &N, h_A, &lda, h_R, &lda );
             magma_csetmatrix( N, N, h_A, lda, d_A, ldda, opts.queue );
             

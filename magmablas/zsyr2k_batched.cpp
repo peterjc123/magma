@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> c
 
@@ -185,10 +185,34 @@ magmablas_zsyr2k_batched(
     }
     
     if( trans == MagmaNoTrans){
-        magmablas_zsyrk_internal_batched(uplo, MagmaNoTrans, n, k, alpha, dA_array, ldda, dB_array, lddb, beta, dC_array, lddc, batchCount, queue );
-        magmablas_zsyrk_internal_batched(uplo, MagmaNoTrans, n, k, alpha, dB_array, lddb, dA_array, ldda, c_one, dC_array, lddc, batchCount, queue );    
+        magmablas_zsyrk_batched_core(
+                uplo, MagmaNoTrans, 
+                n, k, 
+                alpha, dA_array, 0, 0, ldda, 
+                       dB_array, 0, 0, lddb, 
+                beta,  dC_array, 0, 0, lddc, 
+                batchCount, queue );
+        magmablas_zsyrk_batched_core(
+                uplo, MagmaNoTrans, 
+                n, k, 
+                alpha, dB_array, 0, 0, lddb, 
+                       dA_array, 0, 0, ldda, 
+                c_one, dC_array, 0, 0, lddc, 
+                batchCount, queue );    
     }else{
-        magmablas_zsyrk_internal_batched(uplo, MagmaConjTrans, n, k, alpha, dA_array, ldda, dB_array, lddb, beta, dC_array, lddc, batchCount, queue );
-        magmablas_zsyrk_internal_batched(uplo, MagmaConjTrans, n, k, alpha, dB_array, lddb, dA_array, ldda, c_one, dC_array, lddc, batchCount, queue );
+        magmablas_zsyrk_batched_core(
+                uplo, MagmaConjTrans, 
+                n, k, 
+                alpha, dA_array, 0, 0, ldda, 
+                       dB_array, 0, 0, lddb, 
+                beta,  dC_array, 0, 0, lddc, 
+                batchCount, queue );
+        magmablas_zsyrk_batched_core(
+                uplo, MagmaConjTrans, 
+                n, k, 
+                alpha, dB_array, 0, 0, lddb, 
+                       dA_array, 0, 0, ldda, 
+                c_one, dC_array, 0, 0, lddc, 
+                batchCount, queue );
     }
 }

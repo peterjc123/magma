@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from magmablas/ztranspose_conj.cu, normal z -> c, Wed Nov 15 00:34:22 2017
+       @generated from magmablas/ztranspose_conj.cu, normal z -> c, Mon Jun 25 18:24:14 2018
 
        @author Stan Tomov
        @author Mark Gates

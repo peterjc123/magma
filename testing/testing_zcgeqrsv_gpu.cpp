@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions mixed zc -> ds
 
@@ -105,7 +105,7 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_zmalloc( &d_T, ( 2*min_mn + magma_roundup( N, 32 ) )*nb ));
             
             /* Initialize the matrices */
-            magma_generate_matrix( opts, M, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, M, N, h_A, lda );
             lapackf77_zlacpy( MagmaFullStr, &M, &N, h_A, &lda, h_A2, &lda );
             
             // make random RHS

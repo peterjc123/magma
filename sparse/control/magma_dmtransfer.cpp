@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmtransfer.cpp, normal z -> d, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zmtransfer.cpp, normal z -> d, Mon Jun 25 18:24:29 2018
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"
@@ -56,6 +56,7 @@ magma_dmtransfer(
     
     // make sure the target structure is empty
     magma_dmfree( B, queue );
+    B->ownership = MagmaTrue;
     
     B->val = NULL;
     B->diag = NULL;

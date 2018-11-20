@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/src/magma_z_precond_wrapper.cpp, normal z -> c, Wed Nov 15 00:34:25 2017
+       @generated from sparse/src/magma_z_precond_wrapper.cpp, normal z -> c, Mon Jun 25 18:24:32 2018
        @author Hartwig Anzt
 
 */
@@ -163,22 +163,30 @@ magma_c_precondsetup(
     // ILU and related
     else if ( precond->solver == Magma_ILU ) {
         if ( precond->trisolver == Magma_ISAI ||
-             precond->trisolver == Magma_JACOBI ||
-             precond->trisolver == Magma_VBJACOBI ){
+            precond->trisolver == Magma_JACOBI ||
+            precond->trisolver == Magma_VBJACOBI ){
             info = magma_ccumilusetup( A, precond, queue );
-            //info = magma_ciluisaisetup( A, b, precond, queue );
-            info = magma_ciluisaisetup_lower( A, precond->L, precond, queue );
-            info = magma_ciluisaisetup_upper( A, precond->U, precond, queue );
+            info = magma_ciluisaisetup_lower( precond->L, precond->L, &precond->LD, queue );
+            info = magma_ciluisaisetup_upper( precond->U, precond->U, &precond->UD, queue );
+            if (info == Magma_CUSOLVE) {
+                precond->trisolver = Magma_CUSOLVE;
+                info = 0;
+            }
         } else {
             info = magma_ccumilusetup( A, precond, queue );
         }
     }
     else if ( precond->solver == Magma_PARILU ) {
-        info = magma_cparilusetup( A, b, precond, queue );
+        info = magma_cparilu_gpu( A, b, precond, queue );
         if ( precond->trisolver == Magma_ISAI ||
              precond->trisolver == Magma_JACOBI ||
              precond->trisolver == Magma_VBJACOBI ){
-            info = magma_ciluisaisetup( A, b, precond, queue );
+             info = magma_ciluisaisetup_lower( precond->L, precond->L, &precond->LD, queue );
+             info = magma_ciluisaisetup_upper( precond->U, precond->U, &precond->UD, queue );
+             if (info == Magma_CUSOLVE) {
+                precond->trisolver = Magma_CUSOLVE;
+                info = 0;
+             }
         }
     }
     else if ( precond->solver == Magma_ILUT ) {
@@ -189,12 +197,17 @@ magma_c_precondsetup(
     
     else if ( precond->solver == Magma_PARILUT ) {
         #ifdef _OPENMP
-            info = magma_cparilut( A, b, precond, queue );
+            info = magma_cparilut_cpu( A, b, precond, queue );
             if ( precond->trisolver == Magma_ISAI  ||
-                 precond->trisolver == Magma_JACOBI ||
-                 precond->trisolver == Magma_VBJACOBI ){
-                info = magma_ciluisaisetup( A, b, precond, queue );
-            }
+                precond->trisolver == Magma_JACOBI ||
+                precond->trisolver == Magma_VBJACOBI ){
+                info = magma_ciluisaisetup_lower( precond->L, precond->L, &precond->LD, queue );
+                info = magma_ciluisaisetup_upper( precond->U, precond->U, &precond->UD, queue );
+                if (info == Magma_CUSOLVE) {
+                    precond->trisolver = Magma_CUSOLVE;
+                    info = 0;
+                }
+             }
             precond->solver = Magma_PARILU; // handle as PARILU
         #else
             printf( "error: preconditioner requires OpenMP.\n" );
@@ -211,17 +224,18 @@ magma_c_precondsetup(
              precond->trisolver == Magma_JACOBI ||
              precond->trisolver == Magma_VBJACOBI ){
             info = magma_ccumiccsetup( A, precond, queue );
-            info = magma_cicisaisetup( A, b, precond, queue );
+            info = magma_ciluisaisetup_lower( precond->L, precond->L, &precond->LD, queue );
+            info = magma_ciluisaisetup_upper( precond->U, precond->U, &precond->UD, queue );
         } else {
             info = magma_ccumiccsetup( A, precond, queue );
         }
     }
     else if ( precond->solver == Magma_PARIC ) {
-        info = magma_cparicsetup( A, b, precond, queue );
+        info = magma_cparic_gpu( A, b, precond, queue );
     }
     else if ( precond->solver == Magma_PARICT ) {
         #ifdef _OPENMP
-            info = magma_cparict( A, b, precond, queue );
+            info = magma_cparict_cpu( A, b, precond, queue );
             precond->solver = Magma_ICC; // handle as PARIC
         #else
             printf( "error: preconditioner requires OpenMP.\n" );

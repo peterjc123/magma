@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Stan Tomov
        @author Mark Gates
 
-       @generated from testing/testing_zhetrd.cpp, normal z -> c, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zhetrd.cpp, normal z -> c, Mon Jun 25 18:24:21 2018
 
 */
 
@@ -79,7 +79,7 @@ int main( int argc, char** argv)
             /* ====================================================================
                Initialize the matrix
                =================================================================== */
-            magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda );
             lapackf77_clacpy( MagmaFullStr, &N, &N, h_A, &lda, h_R, &lda );
             
             /* ====================================================================

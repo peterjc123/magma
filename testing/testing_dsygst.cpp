@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
 
-       @generated from testing/testing_zhegst.cpp, normal z -> d, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zhegst.cpp, normal z -> d, Mon Jun 25 18:24:20 2018
 
 */
 
@@ -69,8 +69,8 @@ int main( int argc, char** argv)
                Initialize the matrix
                =================================================================== */
             // todo: have different options for A and B
-            magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
-            magma_generate_matrix( opts, N, N, nullptr, h_B, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_B, lda );
             magma_dpotrf( opts.uplo, N, h_B, lda, &info );
             if (info != 0) {
                 printf("magma_dpotrf returned error %lld: %s.\n",

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmgenerator.cpp, normal z -> d, Wed Nov 15 00:34:24 2017
+       @generated from sparse/control/magma_zmgenerator.cpp, normal z -> d, Mon Jun 25 18:24:26 2018
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"
@@ -242,6 +242,10 @@ magma_dm_27stencil(
         }
     }
     hA.true_nnz = hA.nnz;
+    if (A->ownership) {
+        magma_dmfree( A, queue );
+    }
+    A->ownership = MagmaTrue;
     CHECK( magma_dmconvert( hA, A, Magma_CSR, Magma_CSR, queue ));
 
 cleanup:
@@ -295,7 +299,9 @@ magma_dm_5stencil(
     double *diag_vals=NULL;
     CHECK( magma_dmalloc_cpu( &diag_vals, offdiags+1 ));
     CHECK( magma_index_malloc_cpu( &diag_offset, offdiags+1 ));
-
+    
+    magma_dmfree( A, queue );
+    A->ownership = MagmaTrue;
     diag_offset[0] = 0;
     diag_offset[1] = 1;
     diag_offset[2] = n;

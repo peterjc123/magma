@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -33,6 +33,8 @@ magma_z_mtrans_template(
     
     // magma_int_t num_threads;
     // magma_int_t el_per_block;
+    magma_zmfree( B, queue );
+    B->ownership = MagmaTrue;
     
     B->storage_type = A.storage_type;
     B->memory_location = A.memory_location;
@@ -118,6 +120,8 @@ cleanup:
 }
 
 
+inline void cpy(const magmaDoubleComplex &from, magmaDoubleComplex &to) { to = from; }
+
 /**
     Purpose
     -------
@@ -140,9 +144,6 @@ cleanup:
 
     @ingroup magmasparse_zaux
     ********************************************************************/
-    
-inline void cpy(const magmaDoubleComplex &from, magmaDoubleComplex &to) { to = from; }
-
 extern "C" magma_int_t
 magma_zmtranspose_cpu(
     magma_z_matrix A, 
@@ -158,6 +159,7 @@ cleanup:
 }
 
 
+inline void conjop(const magmaDoubleComplex &from, magmaDoubleComplex &to) { to = MAGMA_Z_CONJ(from); }
 
 /**
     Purpose
@@ -181,9 +183,6 @@ cleanup:
 
     @ingroup magmasparse_zaux
     ********************************************************************/
-    
-inline void conjop(const magmaDoubleComplex &from, magmaDoubleComplex &to) { to = MAGMA_Z_CONJ(from); }
-
 extern "C" magma_int_t
 magma_zmtransposeconj_cpu(
     magma_z_matrix A, 
@@ -199,6 +198,7 @@ cleanup:
 }
 
 
+inline void pass(const magmaDoubleComplex &from, magmaDoubleComplex &to) { }
 
 /**
     Purpose
@@ -222,9 +222,6 @@ cleanup:
 
     @ingroup magmasparse_zaux
     ********************************************************************/
-    
-inline void pass(const magmaDoubleComplex &from, magmaDoubleComplex &to) { }
-
 extern "C" magma_int_t
 magma_zmtransposestruct_cpu(
     magma_z_matrix A, 
@@ -240,6 +237,7 @@ cleanup:
 }
 
 
+inline void absval(const magmaDoubleComplex &from, magmaDoubleComplex &to) { to = MAGMA_Z_MAKE(MAGMA_Z_ABS(from), 0.0 ); }
 
 /**
     Purpose
@@ -263,9 +261,6 @@ cleanup:
 
     @ingroup magmasparse_zaux
     ********************************************************************/
-    
-inline void absval(const magmaDoubleComplex &from, magmaDoubleComplex &to) { to = MAGMA_Z_MAKE(MAGMA_Z_ABS(from), 0.0 ); }
-
 extern "C" magma_int_t
 magma_zmtransposeabs_cpu(
     magma_z_matrix A, 

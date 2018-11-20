@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/blas/zpipelinedgmres.cu, normal z -> s, Wed Nov 15 00:34:24 2017
+       @generated from sparse/blas/zpipelinedgmres.cu, normal z -> s, Mon Jun 25 18:24:25 2018
        @author Hartwig Anzt
 
 */
@@ -174,7 +174,7 @@ magma_spipelinesscale(
     v           magmaFloat_ptr 
                 vector of length n
                 
-    @param[in]  
+    @param[in]
     skp         magmaFloat_ptr 
                 array of parameters
 

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmtranspose_cpu.cpp, normal z -> d, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zmtranspose_cpu.cpp, normal z -> d, Mon Jun 25 18:24:27 2018
        @author Hartwig Anzt
 
 */
@@ -33,6 +33,8 @@ magma_d_mtrans_template(
     
     // magma_int_t num_threads;
     // magma_int_t el_per_block;
+    magma_dmfree( B, queue );
+    B->ownership = MagmaTrue;
     
     B->storage_type = A.storage_type;
     B->memory_location = A.memory_location;
@@ -118,6 +120,8 @@ cleanup:
 }
 
 
+inline void cpy(const double &from, double &to) { to = from; }
+
 /**
     Purpose
     -------
@@ -140,9 +144,6 @@ cleanup:
 
     @ingroup magmasparse_daux
     ********************************************************************/
-    
-inline void cpy(const double &from, double &to) { to = from; }
-
 extern "C" magma_int_t
 magma_dmtranspose_cpu(
     magma_d_matrix A, 
@@ -158,6 +159,7 @@ cleanup:
 }
 
 
+inline void conjop(const double &from, double &to) { to = MAGMA_D_CONJ(from); }
 
 /**
     Purpose
@@ -181,9 +183,6 @@ cleanup:
 
     @ingroup magmasparse_daux
     ********************************************************************/
-    
-inline void conjop(const double &from, double &to) { to = MAGMA_D_CONJ(from); }
-
 extern "C" magma_int_t
 magma_dmtransposeconj_cpu(
     magma_d_matrix A, 
@@ -199,6 +198,7 @@ cleanup:
 }
 
 
+inline void pass(const double &from, double &to) { }
 
 /**
     Purpose
@@ -222,9 +222,6 @@ cleanup:
 
     @ingroup magmasparse_daux
     ********************************************************************/
-    
-inline void pass(const double &from, double &to) { }
-
 extern "C" magma_int_t
 magma_dmtransposestruct_cpu(
     magma_d_matrix A, 
@@ -240,6 +237,7 @@ cleanup:
 }
 
 
+inline void absval(const double &from, double &to) { to = MAGMA_D_MAKE(MAGMA_D_ABS(from), 0.0 ); }
 
 /**
     Purpose
@@ -263,9 +261,6 @@ cleanup:
 
     @ingroup magmasparse_daux
     ********************************************************************/
-    
-inline void absval(const double &from, double &to) { to = MAGMA_D_MAKE(MAGMA_D_ABS(from), 0.0 ); }
-
 extern "C" magma_int_t
 magma_dmtransposeabs_cpu(
     magma_d_matrix A, 

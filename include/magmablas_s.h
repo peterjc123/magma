@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from include/magmablas_z.h, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from include/magmablas_z.h, normal z -> s, Mon Jun 25 18:24:32 2018
 */
 
 #ifndef MAGMABLAS_S_H
@@ -14,7 +14,7 @@
 #include "magma_types.h"
 #include "magma_copy.h"
 
-#define REAL
+#define MAGMA_REAL
 
 #ifdef __cplusplus
 extern "C" {
@@ -1138,7 +1138,7 @@ magma_srotg(
     magmaFloat_ptr s,
     magma_queue_t queue );
 
-#ifdef REAL
+#ifdef MAGMA_REAL
 void
 magma_srotm(
     magma_int_t n,
@@ -1155,7 +1155,7 @@ magma_srotmg(
     magmaFloat_const_ptr y1,
     magmaFloat_ptr param,
     magma_queue_t queue );
-#endif
+#endif  // MAGMA_REAL
 
 void
 magma_sscal(
@@ -1201,7 +1201,7 @@ magma_sger(
     magmaFloat_ptr       dA, magma_int_t ldda,
     magma_queue_t queue );
 
-#ifdef COMPLEX
+#ifdef MAGMA_COMPLEX
 void
 magma_sger(
     magma_int_t m, magma_int_t n,
@@ -1240,7 +1240,7 @@ magma_ssyr2(
     magmaFloat_const_ptr dy, magma_int_t incy,
     magmaFloat_ptr       dA, magma_int_t ldda,
     magma_queue_t queue );
-#endif // COMPLEX
+#endif // MAGMA_COMPLEX
 
 void
 magma_ssymv(
@@ -1400,6 +1400,6 @@ magma_spotf2_lpin(
 }
 #endif
 
-#undef REAL
+#undef MAGMA_REAL
 
 #endif // MAGMABLAS_S_H

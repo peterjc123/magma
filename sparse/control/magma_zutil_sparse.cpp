@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> c d s
 
@@ -331,6 +331,9 @@ magma_zparse_opts(
                 opts->precond_par.solver = Magma_ILUT;
             }
             else if ( strcmp("PARILU", argv[i]) == 0 || strcmp("AIC", argv[i]) == 0 ) {
+                opts->precond_par.solver = Magma_PARILU;
+            }
+            else if ( strcmp("PARIC", argv[i]) == 0 ) {
                 opts->precond_par.solver = Magma_PARILU;
             }
             else if ( strcmp("PARICT", argv[i]) == 0 ) {

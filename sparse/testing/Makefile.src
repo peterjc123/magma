@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.3.0) --
+#   -- MAGMA (version 2.4.0) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date November 2017
+#      @date June 2018
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -22,7 +22,7 @@ sparse_testing_src += \
 	$(cdir)/testing_zmconverter.cpp       \
 	$(cdir)/testing_zsort.cpp             \
 	$(cdir)/testing_zmatrixinfo.cpp       \
-
+	$(cdir)/testing_zgetrowptr.cpp	      \
 
 # ----------
 # low level LA operations
@@ -33,6 +33,8 @@ sparse_testing_src += \
 	$(cdir)/testing_zspmv_check.cpp       \
 	$(cdir)/testing_zspmm.cpp             \
 	$(cdir)/testing_zmadd.cpp             \
+	$(cdir)/testing_zcspmv_mixed.cpp       \
+
 
 # ----------
 # iterative solvers and preconditioners
@@ -41,6 +43,7 @@ sparse_testing_src += \
 	$(cdir)/testing_zsolver_rhs.cpp           \
 	$(cdir)/testing_zsolver_rhs_scaling.cpp   \
 	$(cdir)/testing_zpreconditioner.cpp   \
+#	$(cdir)/testing_dusemagma_example.cpp	\
 
 # ----------
 # Mixed-precision solvers
@@ -56,6 +59,10 @@ sparse_testing_src += \
 #	$(cdir)/testing_z_csrmv.cpp           \
 #	$(cdir)/testing_z_mpk_4.cpp           \
 #	$(cdir)/testing_z_mpk_5.cpp           \
+
+# Big Data Analytics
+#sparse_testing_src += \
+	$(cdir)/testing_zjaccard.cpp              \
 
 # debugging
 sparse_testing_src += \

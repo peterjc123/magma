@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/blas/zmdotc.cu, normal z -> c, Wed Nov 15 00:34:24 2017
+       @generated from sparse/blas/zmdotc.cu, normal z -> c, Mon Jun 25 18:24:26 2018
        @author Hartwig Anzt
 
 */
@@ -158,11 +158,11 @@ magma_cmdotc1_kernel_2(
     n           int
                 length of v_i and w_i
 
-    @param[in]                             
+    @param[in]
     v0          magmaFloatComplex_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w0          magmaFloatComplex_ptr                 
                 input vector                           
 
@@ -422,19 +422,19 @@ magma_cmdotc2_kernel_2(
     n           int
                 length of v_i and w_i
 
-    @param[in]                             
+    @param[in]
     v0          magmaFloatComplex_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w0          magmaFloatComplex_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     v1          magmaFloatComplex_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     w1          magmaFloatComplex_ptr                 
                 input vector                             
 
@@ -702,27 +702,27 @@ magma_cmdotc3_kernel_2(
     n           int
                 length of v_i and w_i
 
-    @param[in]                             
+    @param[in]
     v0          magmaFloatComplex_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w0          magmaFloatComplex_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     v1          magmaFloatComplex_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     w1          magmaFloatComplex_ptr                 
                 input vector          
 
-    @param[in]                             
+    @param[in]
     v2          magmaFloatComplex_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w2          magmaFloatComplex_ptr                 
                 input vector                           
 
@@ -997,35 +997,35 @@ magma_cmdotc4_kernel_2(
     n           int
                 length of v_i and w_i
 
-    @param[in]                             
+    @param[in]
     v0          magmaFloatComplex_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w0          magmaFloatComplex_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     v1          magmaFloatComplex_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     w1          magmaFloatComplex_ptr                 
                 input vector          
 
-    @param[in]                             
+    @param[in]
     v2          magmaFloatComplex_ptr     
                 input vector               
 
-    @param[in]                                         
+    @param[in]
     w2          magmaFloatComplex_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     v3          magmaFloatComplex_ptr                 
                 input vector                           
                                                        
-    @param[in]                                         
+    @param[in]
     w3          magmaFloatComplex_ptr                 
                 input vector          
 

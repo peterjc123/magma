@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from testing/testing_zgenerate.cpp, normal z -> c, Wed Nov 15 00:34:23 2017
+       @generated from testing/testing_zgenerate.cpp, normal z -> c, Mon Jun 25 18:24:18 2018
 
        @author Mark Gates
 */
@@ -42,11 +42,11 @@ int main( int argc, char** argv )
             Vector<float> sigma( minmn );
 
             time2 = magma_wtime();
-            magma_generate_matrix( opts, sigma, A );
+            magma_generate_matrix( opts, A, sigma );
             time2 = magma_wtime() - time2;
 
             time = magma_wtime();
-            magma_generate_matrix( opts, A.m, A.n, sigma(0), A(0,0), A.ld );
+            magma_generate_matrix( opts, A.m, A.n, A(0,0), A.ld, sigma(0) );
             time = magma_wtime() - time;
 
             printf( "%% %5lld %5lld   %9.2e   %9.2e   %9.4f     %9.4f        %s\n",

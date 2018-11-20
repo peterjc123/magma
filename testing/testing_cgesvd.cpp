@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from testing/testing_zgesvd.cpp, normal z -> c, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zgesvd.cpp, normal z -> c, Mon Jun 25 18:24:22 2018
        @author Mark Gates
 
 */
@@ -564,7 +564,7 @@ int main( int argc, char** argv)
             float result_lapack[5] = { nan, nan, nan, nan, nan };
             
             /* Initialize the matrix */
-            magma_generate_matrix( opts, M, N, Sref, hA, lda );
+            magma_generate_matrix( opts, M, N, hA, lda, Sref );
             lapackf77_clacpy( MagmaFullStr, &M, &N, hA, &lda, hR, &lda );
             
             // ----------

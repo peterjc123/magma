@@ -1,11 +1,11 @@
 /*
--- MAGMA (version 2.3.0) --
+-- MAGMA (version 2.4.0) --
  Univ. of Tennessee, Knoxville
  Univ. of California, Berkeley
  Univ. of Colorado, Denver
- @date November 2017
+ @date June 2018
 
- @generated from sparse/include/magmasparse_zc.h, mixed zc -> ds, Wed Nov 15 00:34:29 2017
+ @generated from sparse/include/magmasparse_zc.h, mixed zc -> ds, Mon Jun 25 18:24:32 2018
  @author Hartwig Anzt
 */
 
@@ -115,6 +115,20 @@ magma_dsir(
     magma_d_matrix *x,
     magma_d_solver_par *solver_par, 
     magma_d_preconditioner *precond_par,
+    magma_queue_t queue );
+
+magma_int_t
+magma_dsgecsrmv_mixed_prec(
+    magma_trans_t transA,
+    magma_int_t m, magma_int_t n,
+    double alpha,
+    magmaDouble_ptr ddiagval,
+    magmaFloat_ptr doffdiagval,
+    magmaIndex_ptr drowptr,
+    magmaIndex_ptr dcolind,
+    magmaDouble_ptr dx,
+    double beta,
+    magmaDouble_ptr dy,
     magma_queue_t queue );
 
 

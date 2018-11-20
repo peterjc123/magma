@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
        @precisions normal z -> c d s
@@ -112,7 +112,7 @@ int main( int argc, char** argv )
             magma_zsetmatrix( m, n, C, ldc, dC, ldc, opts.queue );
             
             // A is mm x k
-            magma_generate_matrix( opts, mm, k, nullptr, A, lda );
+            magma_generate_matrix( opts, mm, k, A, lda );
             
             // compute QR factorization to get Householder vectors in dA, tau, dT
             magma_zsetmatrix( mm, k, A,  lda, dA, lda, opts.queue );

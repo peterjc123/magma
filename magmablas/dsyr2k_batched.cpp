@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from magmablas/zher2k_batched.cpp, normal z -> d, Wed Nov 15 00:34:23 2017
+       @generated from magmablas/zher2k_batched.cpp, normal z -> d, Mon Jun 25 18:24:15 2018
 
        @author Jakub Kurzak
        @author Stan Tomov
@@ -189,10 +189,34 @@ magmablas_dsyr2k_batched(
       ) return;
     
     if( trans == MagmaNoTrans){
-        magmablas_dsyrk_internal_batched(uplo, MagmaNoTrans, n, k, alpha, dA_array, ldda, dB_array, lddb, cbeta, dC_array, lddc, batchCount, queue );
-        magmablas_dsyrk_internal_batched(uplo, MagmaNoTrans, n, k, MAGMA_D_CONJ(alpha), dB_array, lddb, dA_array, ldda, c_one, dC_array, lddc, batchCount, queue );    
+        magmablas_dsyrk_batched_core(
+                uplo, MagmaNoTrans, 
+                n, k, 
+                alpha, dA_array, 0, 0, ldda, 
+                       dB_array, 0, 0, lddb, 
+                cbeta, dC_array, 0, 0, lddc, 
+                batchCount, queue );
+        magmablas_dsyrk_batched_core(
+                uplo, MagmaNoTrans, 
+                n, k, 
+                MAGMA_D_CONJ(alpha), dB_array, 0, 0, lddb, 
+                                     dA_array, 0, 0, ldda, 
+                c_one,               dC_array, 0, 0, lddc, 
+                batchCount, queue );    
     }else{
-        magmablas_dsyrk_internal_batched(uplo, MagmaTrans, n, k, alpha, dA_array, ldda, dB_array, lddb, cbeta, dC_array, lddc, batchCount, queue );
-        magmablas_dsyrk_internal_batched(uplo, MagmaTrans, n, k, MAGMA_D_CONJ(alpha), dB_array, lddb, dA_array, ldda, c_one, dC_array, lddc, batchCount, queue );
+        magmablas_dsyrk_batched_core(
+                uplo, MagmaTrans, 
+                n, k, 
+                alpha, dA_array, 0, 0, ldda, 
+                       dB_array, 0, 0, lddb, 
+                cbeta, dC_array, 0, 0, lddc, 
+                batchCount, queue );
+        magmablas_dsyrk_batched_core(
+                uplo, MagmaTrans, 
+                n, k, 
+                MAGMA_D_CONJ(alpha), dB_array, 0, 0, lddb, 
+                                     dA_array, 0, 0, ldda, 
+                c_one,               dC_array, 0, 0, lddc, 
+                batchCount, queue );
     }
 }

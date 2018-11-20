@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
-       @generated from testing/lin/magma_z_no_fortran.cpp, normal z -> s, Wed Nov 15 00:34:23 2017
+       @generated from testing/lin/magma_z_no_fortran.cpp, normal z -> s, Mon Jun 25 18:24:16 2018
        
        This is simply a copy of part of magma_slapack.h,
        with the { printf(...); } function body added to each function.

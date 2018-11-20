@@ -1,16 +1,16 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
        
        ssymv.cu is nearly identical to ssymv.cu, just change names and drop MAGMA_S_CONJ.
        
        ssymv_kernel_U (upper) in ssymv_upper.cu is very similar to
        ssymv_kernel_L (lower) in ssymv.cu; diff the two files to compare.
        
-       @generated from magmablas/zhemv.cu, normal z -> s, Wed Nov 15 00:34:21 2017
+       @generated from magmablas/zhemv.cu, normal z -> s, Mon Jun 25 18:24:12 2018
        
        @author Mark Gates
 */

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from include/magma_zlapack.h, normal z -> d, Wed Nov 15 00:34:25 2017
+       @generated from include/magma_zlapack.h, normal z -> d, Mon Jun 25 18:24:32 2018
 */
 
 #ifndef MAGMA_DLAPACK_H
@@ -14,7 +14,7 @@
 #include "magma_types.h"
 #include "magma_mangling.h"
 
-#define REAL
+#define MAGMA_REAL
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,12 +74,15 @@ extern "C" {
 #define lapackf77_dgeqlf   FORTRAN_NAME( dgeqlf, DGEQLF )
 #define lapackf77_dgeqp3   FORTRAN_NAME( dgeqp3, DGEQP3 )
 #define lapackf77_dgeqrf   FORTRAN_NAME( dgeqrf, DGEQRF )
+#define lapackf77_dgerqf   FORTRAN_NAME( dgerqf, DGERQF )
 #define lapackf77_dgesdd   FORTRAN_NAME( dgesdd, DGESDD )
 #define lapackf77_dgesv    FORTRAN_NAME( dgesv,  DGESV  )
 #define lapackf77_dgesvd   FORTRAN_NAME( dgesvd, DGESVD )
 #define lapackf77_dgetrf   FORTRAN_NAME( dgetrf, DGETRF )
 #define lapackf77_dgetri   FORTRAN_NAME( dgetri, DGETRI )
 #define lapackf77_dgetrs   FORTRAN_NAME( dgetrs, DGETRS )
+#define lapackf77_dgglse   FORTRAN_NAME( dgglse, DGGLSE )
+#define lapackf77_dggrqf   FORTRAN_NAME( dggrqf, DGGRQF )
 #define lapackf77_dsytf2   FORTRAN_NAME( dsytf2, DSYTF2 )
 #define lapackf77_dsytrs   FORTRAN_NAME( dsytrs, DSYTRS )
 #define lapackf77_dsbtrd   FORTRAN_NAME( dsbtrd, DSBTRD )
@@ -150,6 +153,7 @@ extern "C" {
 #define lapackf77_dormlq   FORTRAN_NAME( dormlq, DORMLQ )
 #define lapackf77_dormql   FORTRAN_NAME( dormql, DORMQL )
 #define lapackf77_dormqr   FORTRAN_NAME( dormqr, DORMQR )
+#define lapackf77_dormrq   FORTRAN_NAME( dormrq, DORMRQ )
 #define lapackf77_dormtr   FORTRAN_NAME( dormtr, DORMTR )
 
 /* testing functions (alphabetical order) */
@@ -351,7 +355,7 @@ double magma_cblas_ddot(
 /*
  * LAPACK functions (alphabetical order)
  */
-#ifdef REAL
+#ifdef MAGMA_REAL
 void   lapackf77_dbdsdc( const char *uplo, const char *compq,
                          const magma_int_t *n,
                          double *d, double *e,
@@ -360,7 +364,7 @@ void   lapackf77_dbdsdc( const char *uplo, const char *compq,
                          double *Q, magma_int_t *IQ,
                          double *work, magma_int_t *iwork,
                          magma_int_t *info );
-#endif
+#endif  // MAGMA_REAL
 
 void   lapackf77_dbdsqr( const char *uplo,
                          const magma_int_t *n, const magma_int_t *ncvt, const magma_int_t *nru,  const magma_int_t *ncc,
@@ -410,7 +414,7 @@ void   lapackf77_dgbbrd( const char *vect, const magma_int_t *m,
                          double *PT, const magma_int_t *ldpt,
                          double *C, const magma_int_t *ldc,
                          double *work,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          magma_int_t *info );
@@ -426,7 +430,7 @@ void   lapackf77_dgbsv( const magma_int_t *n,
 void   lapackf77_dgeev(  const char *jobvl, const char *jobvr,
                          const magma_int_t *n,
                          double *A,    const magma_int_t *lda,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *w,
                          #else
                          double *wr, double *wi,
@@ -434,7 +438,7 @@ void   lapackf77_dgeev(  const char *jobvl, const char *jobvr,
                          double *Vl,   const magma_int_t *ldvl,
                          double *Vr,   const magma_int_t *ldvr,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          magma_int_t *info );
@@ -477,7 +481,7 @@ void   lapackf77_dgeqp3( const magma_int_t *m, const magma_int_t *n,
                          magma_int_t *jpvt,
                          double *tau,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          magma_int_t *info );
@@ -488,6 +492,12 @@ void   lapackf77_dgeqrf( const magma_int_t *m, const magma_int_t *n,
                          double *work, const magma_int_t *lwork,
                          magma_int_t *info );
 
+void   lapackf77_dgerqf( const magma_int_t *m, const magma_int_t *n, 
+                         double *A, const magma_int_t *lda,
+                         double *tau, 
+                         double *work, const magma_int_t *lwork, 
+                         magma_int_t *info);
+
 void   lapackf77_dgesdd( const char *jobz,
                          const magma_int_t *m, const magma_int_t *n,
                          double *A, const magma_int_t *lda,
@@ -495,7 +505,7 @@ void   lapackf77_dgesdd( const char *jobz,
                          double *U,  const magma_int_t *ldu,
                          double *Vt, const magma_int_t *ldvt,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          magma_int_t *iwork,
@@ -514,7 +524,7 @@ void   lapackf77_dgesvd( const char *jobu, const char *jobvt,
                          double *U,  const magma_int_t *ldu,
                          double *Vt, const magma_int_t *ldvt,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          magma_int_t *info );
@@ -536,6 +546,21 @@ void   lapackf77_dgetrs( const char *trans,
                          const magma_int_t *ipiv,
                          double *B, const magma_int_t *ldb,
                          magma_int_t *info );
+
+void   lapackf77_dgglse( magma_int_t *m, magma_int_t *n, magma_int_t *p,
+                         double *A, magma_int_t *lda,
+                         double *B, magma_int_t *ldb,
+                         double *c, double *d, 
+                         double *x,
+                         double *work, magma_int_t *lwork,
+                         magma_int_t *info);
+
+void   lapackf77_dggrqf( magma_int_t *m, magma_int_t *p, magma_int_t *n,
+                         double *A, magma_int_t *lda,
+                         double *tauA, double *B,
+                         magma_int_t *ldb, double *tauB,
+                         double *work, magma_int_t *lwork, 
+                         magma_int_t *info);
 
 void   lapackf77_dsytf2( const char *uplo, const magma_int_t *n,
                          double *A, const magma_int_t *lda,
@@ -562,7 +587,7 @@ void   lapackf77_dsyev(  const char *jobz, const char *uplo,
                          double *A, const magma_int_t *lda,
                          double *w,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          magma_int_t *info );
@@ -572,7 +597,7 @@ void   lapackf77_dsyevd( const char *jobz, const char *uplo,
                          double *A, const magma_int_t *lda,
                          double *w,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork, const magma_int_t *lrwork,
                          #endif
                          magma_int_t *iwork, const magma_int_t *liwork,
@@ -588,7 +613,7 @@ void   lapackf77_dsyevr( const char *jobz, const char *range, const char *uplo,
                          double *Z, const magma_int_t *ldz,
                          magma_int_t *isuppz,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork, const magma_int_t *lrwork,
                          #endif
                          magma_int_t *iwork, const magma_int_t *liwork,
@@ -603,7 +628,7 @@ void   lapackf77_dsyevx( const char *jobz, const char *range, const char *uplo,
                          magma_int_t *m, double *w,
                          double *Z, const magma_int_t *ldz,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          magma_int_t *iwork, magma_int_t *ifail,
@@ -627,7 +652,7 @@ void   lapackf77_dsygvd( const magma_int_t *itype, const char *jobz, const char 
                          double *B, const magma_int_t *ldb,
                          double *w,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork, const magma_int_t *lrwork,
                          #endif
                          magma_int_t *iwork, const magma_int_t *liwork,
@@ -666,7 +691,7 @@ void   lapackf77_dhseqr( const char *job, const char *compz,
                          const magma_int_t *n,
                          const magma_int_t *ilo, const magma_int_t *ihi,
                          double *H, const magma_int_t *ldh,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *w,
                          #else
                          double *wr, double *wi,
@@ -683,12 +708,12 @@ void   lapackf77_dlabrd( const magma_int_t *m, const magma_int_t *n, const magma
                          double *X, const magma_int_t *ldx,
                          double *Y, const magma_int_t *ldy );
 
-#ifdef COMPLEX
+#ifdef MAGMA_COMPLEX
 void   lapackf77_dlacgv( const magma_int_t *n,
                          double *x, const magma_int_t *incx );
 #endif
 
-#ifdef COMPLEX
+#ifdef MAGMA_COMPLEX
 void   lapackf77_dlacp2( const char *uplo,
                          const magma_int_t *m, const magma_int_t *n,
                          const double *A, const magma_int_t *lda,
@@ -700,7 +725,7 @@ void   lapackf77_dlacpy( const char *uplo,
                          const double *A, const magma_int_t *lda,
                          double *B, const magma_int_t *ldb );
 
-#ifdef COMPLEX
+#ifdef MAGMA_COMPLEX
 void   lapackf77_dlacrm( const magma_int_t *m, const magma_int_t *n,
                          const double *A, const magma_int_t *lda,
                          const double             *B, const magma_int_t *ldb,
@@ -708,11 +733,11 @@ void   lapackf77_dlacrm( const magma_int_t *m, const magma_int_t *n,
                          double *rwork );
 #endif
 
-#ifdef COMPLEX
+#ifdef MAGMA_COMPLEX
 void   lapackf77_dladiv( double *ret_val,
                          const double *x,
                          const double *y );
-#else // REAL
+#else // MAGMA_REAL
 void   lapackf77_dladiv( const double *a, const double *b,
                          const double *c, const double *d,
                          double *p, double *q );
@@ -756,7 +781,7 @@ void   lapackf77_dlaqp2( const magma_int_t *m, const magma_int_t *n, const magma
                          double *vn1, double *vn2,
                          double *work );
 
-#ifdef COMPLEX
+#ifdef MAGMA_COMPLEX
 void   lapackf77_dlarcm( const magma_int_t *m, const magma_int_t *n,
                          const double             *A, const magma_int_t *lda,
                          const double *B, const magma_int_t *ldb,
@@ -877,7 +902,7 @@ void   lapackf77_dstedc( const char *compz,
                          double *d, double *e,
                          double *Z, const magma_int_t *ldz,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork, const magma_int_t *lrwork,
                          #endif
                          magma_int_t *iwork, const magma_int_t *liwork,
@@ -913,7 +938,7 @@ void   lapackf77_dsteqr( const char *compz,
                          double *work,
                          magma_int_t *info );
 
-#ifdef COMPLEX
+#ifdef MAGMA_COMPLEX
 void   lapackf77_dsymv(  const char *uplo,
                          const magma_int_t *n,
                          const double *alpha,
@@ -935,16 +960,16 @@ void   lapackf77_dsysv(  const char *uplo,
                          double *work, const magma_int_t *lwork,
                          magma_int_t *info );
 
-#endif
+#endif  // MAGMA_COMPLEX
 
 void   lapackf77_dtrevc( const char *side, const char *howmny,
                          // select is [in] for real; [in,out] for real
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          const
                          #endif
                          magma_int_t *select, const magma_int_t *n,
                          // T is modified but restored in real; const for real
-                         #ifdef REAL
+                         #ifdef MAGMA_REAL
                          const
                          #endif
                          double *T,  const magma_int_t *ldt,
@@ -952,7 +977,7 @@ void   lapackf77_dtrevc( const char *side, const char *howmny,
                          double *Vr, const magma_int_t *ldvr,
                          const magma_int_t *mm, magma_int_t *m,
                          double *work,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          magma_int_t *info );
@@ -965,7 +990,7 @@ void   lapackf77_dtrevc3( const char *side, const char *howmny,
                           const magma_int_t *mm,
                           const magma_int_t *mout,
                           double *work, const magma_int_t *lwork,
-                          #ifdef COMPLEX
+                          #ifdef MAGMA_COMPLEX
                           double *rwork,
                           #endif
                           magma_int_t *info );
@@ -1060,6 +1085,14 @@ void   lapackf77_dormqr( const char *side, const char *trans,
                          double *work, const magma_int_t *lwork,
                          magma_int_t *info );
 
+void   lapackf77_dormrq( const char *side, const char *trans, 
+                         magma_int_t *m, magma_int_t *n, magma_int_t *k, 
+                         double *A, magma_int_t *lda,
+                         double *tau, 
+                         double *C, magma_int_t *ldc,
+                         double *work, magma_int_t *lwork, 
+                         magma_int_t *info );
+
 void   lapackf77_dormtr( const char *side, const char *uplo, const char *trans,
                          const magma_int_t *m, const magma_int_t *n,
                          const double *A, const magma_int_t *lda,
@@ -1134,7 +1167,7 @@ void   lapackf77_dbdt01( const magma_int_t *m, const magma_int_t *n, const magma
                          double *d, double *e,
                          double *Pt, const magma_int_t *ldpt,
                          double *work,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          double *resid );
@@ -1142,14 +1175,14 @@ void   lapackf77_dbdt01( const magma_int_t *m, const magma_int_t *n, const magma
 void   lapackf77_dget22( const char *transa, const char *transe, const char *transw, const magma_int_t *n,
                          double *A, const magma_int_t *lda,
                          double *E, const magma_int_t *lde,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *w,
                          #else
                          double *wr,
                          double *wi,
                          #endif
                          double *work,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          double *result );
@@ -1162,7 +1195,7 @@ void   lapackf77_dsyt21( const magma_int_t *itype, const char *uplo,
                          double *V, const magma_int_t *ldv,
                          double *tau,
                          double *work,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          double *result );
@@ -1172,7 +1205,7 @@ void   lapackf77_dhst01( const magma_int_t *n, const magma_int_t *ilo, const mag
                          double *H, const magma_int_t *ldh,
                          double *Q, const magma_int_t *ldq,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          double *result );
@@ -1184,7 +1217,7 @@ void   lapackf77_dstt21( const magma_int_t *n, const magma_int_t *kband,
                          double *SE,
                          double *U, const magma_int_t *ldu,
                          double *work,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          double *result );
@@ -1192,7 +1225,7 @@ void   lapackf77_dstt21( const magma_int_t *n, const magma_int_t *kband,
 void   lapackf77_dort01( const char *rowcol, const magma_int_t *m, const magma_int_t *n,
                          double *U, const magma_int_t *ldu,
                          double *work, const magma_int_t *lwork,
-                         #ifdef COMPLEX
+                         #ifdef MAGMA_COMPLEX
                          double *rwork,
                          #endif
                          double *resid );
@@ -1233,6 +1266,6 @@ void   lapackf77_dlatms( const magma_int_t *m, const magma_int_t *n,
 }
 #endif
 
-#undef REAL
+#undef MAGMA_REAL
 
 #endif /* MAGMA_DLAPACK_H */

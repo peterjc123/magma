@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zsort.cpp, normal z -> c, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zsort.cpp, normal z -> c, Mon Jun 25 18:24:28 2018
        @author Hartwig Anzt
 */
 
@@ -689,29 +689,21 @@ void swap(magmaFloatComplex *a, magmaFloatComplex *b)
     Arguments
     ---------
     
-    @param[in,out]
-    val         magmaFloatComplex*
-                Target array, will be modified during operation.
+    @param[in]                                                                                                                                                         
+    start       magma_int_t
+                Start position of the target array.
 
     @param[in]
     length      magma_int_t
                 Length of the target array.
 
+    @param[in,out]
+    seq         magmaFloatComplex*
+                Target array, will be modified during operation.
+
     @param[in]
-    k           magma_int_t
-                Element to be identified (largest/smallest).
-                
-    @param[in]
-    inc         magma_int_t
-                Stepsize in the approximation.
-                
-    @param[in]
-    r           magma_int_t
-                rule how to sort: '1' -> largest, '0' -> smallest
-                
-    @param[out]
-    element     magmaFloatComplex*
-                location of the respective element
+    flag        magma_int_t
+                ???
                 
     @param[in]
     queue       magma_queue_t

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from magmablas/dznrm2.cu, normal z -> s, Wed Nov 15 00:34:22 2017
+       @generated from magmablas/dznrm2.cu, normal z -> s, Mon Jun 25 18:24:13 2018
 
 */
 #include "magma_internal.h"

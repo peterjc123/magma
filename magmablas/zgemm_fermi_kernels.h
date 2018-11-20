@@ -2,11 +2,11 @@
 #define ZGEMM_FERMI_KERNELS_H
 
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Jakub Kurzak
        @author Stan Tomov

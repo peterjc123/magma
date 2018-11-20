@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Raffaele Solca
        @author Azzam Haidar
        @author Mark Gates
 
-       @generated from testing/testing_zheevdx_2stage.cpp, normal z -> c, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zheevdx_2stage.cpp, normal z -> c, Mon Jun 25 18:24:21 2018
 
 */
 
@@ -101,7 +101,7 @@ int main( int argc, char** argv)
             #endif
 
             /* Initialize the matrix */
-            magma_generate_matrix( opts, N, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, N, N, h_A, lda );
 
             if (opts.warmup) {
                 // ==================================================================
@@ -260,7 +260,7 @@ static magma_int_t check_orthogonality(magma_int_t M, magma_int_t N, magmaFloatC
     printf( "      %8.2e", normQ / minMN );
 
     // TODO: use opts.tolerance instead of hard coding 60
-    if ( isnan(result) || isinf(result) || (result > 60.0) ) {
+    if (std::isnan(result) || std::isinf(result) || (result > 60.0)) {
         info_ortho = 1;
     }
     else {
@@ -315,7 +315,7 @@ static magma_int_t check_reduction(magma_uplo_t uplo, magma_int_t N, magma_int_t
     printf("           %8.2e",  Rnorm / ( Anorm * N));
 
     // TODO: use opts.tolerance instead of hard coding 60
-    if ( isnan(result) || isinf(result) || (result > 60.0) ) {
+    if (std::isnan(result) || std::isinf(result) || (result > 60.0)) {
         info_reduction = 1;
     }
     else {
@@ -354,7 +354,7 @@ static magma_int_t check_solution(magma_int_t N, float *E1, float *E2, float eps
     printf("              %8.2e", maxdif / (max(maxeig, maxdif)) );
 
     // TODO: use opts.tolerance instead of hard coding 100
-    if ( isnan(maxtmp) || isinf(maxtmp) || (maxtmp > 100) ) {
+    if (std::isnan(maxtmp) || std::isinf(maxtmp) || (maxtmp > 100)) {
         info_solution = 1;
     }
     else {

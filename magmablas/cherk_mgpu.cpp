@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
        
        @author Azzam Haidar
        @author Ichi Yamazaki
 
-       @generated from magmablas/zherk_mgpu.cpp, normal z -> c, Wed Nov 15 00:34:23 2017
+       @generated from magmablas/zherk_mgpu.cpp, normal z -> c, Mon Jun 25 18:24:14 2018
 
 */
 #include "magma_internal.h"

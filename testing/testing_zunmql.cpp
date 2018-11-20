@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
        @precisions normal z -> c d s
@@ -99,7 +99,7 @@ int main( int argc, char** argv )
             lapackf77_zlacpy( "Full", &m, &n, C, &ldc, R, &ldc );
             
             // A is mm x k
-            magma_generate_matrix( opts, mm, k, nullptr, A, lda );
+            magma_generate_matrix( opts, mm, k, A, lda );
             
             // compute QL factorization to get Householder vectors in A, tau
             magma_zgeqlf( mm, k, A, lda, tau, hwork, lwork_max, &info );

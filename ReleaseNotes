@@ -24,6 +24,24 @@ Included are routines for the following algorithms:
 Most routines have all four precisions:
 single (s), double (d), single-complex (c), double-complex (z).
 
+ 2.4.0 - Jun 25, 2018
+    * Added constrained least squares routines (magma_[sdcz]gglse)
+      and dependencies:
+      magma_zggrqf - generalized RQ factorization
+      magma_zunmrq - multiply by orthogonal Q as returned by zgerqf
+    * Performance improvements across many batch routines, including 
+      batched TRSM, batched LU, batched LU-nopiv, and batched Cholesky
+    * Fixed some compilation issues with inf, nan, and nullptr.
+      
+    MAGMA-sparse
+    * Changed the way how data from an external application is handled: 
+      There is now a clear distinction between memory allocated/used/freed from 
+      MAGMA and the user application.  
+      We added a functions magma_zvcopy and magma_zvpass that do not allocate 
+      memory, instead they copy values from/to application-allocated memory.
+    * The examples ( in example/example_sparse.c ) give a demonstration on how 
+      these routines should be used.
+
  2.3.0 - Nov 15, 2017
     * Moved MAGMA's repository to Bitbucket: https://bitbucket.org/icl/magma
     * Added support for Volta GPUs

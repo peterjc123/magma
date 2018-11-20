@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from src/zungqr_2stage_gpu.cpp, normal z -> s, Wed Nov 15 00:34:19 2017
+       @generated from src/zungqr_2stage_gpu.cpp, normal z -> s, Mon Jun 25 18:24:07 2018
 
 */
 #include "magma_internal.h"
@@ -121,7 +121,7 @@ magma_sorgqr_2stage_gpu(
 
     if (MAGMA_SUCCESS != magma_smalloc( &dwork, n*nb )) {
         printf ("!!!! sorgqr_2stage magma_alloc failed for: dwork\n" );
-        exit(-1);
+        return MAGMA_ERR_ALLOCATION;
     }
 
     if ( (nb > 1) && (nb < k) ) {

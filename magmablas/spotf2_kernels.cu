@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.3.0) --
+   -- MAGMA (version 2.4.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date November 2017
+   @date June 2018
 
    @author Azzam Haidar
    @author Ahmad Ahmad
 
-   @generated from magmablas/zpotf2_kernels.cu, normal z -> s, Wed Nov 15 00:34:23 2017
+   @generated from magmablas/zpotf2_kernels.cu, normal z -> s, Mon Jun 25 18:24:15 2018
  */
 #include "magma_internal.h"
 #include "batched_kernel_param.h"
@@ -62,15 +62,16 @@ __global__ void spotf2_smlpin_anywidth_kernel(int m, float *dA, int ldda, int lo
 }
 /******************************************************************************/
 __global__ void spotf2_smlpin_fixwidth_kernel_batched(int m,
-        float **dA_array, int lda,
+        float **dA_array, int ai, int aj, int lda,
         int localstep, int gbstep, magma_int_t *info_array, const int batchCount)
 {
     const int batchid = blockIdx.z * blockDim.y + threadIdx.y;
+    float *dA = dA_array[batchid] + aj * lda + ai; 
     if (batchid >= batchCount) return;
     #pragma unroll
     for(int i = 0; i < m; i+= POTF2_NB){
         //if(threadIdx.x < m-i){
-            spotf2_smlpout_fixwidth_device(m-i, dA_array[batchid]+localstep+i, dA_array[batchid]+localstep+i+(localstep+i)*lda, lda, localstep+i, gbstep, &(info_array[batchid]));
+            spotf2_smlpout_fixwidth_device(m-i, dA+localstep+i, dA+localstep+i+(localstep+i)*lda, lda, localstep+i, gbstep, &(info_array[batchid]));
         //}
     }
 }
@@ -78,16 +79,17 @@ __global__ void spotf2_smlpin_fixwidth_kernel_batched(int m,
 
 /******************************************************************************/
 __global__ void spotf2_smlpin_anywidth_kernel_batched(int m,
-        float **dA_array, int lda,
+        float **dA_array, int ai, int aj, int lda,
         int localstep, int gbstep, magma_int_t *info_array, const int batchCount)
 {
     const int batchid = blockIdx.z * blockDim.y + threadIdx.y;
+    float *dA = dA_array[batchid] + aj * lda + ai; 
     if (batchid >= batchCount) return;
     #pragma unroll
     for(int i = 0; i < m; i+= POTF2_NB){
         int ib = min(m-i, POTF2_NB);
         //if(threadIdx.x < m-i){
-            spotf2_smlpout_anywidth_device(m-i, ib, dA_array[batchid]+localstep+i, dA_array[batchid]+localstep+i+(localstep+i)*lda, lda, localstep+i, gbstep, &(info_array[batchid]));
+            spotf2_smlpout_anywidth_device(m-i, ib, dA+localstep+i, dA+localstep+i+(localstep+i)*lda, lda, localstep+i, gbstep, &(info_array[batchid]));
         //}
     }
 }
@@ -112,30 +114,32 @@ __global__ void spotf2_smlpout_anywidth_kernel(int m, int n,
 
 /******************************************************************************/
 __global__ void spotf2_smlpout_fixwidth_kernel_batched(int m, 
-        float **dA_array, int lda, 
+        float **dA_array, int ai, int aj, int lda, 
         int localstep, int gbstep, magma_int_t *info_array, const int batchCount)
 {
     const int batchid = blockIdx.z * blockDim.y + threadIdx.y;
+    float *dA = dA_array[batchid] + aj * lda + ai; 
     if (batchid >= batchCount) return;
-    spotf2_smlpout_fixwidth_device(m, dA_array[batchid]+localstep, dA_array[batchid]+localstep+localstep*lda, lda, localstep, gbstep, &(info_array[batchid]));
+    spotf2_smlpout_fixwidth_device(m, dA+localstep, dA+localstep+localstep*lda, lda, localstep, gbstep, &(info_array[batchid]));
 }
 
 
 /******************************************************************************/
 __global__ void spotf2_smlpout_anywidth_kernel_batched(int m, int n, 
-        float **dA_array, int lda, 
+        float **dA_array, int ai, int aj, int lda, 
         int localstep, int gbstep, magma_int_t *info_array, const int batchCount)
 {
     const int batchid = blockIdx.z * blockDim.y + threadIdx.y;
+    float *dA = dA_array[batchid] + aj * lda + ai; 
     if (batchid >= batchCount) return;
-    spotf2_smlpout_anywidth_device(m, n, dA_array[batchid]+localstep, dA_array[batchid]+localstep+localstep*lda, lda, localstep, gbstep, &(info_array[batchid]));
+    spotf2_smlpout_anywidth_device(m, n, dA+localstep, dA+localstep+localstep*lda, lda, localstep, gbstep, &(info_array[batchid]));
 }
 
 /******************************************************************************/
 extern "C" magma_int_t
 magma_spotrf_lpout_batched(
         magma_uplo_t uplo, magma_int_t n, 
-        float **dA_array, magma_int_t lda, magma_int_t gbstep,
+        float **dA_array, magma_int_t ai, magma_int_t aj, magma_int_t lda, magma_int_t gbstep,
         magma_int_t *info_array, magma_int_t batchCount, magma_queue_t queue)
 {
     magma_int_t m = n;
@@ -202,11 +206,11 @@ magma_spotrf_lpout_batched(
         {
             spotf2_smlpout_fixwidth_kernel_batched
                 <<< dimGrid, threads, shared_mem_size, queue->cuda_stream() >>>
-                (rows, dA_array, lda, j, gbstep, info_array, batchCount);
+                (rows, dA_array, ai, aj, lda, j, gbstep, info_array, batchCount);
         } else {
             spotf2_smlpout_anywidth_kernel_batched
                 <<< dimGrid, threads, shared_mem_size, queue->cuda_stream() >>>
-                (rows, ib, dA_array, lda, j, gbstep, info_array, batchCount);
+                (rows, ib, dA_array, ai, aj, lda, j, gbstep, info_array, batchCount);
         }
     }
 
@@ -216,7 +220,7 @@ magma_spotrf_lpout_batched(
 extern "C" magma_int_t
 magma_spotrf_lpin_batched(
         magma_uplo_t uplo, magma_int_t n,
-        float **dA_array, magma_int_t lda, magma_int_t gbstep,
+        float **dA_array, magma_int_t ai, magma_int_t aj, magma_int_t lda, magma_int_t gbstep,
         magma_int_t *info_array, magma_int_t batchCount, magma_queue_t queue)
 {
     magma_int_t m = n;
@@ -259,12 +263,12 @@ magma_spotrf_lpin_batched(
     if( n % POTF2_NB == 0){
         spotf2_smlpin_fixwidth_kernel_batched
             <<< grid, threads, shared_mem_size, queue->cuda_stream() >>>
-            (n, dA_array, lda, 0, gbstep, info_array, batchCount);
+            (n, dA_array, ai, aj, lda, 0, gbstep, info_array, batchCount);
     }
     else{
         spotf2_smlpin_anywidth_kernel_batched
             <<< grid, threads, shared_mem_size, queue->cuda_stream() >>>
-            (n, dA_array, lda, 0, gbstep, info_array, batchCount);
+            (n, dA_array, ai, aj, lda, 0, gbstep, info_array, batchCount);
     }
 
     return arginfo;

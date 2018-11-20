@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> c d s
        @author Mark Gates
@@ -599,7 +599,7 @@ int main( int argc, char** argv)
             double result_lapack[5] = { nan, nan, nan, nan, nan };
             
             /* Initialize the matrix */
-            magma_generate_matrix( opts, M, N, Sref, hA, lda );
+            magma_generate_matrix( opts, M, N, hA, lda, Sref );
             lapackf77_zlacpy( MagmaFullStr, &M, &N, hA, &lda, hR, &lda );
             
             // ----------

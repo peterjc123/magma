@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmslice.cpp, normal z -> s, Wed Nov 15 00:34:25 2017
+       @generated from sparse/control/magma_zmslice.cpp, normal z -> s, Mon Jun 25 18:24:28 2018
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"
@@ -56,11 +56,11 @@
     ANLOC       magma_s_matrix*
                 sparse matrix in CSR
                 
-   @param[in,out]          
+    @param[in,out]
     comm_i      magma_int_t*
                 communication plan
  
-    @param[in,out]          
+    @param[in,out]
     comm_v      float*
                 communication plan
 
@@ -68,11 +68,11 @@
     queue       magma_queue_t
                 Queue to execute in.
                 
-    @param[out]          
+    @param[out]
     start       magma_int_t*
                 start of slice (row-index)
                 
-    @param[out]          
+    @param[out]
     end         magma_int_t*
                 end of slice (row-index)
 

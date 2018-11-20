@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from testing/testing_zgesv_nopiv_batched.cpp, normal z -> s, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zgesv_nopiv_batched.cpp, normal z -> s, Mon Jun 25 18:24:23 2018
        @author Mark Gates
 */
 // includes, system
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 
                 Rnorm = lapackf77_slange("I", &N, &nrhs, h_B+s*ldb*nrhs, &ldb, work);
                 float err = Rnorm/(N*Anorm*Xnorm);
-                if ( isnan(err) || isinf(err) ) {
+                if (std::isnan(err) || std::isinf(err)) {
                     error = err;
                     break;
                 }

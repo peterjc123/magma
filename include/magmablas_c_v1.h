@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from include/magmablas_z_v1.h, normal z -> c, Wed Nov 15 00:34:25 2017
+       @generated from include/magmablas_z_v1.h, normal z -> c, Mon Jun 25 18:24:32 2018
 */
 
 #ifndef MAGMABLAS_C_V1_H
@@ -18,7 +18,7 @@
 #include "magma_types.h"
 #include "magma_copy_v1.h"
 
-#define COMPLEX
+#define MAGMA_COMPLEX
 
 #ifdef __cplusplus
 extern "C" {
@@ -738,7 +738,7 @@ magma_csrot_v1(
     magmaFloatComplex_ptr dy, magma_int_t incy,
     float dc, float ds );
 
-#ifdef REAL
+#ifdef MAGMA_REAL
 void
 magma_crotm_v1(
     magma_int_t n,
@@ -751,7 +751,7 @@ magma_crotmg_v1(
     magmaFloat_ptr d1, magmaFloat_ptr       d2,
     magmaFloat_ptr x1, magmaFloat_const_ptr y1,
     magmaFloat_ptr param );
-#endif
+#endif  // MAGMA_REAL
 
 void
 magma_cscal_v1(
@@ -933,6 +933,6 @@ magma_ctrsm_v1(
 }
 #endif
 
-#undef COMPLEX
+#undef MAGMA_COMPLEX
 
 #endif // MAGMABLAS_C_H

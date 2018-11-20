@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -49,6 +49,7 @@ magma_zvtranspose(
     
     // make sure the target structure is empty
     magma_zmfree( y, queue );
+    y->ownership = MagmaTrue;
     
     magma_z_matrix dx={Magma_CSR}, dy={Magma_CSR};
             

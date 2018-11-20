@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Azzam Haidar
        @author Stan Tomov
@@ -289,7 +289,7 @@ magma_zhetrd_he2hb_mgpu(
 
     if (upper) {
         printf("ZHETRD_HE2HB is not yet implemented for upper matrix storage. Exit.\n");
-        exit(1);
+        return MAGMA_ERR_NOT_IMPLEMENTED;
     } else {
         /* Reduce the lower triangle of A */
         for (i = 1; i <= n-nb; i += nb) {

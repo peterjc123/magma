@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> c d s
        @author Tingxing Dong
@@ -225,7 +225,7 @@ int main( int argc, char** argv)
                 normr = lapackf77_zlange( "F", &N, &ione, h_bcublas + s * N, &N, work );
                 err = normr / (normA*normx);
                 
-                if ( isnan(err) || isinf(err) ) {
+                if (std::isnan(err) || std::isinf(err)) {
                     printf("error for matrix %lld cublas_error = %7.2f where normr=%7.2f normx=%7.2f and normA=%7.2f\n", 
                             (long long) s, err, normr, normx, normA);
                     cublas_error = err;
@@ -245,7 +245,7 @@ int main( int argc, char** argv)
                 normr = lapackf77_zlange( "F", &N, &ione, h_bmagma + s * N, &N, work );
                 err = normr / (normA*normx);
 
-                if ( isnan(err) || isinf(err) ) {
+                if (std::isnan(err) || std::isinf(err)) {
                     printf("error for matrix %lld magma_error = %7.2f where normr=%7.2f normx=%7.2f and normA=%7.2f\n", 
                             (long long) s, err, normr, normx, normA);
                     magma_error = err;

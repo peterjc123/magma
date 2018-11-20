@@ -1,9 +1,9 @@
 /*
-   -- MAGMA (version 2.3.0) --
+   -- MAGMA (version 2.4.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date November 2017
+   @date June 2018
 
    @author Azzam Haidar
    @author Tingxing Dong
@@ -244,7 +244,7 @@ int main( int argc, char** argv)
                     }
                     
                     double err = get_LU_error( M, N, h_R + i * lda*N, lda, h_Amagma + i * lda*N, ipiv + i * min_mn);
-                    if ( isnan(err) || isinf(err) ) {
+                    if (std::isnan(err) || std::isinf(err)) {
                         error = err;
                         break;
                     }

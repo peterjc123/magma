@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
        @author Azzam Haidar
        @author Tingxing Dong
-       @generated from src/zlarfb_gemm_batched.cpp, normal z -> s, Wed Nov 15 00:34:21 2017
+       @generated from src/zlarfb_gemm_batched.cpp, normal z -> s, Mon Jun 25 18:24:11 2018
 */
 #include "magma_internal.h"
 

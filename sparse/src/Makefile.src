@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.3.0) --
+#   -- MAGMA (version 2.4.0) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date November 2017
+#      @date June 2018
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -92,19 +92,28 @@ libsparse_src += \
 #	$(cdir)/zungqr_chol.cpp               \
 #	$(cdir)/zungqr_iter.cpp               \
 
-# iterative ILU
+# custom ILU
 libsparse_src += \
 	$(cdir)/zcustomic.cpp                 \
 	$(cdir)/zcustomilu.cpp                \
-        $(cdir)/zparilut.cpp                  \
+
+# ParILU / ParILUT
+libsparse_src += \
+	$(cdir)/zparilu_gpu.cpp		\
+	$(cdir)/zparilu_cpu.cpp         \
+	$(cdir)/zparic_gpu.cpp          \
+        $(cdir)/zparic_cpu.cpp          \
+	$(cdir)/zparilut_gpu.cpp        \
+	$(cdir)/zparilut_cpu.cpp        \
+	$(cdir)/zparict_cpu.cpp         \
+	$(cdir)/zparilut.cpp                  \
 	$(cdir)/zparict.cpp   		      \
 
 # incomplete sparse approximate inverse
 libsparse_src += \
-    $(cdir)/zgeisai.cpp                   \
+    $(cdir)/zgeisai_apply.cpp             \
     $(cdir)/zgeisai_lower.cpp             \
     $(cdir)/zgeisai_upper.cpp             \
-    $(cdir)/zsyisai.cpp                   \
 
 # dummy to compensate for routines not included in release
 libsparse_src += \

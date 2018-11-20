@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.3.0) --
+#   -- MAGMA (version 2.4.0) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date November 2017
+#      @date June 2018
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -52,13 +52,20 @@ libsparse_src += \
 	$(cdir)/magma_zcuspmm.cpp             \
 	$(cdir)/magma_zcuspaxpy.cpp           \
 
+# Mixed precision SpMV
+libsparse_src += \
+        $(cdir)/zcgecsrmv_mixed_prec.cu        \
 
 # Iterative factorizations
 libsparse_src += \
 	$(cdir)/zparilu.cpp		      \
 	$(cdir)/zparilu_kernels.cu            \
 	$(cdir)/zparic_kernels.cu             \
-	
+	$(cdir)/zparilut_kernels.cu           \
+	$(cdir)/zparilut_candidates.cu        \
+	$(cdir)/magma_zthrsrm.cu	      \
+	$(cdir)/magma_zpreselect.cu           \
+
 # Auxiliary routines
 libsparse_src += \
 	$(cdir)/zcompact.cu                   \
@@ -67,15 +74,16 @@ libsparse_src += \
 	$(cdir)/zgecsrreimsplit.cu            \
 	$(cdir)/zgedensereimsplit.cu          \
 	$(cdir)/magma_zmconjugate.cu          \
+	$(cdir)/magma_zget_rowptr.cu          \
+	$(cdir)/magma_zmatrixtools_gpu.cu     \
+
+# Big data analytics
+libsparse_src += \
+	$(cdir)/zjaccard_weights.cu    \
 	
 # ISAI
 libsparse_src += \
-	$(cdir)/zgeisai.cu	\
-	$(cdir)/zgeisai_8.cu      \
-	$(cdir)/zgeisai_16.cu      \
-	$(cdir)/zgeisai_32.cu      \
 	$(cdir)/zgeisai_trsv.cu           \
-	$(cdir)/zgeblockstruct.cu	\
 	$(cdir)/zgeisai_maxblock.cu	\
 	$(cdir)/zgeisai_batched32.cu      \
 
@@ -83,7 +91,7 @@ libsparse_src += \
 libsparse_src += \
 	$(cdir)/zge3pt.cu                   \
 	
-	
+
 # Tester routines
 libsparse_src += \
 	$(cdir)/zmergeblockkrylov.cu          \

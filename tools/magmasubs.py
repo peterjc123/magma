@@ -187,6 +187,7 @@ lapack = [
     ('sgeqp3',         'dgeqp3',         'cgeqp3',         'zgeqp3'          ),
     ('sgeqr2',         'dgeqr2',         'cgeqr2',         'zgeqr2'          ),
     ('sgeqrf',         'dgeqrf',         'cgeqrf',         'zgeqrf'          ),
+    ('sgerqf',         'dgerqf',         'cgerqf',         'zgerqf'          ),
     ('sgeqrs',         'dgeqrs',         'cgeqrs',         'zgeqrs'          ),
     ('sgeqrt',         'dgeqrt',         'cgeqrt',         'zgeqrt'          ),
     ('sgerfs',         'dgerfs',         'cgerfs',         'zgerfs'          ),
@@ -200,6 +201,8 @@ lapack = [
     ('sgetrf',         'dgetrf',         'cgetrf',         'zgetrf'          ),
     ('sgetri',         'dgetri',         'cgetri',         'zgetri'          ),
     ('sgetrs',         'dgetrs',         'cgetrs',         'zgetrs'          ),
+    ('sgglse',         'dgglse',         'cgglse',         'zgglse'          ),
+    ('sggrqf',         'dggrqf',         'cggrqf',         'zggrqf'          ),
     ('shseqr',         'dhseqr',         'chseqr',         'zhseqr'          ),
     ('shst01',         'dhst01',         'chst01',         'zhst01'          ),
     ('slabad',         'dlabad',         'slabad',         'dlabad'          ),
@@ -256,6 +259,7 @@ lapack = [
     ('sormlq',         'dormlq',         'cunmlq',         'zunmlq'          ),
     ('sormql',         'dormql',         'cunmql',         'zunmql'          ),
     ('sormqr',         'dormqr',         'cunmqr',         'zunmqr'          ),
+    ('sormrq',         'dormrq',         'cunmrq',         'zunmrq'          ),
     ('sormr2',         'dormr2',         'cunmr2',         'zunmr2'          ),
     ('sormtr',         'dormtr',         'cunmtr',         'zunmtr'          ),
     ('sort01',         'dort01',         'cunt01',         'zunt01'          ),
@@ -331,10 +335,12 @@ subs = {
     # ----- Preprocessor
     ('#define PRECISION_d',       '#define PRECISION_z'     ),
     ('#define PRECISION_s',       '#define PRECISION_c'     ),
-    ('#define REAL',              '#define COMPLEX'         ),
     ('#undef PRECISION_d',        '#undef PRECISION_z'      ),
     ('#undef PRECISION_s',        '#undef PRECISION_c'      ),
-    ('#undef REAL',               '#undef COMPLEX'          ),
+    ('#define REAL',              '#define COMPLEX'         ),  # deprecated
+    ('#undef REAL',               '#undef COMPLEX'          ),  # deprecated
+    ('#define MAGMA_REAL',        '#define MAGMA_COMPLEX'   ),
+    ('#undef MAGMA_REAL',         '#undef MAGMA_COMPLEX'    ),
 
     # ----- Text
     ('symmetric',                 'hermitian'               ),
@@ -427,12 +433,16 @@ subs = {
     ('s',              'd',              'c',              'z'               ),
 
     # ----- Preprocessor
-    ('#define PRECISION_s', '#define PRECISION_d', '#define PRECISION_c', '#define PRECISION_z' ),
-    ('#undef PRECISION_s',  '#undef PRECISION_d',  '#undef PRECISION_c',  '#undef PRECISION_z'  ),
-    ('#define REAL',        '#define REAL',        '#define COMPLEX',     '#define COMPLEX'     ),
-    ('#undef REAL',         '#undef REAL',         '#undef COMPLEX',      '#undef COMPLEX'      ),
-    ('#define SINGLE',      '#define DOUBLE',      '#define SINGLE',      '#define DOUBLE'      ),
-    ('#undef SINGLE',       '#undef DOUBLE',       '#undef SINGLE',       '#undef DOUBLE'       ),
+    ('#define PRECISION_s',  '#define PRECISION_d',  '#define PRECISION_c',   '#define PRECISION_z'  ),
+    ('#undef PRECISION_s',   '#undef PRECISION_d',   '#undef PRECISION_c',    '#undef PRECISION_z'   ),
+    ('#define REAL',         '#define REAL',         '#define COMPLEX',       '#define COMPLEX'      ),  # deprecated
+    ('#undef REAL',          '#undef REAL',          '#undef COMPLEX',        '#undef COMPLEX'       ),  # deprecated
+    ('#define MAGMA_REAL',   '#define MAGMA_REAL',   '#define MAGMA_COMPLEX', '#define MAGMA_COMPLEX'),
+    ('#undef MAGMA_REAL',    '#undef MAGMA_REAL',    '#undef MAGMA_COMPLEX',  '#undef MAGMA_COMPLEX' ),
+    ('#define SINGLE',       '#define DOUBLE',       '#define SINGLE',        '#define DOUBLE'       ),  # deprecated
+    ('#undef SINGLE',        '#undef DOUBLE',        '#undef SINGLE',         '#undef DOUBLE'        ),  # deprecated
+    ('#define MAGMA_SINGLE', '#define MAGMA_DOUBLE', '#define MAGMA_SINGLE',  '#define MAGMA_DOUBLE' ),
+    ('#undef MAGMA_SINGLE',  '#undef MAGMA_DOUBLE',  '#undef MAGMA_SINGLE',   '#undef MAGMA_DOUBLE'  ),
 
     # ----- Text
     ('symmetric',      'symmetric',      'hermitian',      'hermitian'       ),
@@ -628,6 +638,9 @@ subs = {
 
     # ----- SPARSE Iterative Eigensolvers
     ('slobpcg',        'dlobpcg',        'clobpcg',        'zlobpcg'         ),
+
+    # ----- SPARSE Big data analytics
+    ('sjaccard',       'djaccard',       'cjaccard',       'zjaccard'        ),
 
     # ----- SPARSE direct solver interface (PARDISO)
     ('spardiso',       'dpardiso',       'cpardiso',       'zpardiso'        ),

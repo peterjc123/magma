@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Raffaele Solca
        @author Azzam Haidar
@@ -126,10 +126,6 @@
     @param[out]
     w       DOUBLE PRECISION array, dimension (N)
             If INFO = 0, the eigenvalues in ascending order.
-
-    @param[out]
-    work    (workspace) DOUBLE PRECISION array, dimension (MAX(1,LWORK))
-            On exit, if INFO = 0, WORK[0] returns the optimal LWORK.
 
     @param[out]
     work    (workspace) DOUBLE PRECISION array, dimension (MAX(1,LWORK))

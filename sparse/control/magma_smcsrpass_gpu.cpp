@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from sparse/control/magma_zmcsrpass_gpu.cpp, normal z -> s, Wed Nov 15 00:34:24 2017
+       @generated from sparse/control/magma_zmcsrpass_gpu.cpp, normal z -> s, Mon Jun 25 18:24:26 2018
        @author Hartwig Anzt
 */
 
@@ -78,6 +78,7 @@ magma_scsrset_gpu(
     A->dval = val;
     A->dcol = col;
     A->drow = row;
+    A->ownership = MagmaFalse;
 
     return MAGMA_SUCCESS;
 }
@@ -144,6 +145,7 @@ magma_scsrget_gpu(
         *val = A.dval;
         *col = A.dcol;
         *row = A.drow;
+        A.ownership = MagmaFalse;
     } else {
         CHECK( magma_smconvert( A, &A_CSR, A.storage_type, Magma_CSR, queue ));
         CHECK( magma_smtransfer( A_CSR, &A_DEV, A.memory_location, Magma_DEV, queue ));

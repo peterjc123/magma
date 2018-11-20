@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
-       @generated from testing/testing_zunmlq.cpp, normal z -> s, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zunmlq.cpp, normal z -> s, Mon Jun 25 18:24:20 2018
 */
 // includes, system
 #include <stdlib.h>
@@ -99,7 +99,7 @@ int main( int argc, char** argv )
             lapackf77_slacpy( "Full", &m, &n, C, &ldc, R, &ldc );
             
             // A is k x nn
-            magma_generate_matrix( opts, k, nn, nullptr, A, lda );
+            magma_generate_matrix( opts, k, nn, A, lda );
             
             // compute LQ factorization to get Householder vectors in A, tau
             magma_sgelqf( k, nn, A, lda, tau, W, lwork_max, &info );

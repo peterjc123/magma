@@ -384,6 +384,18 @@ if ( WIN32 )
 		${CUDA_cusparse_LIBRARY}
 	)
 	
+	# no Fortran files at the moment (how to test libmagma_all_f is not empty?),
+	# but keep this around for future reference.
+	#
+	##  ...so make a separate library out of Fortran files. Ugh.
+	## add_library( magmaf ${libmagma_all_f} )
+	## target_link_libraries( magmaf
+	##     ${LAPACK_LIBRARIES}
+	##     ${CUDA_CUDART_LIBRARY}
+	##     ${CUDA_CUBLAS_LIBRARIES}
+	##     ${CUDA_cusparse_LIBRARY}
+	## )
+	
 	set( LIBS tester lapacktest magma )  ##magmaf )
 else()
 	# Unix doesn't seem to have a problem with mixing C, CUDA, and Fortran files

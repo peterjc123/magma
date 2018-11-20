@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from testing/testing_zgetf2_gpu.cpp, normal z -> s, Wed Nov 15 00:34:24 2017
+       @generated from testing/testing_zgetf2_gpu.cpp, normal z -> s, Mon Jun 25 18:24:19 2018
 */
 // includes, system
 #include <stdlib.h>
@@ -106,7 +106,7 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_smalloc( &d_A,  ldda*N ));
             
             /* Initialize the matrix */
-            magma_generate_matrix( opts, M, N, nullptr, h_A, lda );
+            magma_generate_matrix( opts, M, N, h_A, lda );
             lapackf77_slacpy( MagmaFullStr, &M, &N, h_A, &lda, h_R, &lda );
 
             real_Double_t set_time = magma_wtime();

@@ -1,0 +1,209 @@
+/*
+    -- MAGMA (version 2.4.0) --
+       Univ. of Tennessee, Knoxville
+       Univ. of California, Berkeley
+       Univ. of Colorado, Denver
+       @date June 2018
+
+       @generated from testing/testing_zgglse.cpp, normal z -> s, Mon Jun 25 18:24:21 2018
+
+*/
+
+// includes, system
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+// includes, project
+#include "flops.h"
+#include "magma_v2.h"
+#include "magma_lapack.h"
+#include "testings.h"
+
+
+/* ////////////////////////////////////////////////////////////////////////////
+   -- Testing sgels
+*/
+int main( int argc, char** argv )
+{
+    TESTING_CHECK( magma_init() );
+    magma_print_environment();
+    
+    real_Double_t    gflops, gpu_perf, gpu_time, cpu_perf, cpu_time;
+    float           gpu_err1, gpu_err2, cpu_err1, cpu_err2, work[1];
+    float  c_one     = MAGMA_S_ONE;
+    float  c_neg_one = MAGMA_S_NEG_ONE;
+    float *h_A, *h_A2, *h_B, *h_B2, *h_R, *h_work, tmp[1], unused[1];
+    float *h_c, *h_d, *h_x, *h_c2, *h_d2, *h_x2;
+    magma_int_t M, N, size, P, lda, ldb, nb, info;
+    magma_int_t lhwork;
+    magma_int_t ione     = 1;
+    magma_int_t ISEED[4] = {0,0,0,1};
+
+    magma_opts opts;
+    opts.parse_opts( argc, argv );
+ 
+    int status = 0;
+
+    printf("%%                                                          ||c-Ax||/||d-Bx||  ||c-Ax||/||d-Bx||   \n");
+    printf("%%   M     N    P   CPU Gflop/s (sec)   GPU Gflop/s (sec)          CPU                GPU          \n");
+    printf("%%==================================================================================================\n");
+    for( int itest = 0; itest < opts.ntest; ++itest ) {
+        for( int iter = 0; iter < opts.niter; ++iter ) {
+            M = opts.msize[itest];
+            N = opts.nsize[itest];
+            P = opts.ksize[itest];
+            if ( !( P<=N && N <=M+P) ) {
+                printf( "%5lld %5lld %5lld   skipping because we don't have P <= N <= M+P.\n", 
+                        (long long) M, (long long) N, (long long) P );
+                continue;
+            }
+            lda    = M;
+            ldb    = P;
+            nb     = magma_get_sgeqrf_nb( M, N );
+            gflops = (FLOPS_SGEQRF( M, N ) + FLOPS_SGEQRS( M, N, P )) / 1e9;
+            
+            // query for workspace size
+            lhwork = -1;
+            lapackf77_sgglse( &M, &N, &P,
+                              unused, &lda,
+                              unused, &ldb,
+                              unused, unused, unused,
+                              tmp, &lhwork, &info );
+            lhwork = (magma_int_t) MAGMA_S_REAL( tmp[0] );
+            lhwork = max(lhwork, M*nb + P + min(M,N));
+            lhwork = max(lhwork, 2*nb*nb );
+
+            TESTING_CHECK( magma_smalloc_cpu( &h_A,    lda*N     ));
+            TESTING_CHECK( magma_smalloc_pinned( &h_A2,   lda*N     ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_B,    ldb*N  ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_B2,   ldb*N  ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_R,    ldb*N  ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_work, lhwork    ));
+            
+            TESTING_CHECK( magma_smalloc_cpu( &h_c , M  ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_d , P  ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_x , N  ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_c2, M  ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_d2, P  ));
+            TESTING_CHECK( magma_smalloc_cpu( &h_x2, N  ));
+
+            /* Initialize the matrices */
+            magma_generate_matrix( opts, M, N, h_A, lda );
+            lapackf77_slacpy( MagmaFullStr, &M, &N, h_A, &lda, h_A2, &lda );
+            
+            // make random RHS
+            size = ldb*N;
+            lapackf77_slarnv( &ione, ISEED, &size, h_B );
+            lapackf77_slacpy( MagmaFullStr, &P, &N, h_B, &ldb, h_R , &ldb );
+            lapackf77_slacpy( MagmaFullStr, &P, &N, h_B, &ldb, h_B2, &ldb );
+
+            lapackf77_slarnv( &ione, ISEED, &M, h_c );
+            lapackf77_slarnv( &ione, ISEED, &P, h_d );
+            lapackf77_slarnv( &ione, ISEED, &N, h_x );
+            lapackf77_slacpy( MagmaFullStr, &M, &ione, h_c, &M, h_c2, &M );
+            lapackf77_slacpy( MagmaFullStr, &P, &ione, h_d, &P, h_d2, &P );
+            lapackf77_slacpy( MagmaFullStr, &N, &ione, h_x, &N, h_x2, &N );
+            
+            /* ====================================================================
+               Performs operation using MAGMA
+               =================================================================== */
+            gpu_time = magma_wtime();
+            magma_sgglse( M, N, P, 
+                          h_A2, lda,
+                          h_B2, ldb, 
+                          h_c2, h_d2, h_x2,
+                          h_work, lhwork, &info );
+            gpu_time = magma_wtime() - gpu_time;
+            gpu_perf = gflops / gpu_time;
+            if (info != 0) {
+                printf("magma_sgglse returned error %lld: %s.\n",
+                       (long long) info, magma_strerror( info ));
+            }
+            
+            // compute the residual
+            lapackf77_slacpy( MagmaFullStr, &M, &ione, h_c, &M, h_c2, &M );
+            blasf77_sgemm( MagmaNoTransStr, MagmaNoTransStr, &M, &ione, &N,
+                           &c_neg_one, h_A, &lda,
+                                       h_x2, &N,
+                           &c_one,     h_c2, &M );
+            gpu_err1 = lapackf77_slange("f", &M, &ione, h_c2, &M, work); 
+
+            lapackf77_slacpy( MagmaFullStr, &P, &ione, h_d, &P, h_d2, &P );
+            blasf77_sgemm( MagmaNoTransStr, MagmaNoTransStr, &P, &ione, &N,
+                           &c_neg_one, h_B, &ldb,
+                           h_x2, &N,
+                           &c_one,     h_d2, &P );
+            gpu_err2 = lapackf77_slange("f", &P, &ione, h_d2, &P, work);
+
+            /* =====================================================================
+               Performs operation using LAPACK
+               =================================================================== */
+            lapackf77_slacpy( MagmaFullStr, &M, &N, h_A, &lda, h_A2, &lda );
+            lapackf77_slacpy( MagmaFullStr, &P, &N, h_B, &ldb, h_B2, &ldb );
+            
+            lapackf77_slacpy( MagmaFullStr, &M, &ione, h_c, &M, h_c2, &M );
+            lapackf77_slacpy( MagmaFullStr, &P, &ione, h_d, &P, h_d2, &P );
+            lapackf77_slacpy( MagmaFullStr, &N, &ione, h_x, &N, h_x2, &N );
+
+            cpu_time = magma_wtime();
+            lapackf77_sgglse( &M, &N, &P,
+                              h_A2, &lda, 
+                              h_B2, &ldb,
+                              h_c2, h_d2, h_x2, 
+                              h_work, &lhwork, &info );
+            cpu_time = magma_wtime() - cpu_time;
+            cpu_perf = gflops / cpu_time;
+            if (info != 0) {
+                printf("lapackf77_sgels returned error %lld: %s.\n",
+                       (long long) info, magma_strerror( info ));
+            }
+            
+            // compute the residual
+            lapackf77_slacpy( MagmaFullStr, &M, &ione, h_c, &M, h_c2, &M );
+            blasf77_sgemm( MagmaNoTransStr, MagmaNoTransStr, &M, &ione, &N,
+                           &c_neg_one, h_A, &lda,
+                           h_x2, &N,
+                           &c_one,     h_c2, &M );
+            cpu_err1 = lapackf77_slange("f", &M, &ione, h_c2, &M, work);
+
+            lapackf77_slacpy( MagmaFullStr, &P, &ione, h_d, &P, h_d2, &P );
+            blasf77_sgemm( MagmaNoTransStr, MagmaNoTransStr, &P, &ione, &N,
+                           &c_neg_one, h_B, &ldb,
+                           h_x2, &N,
+                           &c_one,     h_d2, &P );
+            cpu_err2 = lapackf77_slange("f", &P, &ione, h_d2, &P, work);
+
+            printf("%5lld %5lld %5lld   %7.2f (%7.2f)   %7.2f (%7.2f)  %8.2e/%8.2e  %8.2e/%8.2e",
+                   (long long) M, (long long) N, (long long) P,
+                   cpu_perf, cpu_time, gpu_perf, gpu_time, cpu_err1, cpu_err2, gpu_err1, gpu_err2);
+            
+            printf( "  %s\n", (0.9*gpu_err1 < cpu_err1 && 0.5*gpu_err2 < cpu_err2 ? "ok" : "failed"));
+            status += ! (0.9*gpu_err1 < cpu_err1 && 0.9*gpu_err2 < cpu_err2);
+
+            magma_free_cpu( h_A    );
+            magma_free_pinned( h_A2   );
+            magma_free_cpu( h_B    );
+            magma_free_cpu( h_B2   );
+            magma_free_cpu( h_R    );
+            magma_free_cpu( h_work );
+            
+            magma_free_cpu( h_c    );
+            magma_free_cpu( h_d    );
+            magma_free_cpu( h_x    );
+            magma_free_cpu( h_c2   );
+            magma_free_cpu( h_d2   );
+            magma_free_cpu( h_x2   );
+
+            fflush( stdout );
+        }
+        if ( opts.niter > 1 ) {
+            printf( "\n" );
+        }
+    }
+
+    opts.cleanup();
+    TESTING_CHECK( magma_finalize() );
+    return status;
+}

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from magmablas/zlaswp_batched.cu, normal z -> d, Wed Nov 15 00:34:23 2017
+       @generated from magmablas/zlaswp_batched.cu, normal z -> d, Mon Jun 25 18:24:14 2018
        
        @author Azzam Haidar
        @author Tingxing Dong
@@ -14,6 +14,7 @@
 #include "batched_kernel_param.h"
 
 #define BLK_SIZE 256
+#define DLASWP_COL_NTH 32
 // SWP_WIDTH is number of threads in a block
 // 64 and 256 are better on Kepler; 
 extern __shared__ double shared_data[];
@@ -43,6 +44,7 @@ void dlaswp_rowparallel_devfunc(
     {
         int mynewroworig = pivinfo[tid]-1; //-1 to get the index in C
         int itsreplacement = pivinfo[mynewroworig] -1; //-1 to get the index in C
+        //printf("%d: mynewroworig = %d, itsreplacement = %d\n", tid, mynewroworig, itsreplacement);
         #pragma unroll
         for (int i=0; i < width; i++)
         {
@@ -81,24 +83,30 @@ void dlaswp_rowparallel_kernel(
 __global__ 
 void dlaswp_rowparallel_kernel_batched(
                                 int n, int width, int height,
-                                double **input_array, int ldi, 
-                                double **output_array, int ldo,
+                                double **input_array, int input_i, int input_j, int ldi, 
+                                double **output_array, int output_i, int output_j, int ldo,
                                 magma_int_t** pivinfo_array)
 {
     int batchid = blockIdx.z;
-    dlaswp_rowparallel_devfunc(n, width, height, input_array[batchid], ldi, output_array[batchid], ldo, pivinfo_array[batchid]);
+    dlaswp_rowparallel_devfunc( n, width, height, 
+                                input_array[batchid]  + input_j  * ldi +  input_i, ldi, 
+                                output_array[batchid] + output_j * ldo + output_i, ldo, 
+                                pivinfo_array[batchid]);
 }
 
 
 /******************************************************************************/
 extern "C" void
 magma_dlaswp_rowparallel_batched( magma_int_t n, 
-                       double** input_array, magma_int_t ldi,
-                       double** output_array, magma_int_t ldo,
+                       double**  input_array, magma_int_t  input_i, magma_int_t  input_j, magma_int_t ldi,
+                       double** output_array, magma_int_t output_i, magma_int_t output_j, magma_int_t ldo,
                        magma_int_t k1, magma_int_t k2,
                        magma_int_t **pivinfo_array, 
                        magma_int_t batchCount, magma_queue_t queue)
 {
+#define  input_array(i,j)  input_array, i, j
+#define output_array(i,j) output_array, i, j
+
     if (n == 0 ) return;
     int height = k2-k1;
     if ( height  > 1024) 
@@ -114,21 +122,23 @@ magma_dlaswp_rowparallel_batched( magma_int_t n,
         size_t shmem = sizeof(double) * height * n;
         dlaswp_rowparallel_kernel_batched
             <<< grid, height, shmem, queue->cuda_stream() >>>
-            ( n, n, height, input_array, ldi, output_array, ldo, pivinfo_array ); 
+            ( n, n, height, input_array, input_i, input_j, ldi, output_array, output_i, output_j, ldo, pivinfo_array ); 
     }
     else
     {
         size_t shmem = sizeof(double) * height * SWP_WIDTH;
         dlaswp_rowparallel_kernel_batched
             <<< grid, height, shmem, queue->cuda_stream() >>>
-            ( n, SWP_WIDTH, height, input_array, ldi, output_array, ldo, pivinfo_array );
+            ( n, SWP_WIDTH, height, input_array, input_i, input_j, ldi, output_array, output_i, output_j, ldo, pivinfo_array );
     }
+#undef  input_array
+#undef output_attay
 }
 
 
 /******************************************************************************/
 extern "C" void
-magma_dlaswp_rowparallel(
+magma_dlaswp_rowparallel_native(
     magma_int_t n, 
     double* input, magma_int_t ldi,
     double* output, magma_int_t ldo,
@@ -169,7 +179,7 @@ magma_dlaswp_rowparallel(
 __global__ void dlaswp_rowserial_kernel_batched( int n, double **dA_array, int lda, int k1, int k2, magma_int_t** ipiv_array )
 {
     double* dA = dA_array[blockIdx.z];
-    magma_int_t *d_ipiv = ipiv_array[blockIdx.z];
+    magma_int_t *dipiv = ipiv_array[blockIdx.z];
     
     unsigned int tid = threadIdx.x + blockDim.x*blockIdx.x;
     
@@ -181,7 +191,33 @@ __global__ void dlaswp_rowserial_kernel_batched( int n, double **dA_array, int l
 
         for (int i1 = k1; i1 < k2; i1++) 
         {
-            int i2 = d_ipiv[i1] - 1;  // Fortran index, switch i1 and i2
+            int i2 = dipiv[i1] - 1;  // Fortran index, switch i1 and i2
+            if ( i2 != i1)
+            {
+                A1 = dA[i1 + tid * lda];
+                dA[i1 + tid * lda] = dA[i2 + tid * lda];
+                dA[i2 + tid * lda] = A1;
+            }
+        }
+    }
+}
+
+
+/******************************************************************************/
+// serial swap that does swapping one row by one row
+__global__ void dlaswp_rowserial_kernel_native( int n, magmaDouble_ptr dA, int lda, int k1, int k2, magma_int_t* dipiv )
+{
+    unsigned int tid = threadIdx.x + blockDim.x*blockIdx.x;
+    
+    //k1--;
+    //k2--;
+
+    if (tid < n) {
+        double A1;
+
+        for (int i1 = k1; i1 < k2; i1++) 
+        {
+            int i2 = dipiv[i1] - 1;  // Fortran index, switch i1 and i2
             if ( i2 != i1)
             {
                 A1 = dA[i1 + tid * lda];
@@ -215,12 +251,29 @@ magma_dlaswp_rowserial_batched(magma_int_t n, double** dA_array, magma_int_t lda
 
 
 /******************************************************************************/
-// serial swap that does swapping one column by one column
-__global__ void dlaswp_columnserial_kernel_batched( int n, double **dA_array, int lda, int k1, int k2, magma_int_t** ipiv_array )
+// serial swap that does swapping one row by one row, similar to LAPACK
+// K1, K2 are in Fortran indexing  
+extern "C" void
+magma_dlaswp_rowserial_native(magma_int_t n, magmaDouble_ptr dA, magma_int_t lda,
+                   magma_int_t k1, magma_int_t k2,
+                   magma_int_t* dipiv, magma_queue_t queue)
 {
-    double* dA = dA_array[blockIdx.z];
-    magma_int_t *d_ipiv = ipiv_array[blockIdx.z];
-    
+    if (n == 0) return;
+
+    int blocks = magma_ceildiv( n, BLK_SIZE );
+    dim3  grid(blocks, 1, 1);
+
+    dlaswp_rowserial_kernel_native
+        <<< grid, max(BLK_SIZE, n), 0, queue->cuda_stream() >>>
+        (n, dA, lda, k1, k2, dipiv);
+}
+
+
+
+/******************************************************************************/
+// serial swap that does swapping one column by one column
+__device__ void dlaswp_columnserial_devfunc(int n, magmaDouble_ptr dA, int lda, int k1, int k2, magma_int_t* dipiv )
+{
     unsigned int tid = threadIdx.x + blockDim.x*blockIdx.x;
     k1--;
     k2--;
@@ -233,7 +286,7 @@ __global__ void dlaswp_columnserial_kernel_batched( int n, double **dA_array, in
         {
             for (int i1 = k1; i1 <= k2; i1++) 
             {
-                int i2 = d_ipiv[i1] - 1;  // Fortran index, switch i1 and i2
+                int i2 = dipiv[i1] - 1;  // Fortran index, switch i1 and i2
                 if ( i2 != i1)
                 {
                     A1 = dA[i1 * lda + tid];
@@ -243,9 +296,10 @@ __global__ void dlaswp_columnserial_kernel_batched( int n, double **dA_array, in
             }
         } else
         {
+            
             for (int i1 = k1; i1 >= k2; i1--) 
             {
-                int i2 = d_ipiv[i1] - 1;  // Fortran index, switch i1 and i2
+                int i2 = dipiv[i1] - 1;  // Fortran index, switch i1 and i2
                 if ( i2 != i1)
                 {
                     A1 = dA[i1 * lda + tid];
@@ -258,9 +312,37 @@ __global__ void dlaswp_columnserial_kernel_batched( int n, double **dA_array, in
 }
 
 
+__global__ void dlaswp_columnserial_kernel_batched( int n, double **dA_array, int lda, int k1, int k2, magma_int_t** ipiv_array )
+{
+    double* dA = dA_array[blockIdx.z];
+    magma_int_t *dipiv = ipiv_array[blockIdx.z];
+
+    dlaswp_columnserial_devfunc(n, dA, lda, k1, k2, dipiv);
+}
+
+__global__ void dlaswp_columnserial_kernel( int n, magmaDouble_ptr dA, int lda, int k1, int k2, magma_int_t* dipiv )
+{
+    dlaswp_columnserial_devfunc(n, dA, lda, k1, k2, dipiv);
+}
+
 /******************************************************************************/
 // serial swap that does swapping one column by one column
 // K1, K2 are in Fortran indexing  
+extern "C" void
+magma_dlaswp_columnserial(
+    magma_int_t n, magmaDouble_ptr dA, magma_int_t lda, 
+    magma_int_t k1, magma_int_t k2, 
+    magma_int_t *dipiv, magma_queue_t queue)
+{
+    if (n == 0 ) return;
+
+    int blocks = magma_ceildiv( n, DLASWP_COL_NTH );
+    dim3  grid(blocks, 1, 1);
+
+    dlaswp_columnserial_kernel<<< grid, DLASWP_COL_NTH, 0, queue->cuda_stream() >>>
+    (n, dA, lda, k1, k2, dipiv);
+}
+
 extern "C" void
 magma_dlaswp_columnserial_batched(magma_int_t n, double** dA_array, magma_int_t lda,
                    magma_int_t k1, magma_int_t k2,
@@ -269,10 +351,10 @@ magma_dlaswp_columnserial_batched(magma_int_t n, double** dA_array, magma_int_t 
 {
     if (n == 0 ) return;
 
-    int blocks = magma_ceildiv( n, BLK_SIZE );
+    int blocks = magma_ceildiv( n, DLASWP_COL_NTH );
     dim3  grid(blocks, 1, batchCount);
 
     dlaswp_columnserial_kernel_batched
-        <<< grid, min(BLK_SIZE, n), 0, queue->cuda_stream() >>>
+        <<< grid, min(DLASWP_COL_NTH,n), 0, queue->cuda_stream() >>>
         (n, dA_array, lda, k1, k2, ipiv_array);
 }

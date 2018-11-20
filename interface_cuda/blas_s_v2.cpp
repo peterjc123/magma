@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Mark Gates
-       @generated from interface_cuda/blas_z_v2.cpp, normal z -> s, Wed Nov 15 00:34:18 2017
+       @generated from interface_cuda/blas_z_v2.cpp, normal z -> s, Mon Jun 25 18:24:04 2018
 */
 #include "magma_internal.h"
 #include "error.h"
@@ -52,7 +52,7 @@ magma_isamax(
 
 /***************************************************************************//**
     @return Index of element of vector x having min. absolute value;
-            \f$ \text{argmax}_i\; | real(x_i) | + | imag(x_i) | \f$.
+            \f$ \text{argmin}_i\; | real(x_i) | + | imag(x_i) | \f$.
 
     @param[in]
     n       Number of elements in vector x. n >= 0.

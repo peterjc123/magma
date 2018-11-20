@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> c d s
        @author Ichitaro Yamazaki
@@ -35,7 +35,7 @@ void init_matrix(
         iseed_save[i] = opts.iseed[i];
     }
 
-    magma_generate_matrix( opts, m, n, nullptr, A, lda );
+    magma_generate_matrix( opts, m, n, A, lda );
 
     // restore iseed
     for (magma_int_t i = 0; i < 4; ++i) {

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
   
-       @generated from testing/testing_znan_inf.cpp, normal z -> d, Wed Nov 15 00:34:23 2017
+       @generated from testing/testing_znan_inf.cpp, normal z -> d, Mon Jun 25 18:24:18 2018
        @author Mark Gates
 */
 // includes, system
@@ -65,15 +65,15 @@ int main( int argc, char** argv)
     double inf_inf = MAGMA_D_MAKE( MAGMA_D_INF, MAGMA_D_INF );
     double inf_nan = MAGMA_D_MAKE( MAGMA_D_INF, MAGMA_D_NAN );
     
-    // ----- isnan
-    magma_assert_warn( ! isnan( MAGMA_D_REAL(a_a)   ), "! isnan( real(a_a)   )" );
-    magma_assert_warn(   isnan( MAGMA_D_REAL(nan_a) ), "  isnan( real(nan_a) )" );
-    magma_assert_warn( ! isnan( MAGMA_D_REAL(inf_a) ), "! isnan( real(inf_a) )" );
+    // ----- std::isnan
+    magma_assert_warn( ! std::isnan( MAGMA_D_REAL(a_a)   ), "! std::isnan( real(a_a)   )" );
+    magma_assert_warn(   std::isnan( MAGMA_D_REAL(nan_a) ), "  std::isnan( real(nan_a) )" );
+    magma_assert_warn( ! std::isnan( MAGMA_D_REAL(inf_a) ), "! std::isnan( real(inf_a) )" );
     
-    // ----- isinf
-    magma_assert_warn( ! isinf( MAGMA_D_REAL(a_a)   ), "! isinf( real(a_a)   )" );
-    magma_assert_warn( ! isinf( MAGMA_D_REAL(nan_a) ), "! isinf( real(nan_a) )" );
-    magma_assert_warn(   isinf( MAGMA_D_REAL(inf_a) ), "  isinf( real(inf_a) )" );
+    // ----- std::isinf
+    magma_assert_warn( ! std::isinf( MAGMA_D_REAL(a_a)   ), "! std::isinf( real(a_a)   )" );
+    magma_assert_warn( ! std::isinf( MAGMA_D_REAL(nan_a) ), "! std::isinf( real(nan_a) )" );
+    magma_assert_warn(   std::isinf( MAGMA_D_REAL(inf_a) ), "  std::isinf( real(inf_a) )" );
     
     // ----- magma_isnan
     magma_assert_warn( ! magma_d_isnan( a_a     ), "! magma_d_isnan( a_a     )" );

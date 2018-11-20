@@ -1,18 +1,24 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @author Hartwig Anzt
 
-       @generated from sparse/blas/zparilu.cpp, normal z -> c, Wed Nov 15 00:34:24 2017
+       @generated from sparse/blas/zparilu.cpp, normal z -> c, Mon Jun 25 18:24:26 2018
 */
 #include "magmasparse_internal.h"
 
 #define PRECISION_c
 
+
+
+// This file is deprecated and will be removed in future.
+// The ParILU/ParIC functionality is provided by 
+// src/cparilu_gpu.cpp and src/cparic_gpu.cpp
+// 
 
 /**
     Purpose
@@ -554,107 +560,3 @@ cleanup:
     return info;
 }
 
-
-/**
-    Purpose
-    -------
-
-    Performs the left triangular solves using the IC preconditioner via Jacobi.
-
-    Arguments
-    ---------
-
-    @param[in]
-    b           magma_c_matrix
-                RHS
-
-    @param[out]
-    x           magma_c_matrix*
-                vector to precondition
-
-    @param[in]
-    precond     magma_c_preconditioner*
-                preconditioner parameters
-                
-    @param[in]
-    queue       magma_queue_t
-                Queue to execute in.
-
-    @ingroup magmasparse_cgepr
-    ********************************************************************/
-extern "C"
-magma_int_t
-magma_capplyiteric_l(
-    magma_c_matrix b,
-    magma_c_matrix *x,
-    magma_c_preconditioner *precond,
-    magma_queue_t queue )
-{
-    magma_int_t info = 0;
-    
-    magma_int_t dofs = precond->L.num_rows;
-    magma_c_solver_par jacobiiter_par;
-    jacobiiter_par.maxiter = precond->maxiter;
-
-    // compute c = D^{-1}b and copy c as initial guess to x
-    CHECK( magma_cjacobisetup_vector_gpu( dofs, b, precond->d,
-                                                precond->work1, x, queue ));
-    // Jacobi iterator
-    CHECK( magma_cjacobiiter_precond( precond->L, x, &jacobiiter_par, precond , queue ));
-
-cleanup:
-    return info;
-}
-
-
-/**
-    Purpose
-    -------
-
-    Performs the right triangular solves using the IC preconditioner via Jacobi.
-
-    Arguments
-    ---------
-
-    @param[in]
-    b           magma_c_matrix
-                RHS
-
-    @param[out]
-    x           magma_c_matrix*
-                vector to precondition
-
-    @param[in]
-    precond     magma_c_preconditioner*
-                preconditioner parameters
-                
-    @param[in]
-    queue       magma_queue_t
-                Queue to execute in.
-
-    @ingroup magmasparse_cgepr
-    ********************************************************************/
-extern "C"
-magma_int_t
-magma_capplyiteric_r(
-    magma_c_matrix b,
-    magma_c_matrix *x,
-    magma_c_preconditioner *precond,
-    magma_queue_t queue )
-{
-    magma_int_t info = 0;
-
-    magma_int_t dofs = precond->U.num_rows;
-    magma_c_solver_par jacobiiter_par;
-    jacobiiter_par.maxiter = precond->maxiter;
-
-    // compute c = D^{-1}b and copy c as initial guess to x
-    CHECK( magma_cjacobisetup_vector_gpu( dofs, b, precond->d,
-                                                precond->work1, x, queue ));
-
-    // Jacobi iterator
-    CHECK( magma_cjacobiiter_precond( precond->U, x, &jacobiiter_par, precond , queue ));
-    
-cleanup:
-    return info;
-}

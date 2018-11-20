@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -56,6 +56,7 @@ magma_zmtransfer(
     
     // make sure the target structure is empty
     magma_zmfree( B, queue );
+    B->ownership = MagmaTrue;
     
     B->val = NULL;
     B->diag = NULL;

@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -78,6 +78,7 @@ magma_zcsrset_gpu(
     A->dval = val;
     A->dcol = col;
     A->drow = row;
+    A->ownership = MagmaFalse;
 
     return MAGMA_SUCCESS;
 }
@@ -144,6 +145,7 @@ magma_zcsrget_gpu(
         *val = A.dval;
         *col = A.dcol;
         *row = A.drow;
+        A.ownership = MagmaFalse;
     } else {
         CHECK( magma_zmconvert( A, &A_CSR, A.storage_type, Magma_CSR, queue ));
         CHECK( magma_zmtransfer( A_CSR, &A_DEV, A.memory_location, Magma_DEV, queue ));

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from include/magmablas_z.h, normal z -> d, Wed Nov 15 00:34:25 2017
+       @generated from include/magmablas_z.h, normal z -> d, Mon Jun 25 18:24:32 2018
 */
 
 #ifndef MAGMABLAS_D_H
@@ -14,7 +14,7 @@
 #include "magma_types.h"
 #include "magma_copy.h"
 
-#define REAL
+#define MAGMA_REAL
 
 #ifdef __cplusplus
 extern "C" {
@@ -1138,7 +1138,7 @@ magma_drotg(
     magmaDouble_ptr s,
     magma_queue_t queue );
 
-#ifdef REAL
+#ifdef MAGMA_REAL
 void
 magma_drotm(
     magma_int_t n,
@@ -1155,7 +1155,7 @@ magma_drotmg(
     magmaDouble_const_ptr y1,
     magmaDouble_ptr param,
     magma_queue_t queue );
-#endif
+#endif  // MAGMA_REAL
 
 void
 magma_dscal(
@@ -1201,7 +1201,7 @@ magma_dger(
     magmaDouble_ptr       dA, magma_int_t ldda,
     magma_queue_t queue );
 
-#ifdef COMPLEX
+#ifdef MAGMA_COMPLEX
 void
 magma_dger(
     magma_int_t m, magma_int_t n,
@@ -1240,7 +1240,7 @@ magma_dsyr2(
     magmaDouble_const_ptr dy, magma_int_t incy,
     magmaDouble_ptr       dA, magma_int_t ldda,
     magma_queue_t queue );
-#endif // COMPLEX
+#endif // MAGMA_COMPLEX
 
 void
 magma_dsymv(
@@ -1400,6 +1400,6 @@ magma_dpotf2_lpin(
 }
 #endif
 
-#undef REAL
+#undef MAGMA_REAL
 
 #endif // MAGMABLAS_D_H

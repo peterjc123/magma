@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.3.0) --
+    -- MAGMA (version 2.4.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2017
+       @date June 2018
 
-       @generated from magmablas/ztrsm_batched.cpp, normal z -> d, Wed Nov 15 00:34:23 2017
+       @generated from magmablas/ztrsm_batched.cpp, normal z -> d, Mon Jun 25 18:24:17 2018
 
        @author Peng Du
        @author Tingxing Dong
@@ -166,7 +166,7 @@
     @ingroup magma_trsm_batched
 *******************************************************************************/
 extern "C"
-void magmablas_dtrsm_outofplace_batched(
+void magmablas_dtrsm_inv_outofplace_batched(
     magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag,
     magma_int_t flag, magma_int_t m, magma_int_t n, 
     double alpha, 
@@ -633,7 +633,7 @@ void magmablas_dtrsm_outofplace_batched(
     @ingroup magma_trsm_batched
 *******************************************************************************/
 extern "C"
-void magmablas_dtrsm_work_batched(
+void magmablas_dtrsm_inv_work_batched(
     magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag,
     magma_int_t flag, magma_int_t m, magma_int_t n, 
     double alpha, 
@@ -672,7 +672,7 @@ void magmablas_dtrsm_work_batched(
         return;
     }
 
-    magmablas_dtrsm_outofplace_batched( 
+    magmablas_dtrsm_inv_outofplace_batched( 
                     side, uplo, transA, diag, flag,
                     m, n, alpha,
                     dA_array,    ldda,
@@ -798,7 +798,7 @@ void magmablas_dtrsm_work_batched(
     @ingroup magma_trsm_batched
 *******************************************************************************/
 extern "C"
-void magmablas_dtrsm_batched(
+void magmablas_dtrsm_inv_batched(
     magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag,
     magma_int_t m, magma_int_t n,
     double alpha,
@@ -871,7 +871,7 @@ void magmablas_dtrsm_batched(
     magma_dset_pointer( dX_array, dX, lddx, 0, 0, size_x, batchCount, queue );
     magma_dset_pointer( dinvA_array, dinvA, DTRTRI_BATCHED_NB, 0, 0, size_dinvA, batchCount, queue );
 
-    magmablas_dtrsm_work_batched( 
+    magmablas_dtrsm_inv_work_batched( 
                     side, uplo, transA, diag, 1, 
                     m, n, alpha,
                     dA_array,    ldda,
