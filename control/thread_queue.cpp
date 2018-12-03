@@ -15,7 +15,7 @@ static void check( int err )
 {
     if ( err != 0 ) {
         fprintf( stderr, "Error: %s (%d)\n", strerror(err), err );
-        throw std::exception();
+        // throw std::exception();
     }
 }
 
@@ -172,7 +172,7 @@ void magma_thread_queue::push_task( magma_task* task )
     check( pthread_mutex_lock( &mutex ));
     if ( quit_flag ) {
         fprintf( stderr, "Error: push_task() called after quit()\n" );
-        throw std::exception();
+        // throw std::exception();
     }
     q.push( task );
     ntask += 1;

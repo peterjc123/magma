@@ -60,6 +60,7 @@ else()
 	message( WARNING "The compiler ${CMAKE_C_COMPILER} doesn't support the -std=c99 flag. Some code may not compile.")
 endif()
 
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -fno-exceptions")
 
 # ----------------------------------------
 # check Fortran name mangling
@@ -79,14 +80,14 @@ endif()
 
 # ----------------------------------------
 # locate OpenMP
-find_package( OpenMP )
-if ( OPENMP_FOUND )
-	message( STATUS "Found OpenMP" )
-	message( STATUS "    OpenMP_C_FLAGS   ${OpenMP_C_FLAGS}" )
-	message( STATUS "    OpenMP_CXX_FLAGS ${OpenMP_CXX_FLAGS}" )
-	set( CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
-	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
-endif()
+# find_package( OpenMP )
+# if ( OPENMP_FOUND )
+# 	message( STATUS "Found OpenMP" )
+# 	message( STATUS "    OpenMP_C_FLAGS   ${OpenMP_C_FLAGS}" )
+# 	message( STATUS "    OpenMP_CXX_FLAGS ${OpenMP_CXX_FLAGS}" )
+# 	set( CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
+# 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
+# endif()
 
 
 # ----------------------------------------
@@ -236,12 +237,20 @@ if ( CUDA_FOUND )
 		set( NV_COMP        "-gencode arch=compute_71,code=compute_71" )
 		message( STATUS "    compile for CUDA arch 7.1 (Volta)" )
 	endif()
-	
+
+	if ( ${GPU_TARGET} MATCHES "All")
+	  set( MIN_ARCH 350)
+	  SET( NV_SM "-gencode arch=compute_35,code=sm_35 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 ")
+	  SET( NV_COMP "")
+	endif()
+
+
 	if ( NOT MIN_ARCH )
 		message( FATAL_ERROR "GPU_TARGET must contain one or more of Fermi, Kepler, Maxwell, Pascal, Volta, or valid sm_[0-9][0-9]" )
 	endif()
 	
-	set( CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -DHAVE_CUBLAS ${NV_SM} ${NV_COMP} ${FORTRAN_CONVENTION}" )
+	set( CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -DHAVE_CUBLAS -Xfatbin -compress-all -Xcompiler -fPIC ${NV_SM} ${NV_COMP} ${FORTRAN_CONVENTION}" )
+	MESSAGE(STATUS "CUDA_NVCC_FLAGS: ${CUDA_NVCC_FLAGS}")
 	add_definitions( "-DHAVE_CUBLAS -DMIN_CUDA_ARCH=${MIN_ARCH}" )
 	message( STATUS "Define -DHAVE_CUBLAS -DMIN_CUDA_ARCH=${MIN_ARCH}" )
 endif()
@@ -252,7 +261,7 @@ endif()
 set( LAPACK_LIBRARIES "" CACHE STRING "Libraries for LAPACK and BLAS, to manually override search" )
 if ( "${LAPACK_LIBRARIES}" STREQUAL "" )
 	message( STATUS "Searching for BLAS and LAPACK. To override, set LAPACK_LIBRARIES using ccmake." )
-	find_package( LAPACK )
+	# find_package( LAPACK )
 else()
 	message( STATUS "User set LAPACK_LIBRARIES. To change, edit LAPACK_LIBRARIES using ccmake (set to empty to enable search)." )
 	# Check existence -- but this may be okay, if the user entered, e.g., -llapack instead of /path/to/lapack.a
@@ -299,7 +308,8 @@ include( ${CMAKE_SOURCE_DIR}/CMake.src )
 # ----------------------------------------
 # common flags
 
-set( LIBS tester lapacktest magma )
+# set( LIBS tester lapacktest magma )
+set( LIBS magma)
 
 if ( WIN32 )
 	# On Windows:
@@ -408,19 +418,33 @@ else()
 	)
 endif()
 
+# set_target_properties(magma PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+# ----------------------------------------
+# compile tester library
+# add_library( tester ${libtest_all} )
+
 
 # ----------------------------------------
 # compile lapacktest library
 # If use fortran, compile only Fortran files, not magma_[sdcz]_no_fortran.cpp
 # else,           compile only C++     files, not Fortran files
-if ( USE_FORTRAN )
-	foreach( f ${liblapacktest_all} )
-		if ( ${f} MATCHES "\\.(f|f90)$" )
-			list( APPEND liblapacktest_all_f ${f} )
-		endif()
-	endforeach()
-	add_library( lapacktest ${liblapacktest_all_f} )
-endif()
+# if ( USE_FORTRAN )
+# 	foreach( f ${liblapacktest_all} )
+# 		if ( ${f} MATCHES "\\.(f|f90)$" )
+# 			list( APPEND liblapacktest_all_f ${f} )
+# 		endif()
+# 	endforeach()
+# 	add_library( lapacktest ${liblapacktest_all_f} )
+# else()
+# 	# alternatively, use only C/C++/CUDA files, including magma_[sdcz]_no_fortran.cpp
+# 	foreach( f ${liblapacktest_all} )
+# 		if ( ${f} MATCHES "\\.(c|cu|cpp)$" )
+# 			list( APPEND liblapacktest_all_cpp ${f} )
+# 		endif()
+# 	endforeach()
+# 	add_library( lapacktest ${liblapacktest_all_cpp} )
+# endif()
 
 
 # ----------------------------------------
@@ -429,6 +453,7 @@ endif()
 # sparse doesn't have Fortran at the moment, so no need for above shenanigans
 include_directories( sparse/include )
 include_directories( sparse/control )
+# include_directories( testing )
 cuda_add_library( magma_sparse ${libsparse_all} )
 target_link_libraries( magma_sparse
 	magma
@@ -438,6 +463,42 @@ target_link_libraries( magma_sparse
 	${CUDA_cusparse_LIBRARY}
 )
 set( LIBS_SPARSE ${LIBS} magma_sparse )
+
+set_target_properties(magma_sparse PROPERTIES POSITION_INDEPENDENT_CODE ON)
+# ----------------------------------------
+# compile each tester
+
+# save testers to testing/
+# save tester lib files to testing_lib/ to avoid cluttering lib/
+# set( CMAKE_RUNTIME_OUTPUT_DIRECTORY testing )
+# set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY testing_lib )
+# set( CMAKE_LIBRARY_OUTPUT_DIRECTORY testing_lib )
+
+# skip Fortran testers, which require an extra file from CUDA
+# foreach( f ${testing_all} )
+# 	if ( ${f} MATCHES "\\.(c|cu|cpp)$" )
+# 		list( APPEND testing_all_cpp ${f} )
+# 	endif()
+# endforeach()
+# foreach( TEST ${testing_all_cpp} )
+# 	string( REGEX REPLACE "\\.(cpp|f90|F90)" "" EXE ${TEST} )
+# 	string( REGEX REPLACE "testing/" "" EXE ${EXE} )
+# 	#message( "${TEST} --> ${EXE}" )
+# 	add_executable( ${EXE} ${TEST} )
+# 	target_link_libraries( ${EXE} ${LIBS} )
+# endforeach()
+
+
+# ----------------------------------------
+# compile each sparse tester
+# set( CMAKE_RUNTIME_OUTPUT_DIRECTORY sparse/testing )
+# foreach( TEST ${sparse_testing_all} )
+# 	string( REGEX REPLACE "\\.(cpp|f90|F90)"     "" EXE ${TEST} )
+# 	string( REGEX REPLACE "sparse/testing/" "" EXE ${EXE} )
+# 	#message( "${TEST} --> ${EXE}" )
+# 	add_executable( ${EXE} ${TEST} )
+# 	target_link_libraries( ${EXE} ${LIBS_SPARSE} )
+# endforeach()
 
 
 # ----------------------------------------
