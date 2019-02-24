@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Azzam Haidar
        @author Ahmad Abdelfattah
 
-       @generated from magmablas/zgetrf_batched_smallsq_shfl.cu, normal z -> d, Mon Jun 25 18:24:15 2018
+       @generated from magmablas/zgetrf_batched_smallsq_shfl.cu, normal z -> d, Wed Jan  2 14:18:51 2019
 */
 
 #include "magma_internal.h"
@@ -66,7 +66,8 @@ dgetrf_batched_smallsq_shfl_kernel( double** dA_array, int ldda,
                 rx_abs_max = sx[j];
             }
         }
-        linfo = ( rx_abs_max == MAGMA_D_ZERO ) ? i+1 : 0;
+        linfo = ( rx_abs_max == MAGMA_D_ZERO && linfo == 0) ? (i+1) : linfo;
+        //linfo = ( rx_abs_max == MAGMA_D_ZERO ) ? min(linfo, i+1) : 0;
 
         if(rowid == max_id){
             sipiv[i] = max_id;

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from testing/testing_zgetrf_gpu.cpp, normal z -> c, Mon Jun 25 18:24:20 2018
+       @generated from testing/testing_zgetrf_gpu.cpp, normal z -> c, Wed Jan  2 14:18:52 2019
        @author Mark Gates
 */
 // includes, system
@@ -236,6 +236,9 @@ int main( int argc, char** argv)
             }
             else if ( opts.version == 2 ) {
                 magma_cgetrf_nopiv_gpu( M, N, d_A, ldda, &info);
+            }
+            else if ( opts.version == 3 ) {
+                magma_cgetrf_native( M, N, d_A, ldda, ipiv, &info);
             }
             gpu_time = magma_wtime() - gpu_time;
             gpu_perf = gflops / gpu_time;

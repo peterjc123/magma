@@ -1,15 +1,15 @@
 
 /*
-   -- MAGMA (version 2.4.0) --
+   -- MAGMA (version 2.5.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date June 2018
+   @date January 2019
 
    @author Azzam Haidar
    @author Ahmad Ahmad
 
-   @generated from magmablas/zpotf2_devicesfunc.cuh, normal z -> c, Mon Jun 25 18:24:32 2018
+   @generated from magmablas/zpotf2_devicesfunc.cuh, normal z -> c, Wed Jan  2 14:18:55 2019
  */
 
 
@@ -37,12 +37,12 @@ static inline __device__ void cpotf2_sminout_anywidth_device(const int m, const 
         #ifdef ENABLE_COND1
         }
         #endif
-        __syncthreads();
+        __syncthreads(); // must sync to make sure that A[iter + iter * lda] is read by all threads before modifying it
         #ifdef ENABLE_COND1
         if ( tx >= iter && tx < m )
         {
         #endif
-            A[ tx + iter * lda ] *= factor;
+            A[ tx + iter * lda ] *= factor; // or use the next line and remove the sync above
             //A[ tx + iter * lda ]  = tx == iter ? MAGMA_C_MAKE(xreal, 0.0) : A[ tx + iter * lda ] * factor;
         #ifdef ENABLE_COND1
         }

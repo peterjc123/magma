@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from testing/testing_zgemm_batched.cpp, normal z -> c, Mon Jun 25 18:24:22 2018
+       @generated from testing/testing_zgemm_batched.cpp, normal z -> c, Wed Jan  2 14:18:53 2019
        @author Mark Gates
        @author Azzam Haidar
        @author Tingxing Dong
@@ -22,11 +22,6 @@
 #include "magma_v2.h"
 #include "magma_lapack.h"
 #include "testings.h"
-
-#if defined(_OPENMP)
-#include <omp.h>
-#include "../control/magma_threadsetting.h"  // internal header
-#endif
 
 /* ////////////////////////////////////////////////////////////////////////////
    -- Testing cgemm_batched
@@ -52,6 +47,9 @@ int main( int argc, char** argv)
     magmaFloatComplex c_neg_one = MAGMA_C_NEG_ONE;
     magmaFloatComplex alpha = MAGMA_C_MAKE(  0.29, -0.86 );
     magmaFloatComplex beta  = MAGMA_C_MAKE( -0.48,  0.38 );
+    magmaFloatComplex **h_A_array = NULL;
+    magmaFloatComplex **h_B_array = NULL;
+    magmaFloatComplex **h_C_array = NULL;
     magmaFloatComplex **d_A_array = NULL;
     magmaFloatComplex **d_B_array = NULL;
     magmaFloatComplex **d_C_array = NULL;
@@ -75,6 +73,7 @@ int main( int argc, char** argv)
            "%% transA = %s, transB = %s\n",
            lapack_trans_const(opts.transA),
            lapack_trans_const(opts.transB));
+    printf("%% version = %lld, %s\n", (long long)opts.version, opts.version == 1 ? "regular batch GEMM" : "strided batch GEMM");
     printf("%% BatchCount     M     N     K   MAGMA Gflop/s (ms)   CUBLAS Gflop/s (ms)   CPU Gflop/s (ms)   MAGMA error   CUBLAS error\n");
     printf("%%========================================================================================================================\n");
     for( int itest = 0; itest < opts.ntest; ++itest ) {
@@ -121,6 +120,10 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_cmalloc( &d_B, lddb*Bn*batchCount ));
             TESTING_CHECK( magma_cmalloc( &d_C, lddc*N*batchCount  ));
 
+            TESTING_CHECK( magma_malloc_cpu( (void**) &h_A_array, batchCount * sizeof(magmaFloatComplex*) ));
+            TESTING_CHECK( magma_malloc_cpu( (void**) &h_B_array, batchCount * sizeof(magmaFloatComplex*) ));
+            TESTING_CHECK( magma_malloc_cpu( (void**) &h_C_array, batchCount * sizeof(magmaFloatComplex*) ));
+
             TESTING_CHECK( magma_malloc( (void**) &d_A_array, batchCount * sizeof(magmaFloatComplex*) ));
             TESTING_CHECK( magma_malloc( (void**) &d_B_array, batchCount * sizeof(magmaFloatComplex*) ));
             TESTING_CHECK( magma_malloc( (void**) &d_C_array, batchCount * sizeof(magmaFloatComplex*) ));
@@ -149,10 +152,18 @@ int main( int argc, char** argv)
             magma_cset_pointer( d_C_array, d_C, lddc, 0, 0, lddc*N,  batchCount, opts.queue );
 
             magma_time = magma_sync_wtime( opts.queue );
-            magmablas_cgemm_batched(opts.transA, opts.transB, M, N, K,
-                             alpha, d_A_array, ldda,
-                                    d_B_array, lddb,
-                             beta,  d_C_array, lddc, batchCount, opts.queue);
+            if(opts.version == 1){
+                magmablas_cgemm_batched(opts.transA, opts.transB, M, N, K,
+                                 alpha, d_A_array, ldda,
+                                        d_B_array, lddb,
+                                 beta,  d_C_array, lddc, batchCount, opts.queue);
+            }
+            else{
+                magmablas_cgemm_batched_strided(opts.transA, opts.transB, M, N, K,
+                                 alpha, d_A, ldda, ldda*An, 
+                                        d_B, lddb, lddb*Bn, 
+                                 beta,  d_C, lddc, lddc*N, batchCount, opts.queue);                
+            }
             magma_time = magma_sync_wtime( opts.queue ) - magma_time;
             magma_perf = gflops / magma_time;
             magma_cgetmatrix( M, N*batchCount, d_C, lddc, h_Cmagma, ldc, opts.queue );
@@ -164,11 +175,20 @@ int main( int argc, char** argv)
 
             cublas_time = magma_sync_wtime( opts.queue );
 
-            cublasCgemmBatched(opts.handle, cublas_trans_const(opts.transA), cublas_trans_const(opts.transB),
-                               int(M), int(N), int(K),
-                               &alpha, (const magmaFloatComplex**) d_A_array, int(ldda),
-                                       (const magmaFloatComplex**) d_B_array, int(lddb),
-                               &beta,  d_C_array, int(lddc), int(batchCount) );
+            if(opts.version == 1){
+                cublasCgemmBatched(opts.handle, cublas_trans_const(opts.transA), cublas_trans_const(opts.transB),
+                                   int(M), int(N), int(K),
+                                   &alpha, (const magmaFloatComplex**) d_A_array, int(ldda),
+                                           (const magmaFloatComplex**) d_B_array, int(lddb),
+                                   &beta,  d_C_array, int(lddc), int(batchCount) );
+            }
+            else{
+                cublasCgemmStridedBatched(opts.handle, cublas_trans_const(opts.transA), cublas_trans_const(opts.transB),
+                                   int(M), int(N), int(K),
+                                   &alpha, (const magmaFloatComplex*) d_A, int(ldda), ldda * An, 
+                                           (const magmaFloatComplex*) d_B, int(lddb), lddb * Bn, 
+                                   &beta,  d_C, int(lddc), lddc*N, int(batchCount) );
+            }
 
             cublas_time = magma_sync_wtime( opts.queue ) - cublas_time;
             cublas_perf = gflops / cublas_time;
@@ -179,25 +199,18 @@ int main( int argc, char** argv)
                Performs operation using CPU BLAS
                =================================================================== */
             if ( opts.lapack ) {
-                cpu_time = magma_wtime();
-                #if !defined (BATCHED_DISABLE_PARCPU) && defined(_OPENMP)
-                magma_int_t nthreads = magma_get_lapack_numthreads();
-                magma_set_lapack_numthreads(1);
-                magma_set_omp_numthreads(nthreads);
-                #pragma omp parallel for schedule(dynamic)
-                #endif
-                for (int i=0; i < batchCount; i++)
-                {
-                    blasf77_cgemm( lapack_trans_const(opts.transA),
-                                   lapack_trans_const(opts.transB),
-                                   &M, &N, &K,
-                                   &alpha, h_A + i*lda*An, &lda,
-                                           h_B + i*ldb*Bn, &ldb,
-                                   &beta,  h_C + i*ldc*N, &ldc );
+                // populate pointer arrays on the host
+                for(int s = 0; s < batchCount; s++){
+                    h_A_array[s] = h_A + s * lda * An;
+                    h_B_array[s] = h_B + s * ldb * Bn;
+                    h_C_array[s] = h_C + s * ldc * N;
                 }
-                #if !defined (BATCHED_DISABLE_PARCPU) && defined(_OPENMP)
-                    magma_set_lapack_numthreads(nthreads);
-                #endif
+                cpu_time = magma_wtime();
+                blas_cgemm_batched( opts.transA, opts.transB, 
+                       M, N, K,
+                       alpha, h_A_array, lda,
+                              h_B_array, ldb,
+                       beta,  h_C_array, ldc, batchCount );
                 cpu_time = magma_wtime() - cpu_time;
                 cpu_perf = gflops / cpu_time;
             }
@@ -267,6 +280,9 @@ int main( int argc, char** argv)
             magma_free_cpu( h_C  );
             magma_free_cpu( h_Cmagma  );
             magma_free_cpu( h_Ccublas );
+            magma_free_cpu( h_A_array );
+            magma_free_cpu( h_B_array );
+            magma_free_cpu( h_C_array );
 
             magma_free( d_A );
             magma_free( d_B );

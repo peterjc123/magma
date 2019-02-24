@@ -1,16 +1,16 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
        
        csymv.cu is nearly identical to chemv.cu, just change names and drop MAGMA_C_CONJ.
        
        chemv_kernel_U (upper) in chemv_upper.cu is very similar to
        chemv_kernel_L (lower) in chemv.cu; diff the two files to compare.
        
-       @generated from magmablas/zhemv.cu, normal z -> c, Mon Jun 25 18:24:13 2018
+       @generated from magmablas/zhemv.cu, normal z -> c, Wed Jan  2 14:18:51 2019
        
        @author Mark Gates
 */

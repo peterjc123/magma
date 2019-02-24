@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Azzam Haidar
        @author Tingxing Dong
        @author Ahmad Abdelfattah
 
-       @generated from include/magma_zvbatched.h, normal z -> c, Mon Jun 25 18:24:32 2018
+       @generated from include/magma_zvbatched.h, normal z -> c, Wed Jan  2 14:18:55 2019
 */
 
 #ifndef MAGMA_CVBATCHED_H

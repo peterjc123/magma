@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
        
        @author Azzam Haidar
        @author Stan Tomov
        @author Raffaele Solca
 
-       @generated from src/zhetrd_hb2st.cpp, normal z -> d, Mon Jun 25 18:24:08 2018
+       @generated from src/zhetrd_hb2st.cpp, normal z -> d, Wed Jan  2 14:18:50 2019
 
 */
 #include "magma_internal.h"

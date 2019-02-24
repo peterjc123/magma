@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.4.0) --
+   -- MAGMA (version 2.5.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date June 2018
+   @date January 2019
 
    @author Azzam Haidar
    @author Ahmad Abdelfattah
 
-   @generated from magmablas/zpotf2_kernels_var.cu, normal z -> d, Mon Jun 25 18:24:17 2018
+   @generated from magmablas/zpotf2_kernels_var.cu, normal z -> d, Wed Jan  2 14:18:52 2019
  */
 #define PRECISION_d
 

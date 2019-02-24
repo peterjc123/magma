@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Mark Gates
-       @generated from testing/magma_zgesvd_check.cpp, normal z -> s, Mon Jun 25 18:24:16 2018
+       @generated from testing/magma_zgesvd_check.cpp, normal z -> s, Wed Jan  2 14:18:52 2019
 */
 
 #include "magma_v2.h"

@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
        
        zsymv_upper.cu is nearly identical to zhemv_upper.cu, just change names and drop MAGMA_Z_CONJ.
        

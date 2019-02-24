@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Azzam Haidar
        @author Tingxing Dong
        @author Ahmad Abdelfattah
 
-       @generated from magmablas/zgetf2_kernels.cu, normal z -> s, Mon Jun 25 18:24:16 2018
+       @generated from magmablas/zgetf2_kernels.cu, normal z -> s, Wed Jan  2 14:18:51 2019
 */
 
 #include "magma_internal.h"
@@ -112,7 +112,6 @@ isamax_kernel_native(int length, int chunk, magmaFloat_ptr x, int incx,
     isamax_devfunc(length, x, incx, shared_x, shared_idx);
     if (tx == 0) {
         ipiv[step]  = shared_idx[0] + step + 1; // Fortran Indexing
-        //printf(" ipiv[%5d] = %5d\n", step, ipiv[step]);
         if (shared_x[0] == MAGMA_D_ZERO) {
             (*info) = shared_idx[0] + step + gbstep + 1;
         }
@@ -140,6 +139,14 @@ isamax_kernel_native(int length, int chunk, magmaFloat_ptr x, int incx,
     x_array     Array of pointers, dimension (batchCount).
             Each is a REAL array of dimension
 
+
+    @param[in]
+    xi      INTEGER
+            Row offset, internal use
+
+    @param[in]
+    xj      INTEGER
+            Column offset, internal use
 
     @param[in]
     incx    Specifies the increment for the elements of X.
@@ -204,6 +211,17 @@ magma_isamax_batched(magma_int_t length,
 
 
 /******************************************************************************/
+// For use in magma_isamax_native only
+// cublasIsamax always writes 32bit pivots, so make sure it is magma_int_t
+__global__ void magma_spivcast(magma_int_t* dipiv)
+{
+    // uses only 1 thread
+    int* address = (int*)dipiv; 
+    int pivot = *address;          // read the value written by cuBLAS (int)
+    *dipiv = (magma_int_t)pivot;    // write it back in the same address as dipiv
+}
+
+/******************************************************************************/
 extern "C" magma_int_t
 magma_isamax_native( magma_int_t length, 
                      magmaFloat_ptr x, magma_int_t incx, 
@@ -212,12 +230,27 @@ magma_isamax_native( magma_int_t length,
                      magma_int_t gbstep, magma_queue_t queue)
 {
     if (length == 0 ) return 0;
-    dim3 grid(1, 1, 1);
-    dim3 threads(zamax, 1, 1);
 
-    int chunk = magma_ceildiv( length, zamax );
-    isamax_kernel_native<<< grid, threads, zamax * (sizeof(float) + sizeof(int)), queue->cuda_stream() >>>
-        (length, chunk, x, incx, step, lda, ipiv, info, gbstep);
+    // TODO: decide the best isamax for all precisions
+    if( length <= 15360 ) {
+        dim3 grid(1, 1, 1);
+        dim3 threads(zamax, 1, 1);
+
+        int chunk = magma_ceildiv( length, zamax );
+        isamax_kernel_native<<< grid, threads, zamax * (sizeof(float) + sizeof(int)), queue->cuda_stream() >>>
+            (length, chunk, x, incx, step, lda, ipiv, info, gbstep);
+    }
+    else {
+        cublasPointerMode_t ptr_mode;
+        cublasGetPointerMode(queue->cublas_handle(), &ptr_mode);
+        cublasSetPointerMode(queue->cublas_handle(), CUBLAS_POINTER_MODE_DEVICE);
+
+        cublasIsamax(queue->cublas_handle(), length, x + step * lda + step, 1, (int*)(ipiv+step));
+        magma_spivcast<<< 1, 1, 0, queue->cuda_stream() >>>( ipiv+step );
+
+        cublasSetPointerMode(queue->cublas_handle(), ptr_mode);
+        adjust_ipiv( ipiv+step, 1, step, queue);
+    }
     return 0;
 }
 
@@ -293,6 +326,14 @@ void sswap_kernel_native( magma_int_t n,
 
 
     @param[in]
+    ai      INTEGER
+            Row offset, internal use.
+
+    @param[in]
+    aj      INTEGER
+            Column offset, internal use.
+
+    @param[in]
     incx    Specifies the increment for the elements of X.
             INCX must not be zero.
 
@@ -343,7 +384,7 @@ magma_sswap_batched( magma_int_t n,
 
 
 /******************************************************************************/
-extern "C" magma_int_t
+extern "C" void
 magma_sswap_native( magma_int_t n, magmaFloat_ptr x, magma_int_t incx, 
                     magma_int_t step, magma_int_t* ipiv,
                     magma_queue_t queue)
@@ -351,11 +392,9 @@ magma_sswap_native( magma_int_t n, magmaFloat_ptr x, magma_int_t incx,
     /*
     sswap two row: (ipiv[step]-1)th and step th
     */
-    if ( n  > MAX_NTHREADS)
-    {
+    if ( n  > MAX_NTHREADS){
         fprintf( stderr, "%s nb=%lld > %lld, not supported\n",
                  __func__, (long long) n, (long long) MAX_NTHREADS );
-        return -15;
     }
     dim3 grid(1, 1, 1);
     dim3 threads(zamax, 1, 1);
@@ -363,7 +402,6 @@ magma_sswap_native( magma_int_t n, magmaFloat_ptr x, magma_int_t incx,
     sswap_kernel_native
         <<< grid, threads, 0, queue->cuda_stream() >>>
         (n, x, incx, step, ipiv);
-    return 0;
 }
 
 
@@ -513,7 +551,7 @@ magma_int_t magma_sscal_sger_batched(magma_int_t m, magma_int_t n, magma_int_t s
         fprintf( stderr, "%s nb=%lld, > %lld, not supported\n", __func__, (long long) n, (long long) MAX_NTHREADS );
         return -15;
     }
-    const int tbx = MAX_NTHREADS;
+    const int tbx = MAX_NTHREADS / 2;
     dim3 grid(magma_ceildiv(m,tbx), 1, batchCount);
     dim3 threads(tbx, 1, 1);
     switch(n){
@@ -534,10 +572,11 @@ magma_int_t magma_sscal_sger_batched(magma_int_t m, magma_int_t n, magma_int_t s
 /******************************************************************************/
 extern "C"
 magma_int_t 
-magma_sscal_sger_native( magma_int_t m, magma_int_t n, magma_int_t step,
-                          magmaFloat_ptr dA, magma_int_t lda,
-                          magma_int_t *info, magma_int_t gbstep,
-                          magma_queue_t queue)
+magma_sscal_sger_native( 
+    magma_int_t m, magma_int_t n, magma_int_t step,
+    magmaFloat_ptr dA, magma_int_t lda,
+    magma_int_t *info, magma_int_t gbstep,
+    magma_queue_t queue)
 {
     /*
     Specialized kernel which merged sscal and sger the two kernels
@@ -550,7 +589,7 @@ magma_sscal_sger_native( magma_int_t m, magma_int_t n, magma_int_t step,
         fprintf( stderr, "%s nb=%lld, > %lld, not supported\n", __func__, (long long) n, (long long) MAX_NTHREADS );
         return -15;
     }
-    const int tbx = MAX_NTHREADS;
+    const int tbx = MAX_NTHREADS / 2;
     dim3 grid(magma_ceildiv(m,tbx), 1, 1);
     dim3 threads(tbx, 1, 1);
     switch(n){
@@ -765,10 +804,11 @@ sgetf2trsm_2d_kernel( int m, int n,
 
 /******************************************************************************/
 extern"C" void 
-magma_sgetf2trsm_2d_native( magma_int_t m, magma_int_t n, 
-                            magmaFloat_ptr dA, magma_int_t ldda, 
-                            magmaFloat_ptr dB, magma_int_t lddb, 
-                            magma_queue_t queue)
+magma_sgetf2trsm_2d_native( 
+    magma_int_t m, magma_int_t n, 
+    magmaFloat_ptr dA, magma_int_t ldda, 
+    magmaFloat_ptr dB, magma_int_t lddb, 
+    magma_queue_t queue)
 {
     if( m > 32 ){
         magma_strsm( MagmaLeft, MagmaLower, MagmaNoTrans, MagmaUnit, 
@@ -963,6 +1003,9 @@ sgetf2_fused_device( int m, float* dA, int ldda, magma_int_t* dipiv,
     int max_id, rowid = tx;
     int linfo = 0;
     float rx_abs_max = MAGMA_D_ZERO;
+    // check from previous calls if the panel factorization failed previously
+    // this is necessary to report the correct info value 
+    if(gbstep > 0 && *info != 0) return;
     
     float *sx = (float*)(swork);
     float* dsx = (float*)(sx + blockDim.y * WIDTH);
@@ -993,7 +1036,7 @@ sgetf2_fused_device( int m, float* dA, int ldda, magma_int_t* dipiv,
         magma_getidmax_n(m-i, tx, dsx+i, isx+i); // this devfunc has syncthreads at the end
         rx_abs_max = dsx[i];
         max_id = isx[i];
-        linfo = ( rx_abs_max == MAGMA_D_ZERO ) ? min(linfo, gbstep+i+1) : 0;
+        linfo = ( rx_abs_max == MAGMA_D_ZERO && linfo == 0) ? (gbstep+i+1) : linfo;
         __syncthreads();
 
         if(rowid == max_id){
@@ -1088,6 +1131,14 @@ sgetf2_fused_batched_kernel( int m,
             On entry, each pointer is an M-by-N matrix to be factored.
             On exit, the factors L and U from the factorization
             A = P*L*U; the unit diagonal elements of L are not stored.
+
+    @param[in]
+    ai      INTEGER
+            Row offset for A.
+
+    @param[in]
+    aj      INTEGER
+            Column offset for A.
 
     @param[in]
     ldda    INTEGER

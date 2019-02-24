@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Mark Gates
        @precisions normal z -> s d c
@@ -129,11 +129,16 @@ void   lapackf77_zqrt02( const magma_int_t *m, const magma_int_t *n, const magma
                          { printf( format, __func__ ); }
 
 // testing/matgen
-void   lapackf77_zlatms( magma_int_t *m, magma_int_t *n,
-                         const char *dist, magma_int_t *iseed, const char *sym, double *d,
-                         magma_int_t *mode, const double *cond, const double *dmax,
-                         magma_int_t *kl, magma_int_t *ku, const char *pack,
-                         magmaDoubleComplex *a, magma_int_t *lda, magmaDoubleComplex *work, magma_int_t *info )
+void   lapackf77_zlatms( const magma_int_t *m, const magma_int_t *n,
+                         const char *dist, magma_int_t *iseed, const char *sym,
+                         double *d,
+                         const magma_int_t *mode, const double *cond,
+                         const double *dmax,
+                         const magma_int_t *kl, const magma_int_t *ku,
+                         const char *pack,
+                         magmaDoubleComplex *A, const magma_int_t *lda,
+                         magmaDoubleComplex *work,
+                         magma_int_t *info )
                          { printf( format, __func__ ); }
 
 #ifdef __cplusplus

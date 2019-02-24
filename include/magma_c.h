@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from include/magma_z.h, normal z -> c, Mon Jun 25 18:24:32 2018
+       @generated from include/magma_z.h, normal z -> c, Wed Jan  2 14:18:55 2019
 */
 
 #ifndef MAGMA_C_H
@@ -30,6 +30,7 @@ magma_int_t magma_get_slaex3_m_nb();       // defined in slaex3_m.cpp
 // Cholesky, LU, symmetric indefinite
 magma_int_t magma_get_cpotrf_nb( magma_int_t n );
 magma_int_t magma_get_cgetrf_nb( magma_int_t m, magma_int_t n );
+magma_int_t magma_get_cgetrf_native_nb( magma_int_t m, magma_int_t n );
 magma_int_t magma_get_cgetri_nb( magma_int_t n );
 magma_int_t magma_get_chetrf_nb( magma_int_t n );
 magma_int_t magma_get_chetrf_nopiv_nb( magma_int_t n );
@@ -481,12 +482,36 @@ magma_cgetf2_gpu(
     magma_queue_t queue,
     magma_int_t *info);
 
+magma_int_t 
+magma_cgetf2_native_fused( 
+    magma_int_t m, magma_int_t n, 
+    magmaFloatComplex_ptr dA, magma_int_t ldda, 
+    magma_int_t *ipiv, magma_int_t gbstep, 
+    magma_int_t *flags, 
+    magma_int_t *info, magma_queue_t queue );
+
+magma_int_t
+magma_cgetf2_native(
+    magma_int_t m, magma_int_t n,
+    magmaFloatComplex_ptr dA, magma_int_t ldda,
+    magma_int_t *dipiv, magma_int_t* dipivinfo, 
+    magma_int_t *dinfo, magma_int_t gbstep, 
+    magma_queue_t queue, magma_queue_t update_queue);
+
 // CUDA MAGMA only
 magma_int_t
 magma_cgetf2_nopiv(
     magma_int_t m, magma_int_t n,
     magmaFloatComplex *A, magma_int_t lda,
     magma_int_t *info);
+
+magma_int_t
+magma_cgetrf_recpanel_native(
+    magma_int_t m, magma_int_t n,    
+    magmaFloatComplex_ptr dA, magma_int_t ldda,
+    magma_int_t* dipiv, magma_int_t* dipivinfo,
+    magma_int_t *dinfo, magma_int_t gbstep, 
+    magma_queue_t queue, magma_queue_t update_queue );
 
 magma_int_t
 magma_cgetrf(
@@ -501,6 +526,13 @@ magma_cgetrf_gpu(
     magmaFloatComplex_ptr dA, magma_int_t ldda,
     magma_int_t *ipiv,
     magma_int_t *info);
+
+magma_int_t
+magma_cgetrf_native(
+    magma_int_t m, magma_int_t n,
+    magmaFloatComplex_ptr dA, magma_int_t ldda,
+    magma_int_t *ipiv,
+    magma_int_t *info );
 
 // CUDA MAGMA only
 magma_int_t
@@ -1343,6 +1375,12 @@ magma_cpotf2_gpu(
     magma_int_t *info);
 
 magma_int_t
+magma_cpotrf_rectile_native(
+    magma_uplo_t uplo, magma_int_t n, magma_int_t recnb,    
+    magmaFloatComplex* dA,    magma_int_t ldda, magma_int_t gbstep, 
+    magma_int_t *dinfo,  magma_int_t *info, magma_queue_t queue);
+
+magma_int_t
 magma_cpotrf(
     magma_uplo_t uplo, magma_int_t n,
     magmaFloatComplex *A, magma_int_t lda,
@@ -1353,6 +1391,12 @@ magma_cpotrf_gpu(
     magma_uplo_t uplo, magma_int_t n,
     magmaFloatComplex_ptr dA, magma_int_t ldda,
     magma_int_t *info);
+
+magma_int_t
+magma_cpotrf_native(
+    magma_uplo_t uplo, magma_int_t n,
+    magmaFloatComplex_ptr dA, magma_int_t ldda,
+    magma_int_t *info );
 
 // CUDA MAGMA only
 magma_int_t

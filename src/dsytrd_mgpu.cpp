@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Raffaele Solca
        @author Stan Tomov
        @author Mark Gates
 
-       @generated from src/zhetrd_mgpu.cpp, normal z -> d, Mon Jun 25 18:24:07 2018
+       @generated from src/zhetrd_mgpu.cpp, normal z -> d, Wed Jan  2 14:18:49 2019
 
 */
 #include "magma_internal.h"
@@ -352,7 +352,7 @@ magma_dsytrd_mgpu(
         }
     }
     else {
-        trace_init( 1, ngpu, nqueue, queues );
+        trace_init( 1, ngpu, nqueue, (magma_queue_t *)queues );
         /* Copy the matrix to the GPU */
         if (1 <= n-nx) {
             magma_dhtodhe( ngpu, uplo, n, nb, A, lda, dA, ldda, queues, &iinfo );

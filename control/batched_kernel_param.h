@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 */
 #ifndef BATCHED_KERNEL_PARAM_H
 #define BATCHED_KERNEL_PARAM_H
@@ -42,15 +42,15 @@
 #define SGETF2_PANEL_NB    (16)
 
 // tuning zgetf2_panel_chain
-#define ZGETF2_CHAIN_NTH    (512)
-#define CGETF2_CHAIN_NTH    (512)
-#define DGETF2_CHAIN_NTH    (512)
-#define SGETF2_CHAIN_NTH    (512)
+#define ZGETF2_FUSED_NTH    (512)
+#define CGETF2_FUSED_NTH    (512)
+#define DGETF2_FUSED_NTH    (512)
+#define SGETF2_FUSED_NTH    (512)
 //
-#define ZGETF2_CHAIN_MAX_M    (10240)
-#define CGETF2_CHAIN_MAX_M    (10240)
-#define DGETF2_CHAIN_MAX_M    (25600)
-#define SGETF2_CHAIN_MAX_M    (40960)
+#define ZGETF2_FUSED_MAX_M  (7168)
+#define CGETF2_FUSED_MAX_M  (10240)
+#define DGETF2_FUSED_MAX_M  (25600)
+#define SGETF2_FUSED_MAX_M  (40960)
 
 
 

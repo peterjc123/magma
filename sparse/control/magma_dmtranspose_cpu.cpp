@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from sparse/control/magma_zmtranspose_cpu.cpp, normal z -> d, Mon Jun 25 18:24:27 2018
+       @generated from sparse/control/magma_zmtranspose_cpu.cpp, normal z -> d, Wed Jan  2 14:18:54 2019
        @author Hartwig Anzt
 
 */
@@ -158,7 +158,7 @@ cleanup:
     return info;
 }
 
-
+//inline function computing the conjugate
 inline void conjop(const double &from, double &to) { to = MAGMA_D_CONJ(from); }
 
 /**
@@ -197,7 +197,7 @@ cleanup:
     return info;
 }
 
-
+// inline function passing a value
 inline void pass(const double &from, double &to) { }
 
 /**
@@ -236,7 +236,7 @@ cleanup:
     return info;
 }
 
-
+// inline function passing absolute value
 inline void absval(const double &from, double &to) { to = MAGMA_D_MAKE(MAGMA_D_ABS(from), 0.0 ); }
 
 /**

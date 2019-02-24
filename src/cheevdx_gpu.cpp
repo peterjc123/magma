@@ -1,16 +1,16 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
     
        @author Raffaele Solca
        @author Stan Tomov
        @author Mark Gates
        @author Azzam Haidar
     
-       @generated from src/zheevdx_gpu.cpp, normal z -> c, Mon Jun 25 18:24:07 2018
+       @generated from src/zheevdx_gpu.cpp, normal z -> c, Wed Jan  2 14:18:49 2019
 
 */
 #include "magma_internal.h"
@@ -404,9 +404,11 @@ magma_cheevdx_gpu(
        tridiagonal matrix, then call CUNMTR to multiply it to the Householder
        transformations represented as Householder vectors in A. */
     if (! wantz) {
+        timer_start( time );
         lapackf77_ssterf( &n, w, &rwork[inde], info );
-
         magma_smove_eig( range, n, w, &il, &iu, vl, vu, mout );
+        timer_stop( time );
+        timer_printf( "time ssterf = %6.2f\n", time );
     }
     else {
         timer_start( time );

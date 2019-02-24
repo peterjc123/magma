@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -158,7 +158,7 @@ cleanup:
     return info;
 }
 
-
+//inline function computing the conjugate
 inline void conjop(const magmaDoubleComplex &from, magmaDoubleComplex &to) { to = MAGMA_Z_CONJ(from); }
 
 /**
@@ -197,7 +197,7 @@ cleanup:
     return info;
 }
 
-
+// inline function passing a value
 inline void pass(const magmaDoubleComplex &from, magmaDoubleComplex &to) { }
 
 /**
@@ -236,7 +236,7 @@ cleanup:
     return info;
 }
 
-
+// inline function passing absolute value
 inline void absval(const magmaDoubleComplex &from, magmaDoubleComplex &to) { to = MAGMA_Z_MAKE(MAGMA_Z_ABS(from), 0.0 ); }
 
 /**

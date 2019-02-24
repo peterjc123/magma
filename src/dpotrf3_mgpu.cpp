@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from src/zpotrf3_mgpu.cpp, normal z -> d, Mon Jun 25 18:24:04 2018
+       @generated from src/zpotrf3_mgpu.cpp, normal z -> d, Wed Jan  2 14:18:48 2019
 
 */
 #include "magma_internal.h"
@@ -220,7 +220,7 @@ magma_dpotrf3_mgpu(
     }
 
     /* == initialize the trace */
-    trace_init( 1, ngpu, 3, queues );
+    trace_init( 1, ngpu, 3, (magma_queue_t *)queues );
 
     if (upper) {
         /* ---------------------------------------------- */

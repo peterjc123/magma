@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Azzam Haidar
        @author Tingxing Dong
 
-       @generated from include/magma_zbatched.h, normal z -> d, Mon Jun 25 18:24:32 2018
+       @generated from include/magma_zbatched.h, normal z -> d, Wed Jan  2 14:18:55 2019
 */
 
 #ifndef MAGMA_DBATCHED_H
@@ -56,7 +56,8 @@ magma_int_t magma_get_dpotrf_batched_crossover();
 
 void magma_get_dgetrf_batched_nbparam(magma_int_t n, magma_int_t *nb, magma_int_t *recnb);
 magma_int_t magma_get_dgetrf_batched_ntcol(magma_int_t m, magma_int_t n);
-
+magma_int_t magma_get_dgemm_batched_ntcol(magma_int_t n);
+magma_int_t magma_get_dgemm_batched_smallsq_limit(magma_int_t n);
 magma_int_t magma_get_dgeqrf_batched_nb(magma_int_t m);
 magma_int_t magma_get_dgeqrf_batched_ntcol(magma_int_t m, magma_int_t n);
 magma_int_t magma_get_dgetri_batched_ntcol(magma_int_t m, magma_int_t n);
@@ -118,6 +119,28 @@ magmablas_dgemm_batched(
     double const * const * dB_array, magma_int_t lddb,
     double beta,
     double **dC_array, magma_int_t lddc, 
+    magma_int_t batchCount, magma_queue_t queue );
+
+void
+magmablas_dgemm_batched_strided( 
+    magma_trans_t transA, magma_trans_t transB, 
+    magma_int_t m, magma_int_t n, magma_int_t k,
+    double alpha,
+    double const * dA, magma_int_t ldda, magma_int_t strideA, 
+    double const * dB, magma_int_t lddb, magma_int_t strideB, 
+    double beta,
+    double       * dC, magma_int_t lddc, magma_int_t strideC,  
+    magma_int_t batchCount, magma_queue_t queue );
+
+void 
+magmablas_dgemm_batched_smallsq(
+    magma_trans_t transA, magma_trans_t transB, 
+    magma_int_t m, magma_int_t n, magma_int_t k, 
+    double alpha,
+    double const * const * dA_array, magma_int_t ai, magma_int_t aj, magma_int_t ldda, 
+    double const * const * dB_array, magma_int_t bi, magma_int_t bj, magma_int_t lddb,
+    double beta,
+    double **dC_array, magma_int_t ci, magma_int_t cj, magma_int_t lddc, 
     magma_int_t batchCount, magma_queue_t queue );
 
 void 
@@ -998,6 +1021,64 @@ magma_dpotrf_v33_batched(
     double **dA_array, magma_int_t lda,
     magma_int_t *info_array,
     magma_int_t batchCount, magma_queue_t queue);
+
+// host interface
+void
+blas_dgemm_batched( 
+    magma_trans_t transA, magma_trans_t transB, 
+    magma_int_t m, magma_int_t n, magma_int_t k,
+    double alpha,
+    double const * const * hA_array, magma_int_t lda,
+    double const * const * hB_array, magma_int_t ldb,
+    double beta,
+    double **hC_array, magma_int_t ldc, 
+    magma_int_t batchCount );
+
+void
+blas_dtrsm_batched( 
+        magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag, 
+        magma_int_t m, magma_int_t n, 
+        double alpha, 
+        double **hA_array, magma_int_t lda,
+        double **hB_array, magma_int_t ldb, 
+        magma_int_t batchCount );
+
+void
+blas_dtrmm_batched( 
+        magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag, 
+        magma_int_t m, magma_int_t n, 
+        double alpha, 
+        double **hA_array, magma_int_t lda,
+        double **hB_array, magma_int_t ldb, 
+        magma_int_t batchCount );
+
+void
+blas_dsymm_batched(
+        magma_side_t side, magma_uplo_t uplo, 
+        magma_int_t m, magma_int_t n, 
+        double alpha, 
+        double **hA_array, magma_int_t lda,
+        double **hB_array, magma_int_t ldb, 
+        double beta, 
+        double **hC_array, magma_int_t ldc, 
+        magma_int_t batchCount );
+
+void
+blas_dsyrk_batched(
+    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_int_t n, magma_int_t k,
+    double alpha, double const * const * hA_array, magma_int_t lda,
+    double beta,  double               **hC_array, magma_int_t ldc, 
+    magma_int_t batchCount );
+
+void
+blas_dsyr2k_batched(
+    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_int_t n, magma_int_t k,
+    double alpha, double const * const * hA_array, magma_int_t lda,
+                              double const * const * hB_array, magma_int_t ldb, 
+    double beta,              double               **hC_array, magma_int_t ldc, 
+    magma_int_t batchCount );
 
 // for debugging purpose
 void 

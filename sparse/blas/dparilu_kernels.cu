@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from sparse/blas/zparilu_kernels.cu, normal z -> d, Mon Jun 25 18:24:25 2018
+       @generated from sparse/blas/zparilu_kernels.cu, normal z -> d, Wed Jan  2 14:18:53 2019
 
 */
 #include "magmasparse_internal.h"
@@ -74,7 +74,7 @@ magma_dparilu_csr_kernel(
     This routine was used in the ISC 2015 paper:
     E. Chow et al.: "Asynchronous Iterative Algorithm for Computing Incomplete
                      Factorizations on GPUs", 
-                     ISC High Performance 2015, LNCS 9137, pp. 1Ð16, 2015.
+                     ISC High Performance 2015, LNCS 9137, pp. 1-16, 2015.
  
     The input format of the system matrix is COO, the lower triangular factor L 
     is stored in CSR, the upper triangular factor U is transposed, then also 

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from magmablas/ztranspose.cu, normal z -> d, Mon Jun 25 18:24:13 2018
+       @generated from magmablas/ztranspose.cu, normal z -> d, Wed Jan  2 14:18:51 2019
 
        @author Stan Tomov
        @author Mark Gates
@@ -118,6 +118,15 @@ void dtranspose_kernel_batched(
     dtranspose_device(m, n, dA_array[batchid], lda, dAT_array[batchid], ldat);
 }
 
+__global__
+void dtranspose_kernel_batched_stride(
+    int m, int n, int stride,
+    double *dA_array,  int lda,
+    double *dAT_array, int ldat)
+{
+    int batchid = blockIdx.z * stride;
+    dtranspose_device(m, n, dA_array + batchid, lda, dAT_array + batchid, ldat);
+}
 
 /***************************************************************************//**
     Purpose
@@ -268,4 +277,40 @@ magmablas_dtranspose_batched(
     dim3 grid( magma_ceildiv( m, NB ), magma_ceildiv( n, NB ), batchCount );
     dtranspose_kernel_batched<<< grid, threads, 0, queue->cuda_stream() >>>
         ( m, n, dA_array, ldda, dAT_array, lddat );
+}
+
+extern "C" void
+magmablas_dtranspose_batched_stride(
+    magma_int_t m, magma_int_t n, magma_int_t stride,
+    double *dA_array,  magma_int_t ldda,
+    double *dAT_array, magma_int_t lddat,
+    magma_int_t batchCount,
+    magma_queue_t queue )
+{
+    magma_int_t info = 0;
+    if ( m < 0 )
+        info = -1;
+    else if ( n < 0 )
+        info = -2;
+    else if (stride < m*n)
+        info = -3;
+    else if ( ldda < m )
+        info = -5;
+    else if ( lddat < n )
+        info = -7;
+
+    if ( info != 0 ) {
+        magma_xerbla( __func__, -(info) );
+        return;  //info;
+    }
+
+    /* Quick return */
+    if ( (m == 0) || (n == 0) )
+        return;
+
+    dim3 threads( NX, NY, 1 );
+    dim3 grid( magma_ceildiv( m, NB ), magma_ceildiv( n, NB ), batchCount );
+    //dtranspose_kernel_batched_stride<<< grid, threads, 0, queue->cuda_stream() >>>
+    dtranspose_kernel_batched_stride<<< grid, threads>>>
+        ( m, n, stride, dA_array, ldda, dAT_array, lddat );
 }

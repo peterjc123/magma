@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from magmablas/ztrtri_diag_vbatched.cu, normal z -> s, Mon Jun 25 18:24:16 2018
+       @generated from magmablas/ztrtri_diag_vbatched.cu, normal z -> s, Wed Jan  2 14:18:51 2019
 
        @author Peng Du
        @author Tingxing Dong
@@ -43,8 +43,12 @@
       -     = MagmaNonUnit:  A is not assumed to be unit triangular.
 
     @param[in]
-    n       INTEGER.
-            On entry, n specifies the order of the matrix A. N >= 0.
+    nmax    INTEGER.
+            maximum value of n.
+
+    @param[in]
+    n       INTEGER array, dimension(batchCount)
+            On entry, each entry specifies the order of the corresponding matrix A. N >= 0.
 
     @param[in]
     dA_array      REAL array of dimension ( ldda, n )
@@ -69,6 +73,14 @@
     dinvA_array REAL array of dimension (NB, ceil(n/NB)*NB),
             where NB = 128.
             On exit, contains inverses of the NB-by-NB diagonal blocks of A.
+
+    @param[in]
+    resetozero INTEGER
+               If not zero, each array dinvA will be reset to all zeros 
+    
+    @param[in]
+    batchCount  INTEGER
+                The number of matrices to operate on.
 
     @param[in]
     queue   magma_queue_t

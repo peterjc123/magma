@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Stan Tomov
        @author Raffaele Solca
@@ -372,9 +372,11 @@ magma_zheevdx(
      tridiagonal matrix, then call ZUNMTR to multiply it to the Householder
      transformations represented as Householder vectors in A. */
     if (! wantz) {
+        timer_start( time );
         lapackf77_dsterf(&n, w, &rwork[inde], info);
-
         magma_dmove_eig(range, n, w, &il, &iu, vl, vu, m);
+        timer_stop( time );
+        timer_printf( "time dsterf = %6.2f\n", time );
     }
     else {
         timer_start( time );

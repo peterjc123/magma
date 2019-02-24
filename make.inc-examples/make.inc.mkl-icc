@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.4.0) --
+#   -- MAGMA (version 2.5.0) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date June 2018
+#      @date January 2019
 #//////////////////////////////////////////////////////////////////////////////
 
 # GPU_TARGET contains one or more of Fermi, Kepler, Maxwell, Pascal, Volta
@@ -42,7 +42,7 @@ FPIC      = -fPIC
 CFLAGS    = -O3 $(FPIC) -qopenmp -DNDEBUG -DADD_ -Wall -Wshadow -DMAGMA_WITH_MKL
 FFLAGS    = -O3 $(FPIC)          -DNDEBUG -DADD_ -warn all -warn nounused -nogen-interfaces
 F90FLAGS  = -O3 $(FPIC)          -DNDEBUG -DADD_ -warn all -warn nounused
-NVCCFLAGS = -O3                  -DNDEBUG -DADD_ -Xcompiler "$(FPIC) -Wall -Wno-unused-function"
+NVCCFLAGS = -O3                  -DNDEBUG -DADD_ -Xcompiler "$(FPIC) -Wall -Wno-unused-function" -std=c++11
 LDFLAGS   =     $(FPIC) -qopenmp
 
 # C++11 (icc >= 13) is not required, but has benefits like atomic operations

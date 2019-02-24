@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
        
        @author Mark Gates
        @author Tingxing Dong
        @author Azzam Haidar
 
-       @generated from magmablas/zgemv_fermi.cu, normal z -> d, Mon Jun 25 18:24:11 2018
+       @generated from magmablas/zgemv_fermi.cu, normal z -> d, Wed Jan  2 14:18:50 2019
 */
 #include "magma_internal.h"
 #include "commonblas_d.h"
@@ -208,14 +208,8 @@ magmablas_dgemv(
     // --------------------
     // CUDA ARCH 2.x (Fermi) version
     if ( trans == MagmaNoTrans ) {
-        if (m <= 256) {
-            dgemvn_template_fermi<version(N, 137)>
-                ( m, n, alpha, dA, ldda, dx, incx, beta, dy, incy, queue );
-        }
-        else {
-            dgemvn_template_fermi<version(N, 140)>
-                ( m, n, alpha, dA, ldda, dx, incx, beta, dy, incy, queue );
-        }
+        dgemvn_template_fermi<version(N, 106)>
+            ( m, n, alpha, dA, ldda, dx, incx, beta, dy, incy, queue );
     }
     else {
         dgemvc_template_fermi<version(T, 189)>

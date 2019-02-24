@@ -1,11 +1,11 @@
 /*
- -- MAGMA (version 2.4.0) --
+ -- MAGMA (version 2.5.0) --
  Univ. of Tennessee, Knoxville
  Univ. of California, Berkeley
  Univ. of Colorado, Denver
- @date June 2018
+ @date January 2019
 
- @generated from sparse/include/magmasparse_z.h, normal z -> d, Mon Jun 25 18:24:32 2018
+ @generated from sparse/include/magmasparse_z.h, normal z -> d, Wed Jan  2 14:18:55 2019
  @author Hartwig Anzt
 */
 
@@ -1393,6 +1393,26 @@ magma_dpreselect_gpu(
     magma_int_t order,
     magma_d_matrix *A,
     magma_d_matrix *oneA,
+    magma_queue_t queue );
+
+magma_int_t
+magma_dsampleselect(
+    magma_int_t total_size,
+    magma_int_t subset_size,
+    double *val,
+    double *thrs,
+    magma_ptr *tmp_ptr,
+    magma_int_t *tmp_size,
+    magma_queue_t queue );
+
+magma_int_t
+magma_dsampleselect_approx(
+    magma_int_t total_size,
+    magma_int_t subset_size,
+    double *val,
+    double *thrs,
+    magma_ptr *tmp_ptr,
+    magma_int_t *tmp_size,
     magma_queue_t queue );
 
 // ISAI preconditioner

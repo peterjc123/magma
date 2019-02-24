@@ -2,6 +2,7 @@ var group__magma__gemm =
 [
     [ "magma_cgemm", "group__magma__gemm.html#ga503a31364953b1840327712760b0ca05", null ],
     [ "magma_dgemm", "group__magma__gemm.html#gaa1c5db46fc9884b01b6423366e47e469", null ],
+    [ "magma_hgemm", "group__magma__gemm.html#ga94138ef55ce700e154900bf681959979", null ],
     [ "magma_sgemm", "group__magma__gemm.html#gaa869654506213fba5ff91f9212bd08c3", null ],
     [ "magma_zgemm", "group__magma__gemm.html#gac129c556a4bd76a081b47684d270bc16", null ],
     [ "magmablas_cgemm", "group__magma__gemm.html#gad75821e60d4c804851539b5d65aac701", null ],

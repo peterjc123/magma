@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Mark Gates
-       @generated from control/magma_znan_inf.cpp, normal z -> c, Mon Jun 25 18:24:02 2018
+       @generated from control/magma_znan_inf.cpp, normal z -> c, Wed Jan  2 14:18:48 2019
 
 */
 #include <limits>

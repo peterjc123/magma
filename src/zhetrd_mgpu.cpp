@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Raffaele Solca
        @author Stan Tomov
@@ -352,7 +352,7 @@ magma_zhetrd_mgpu(
         }
     }
     else {
-        trace_init( 1, ngpu, nqueue, queues );
+        trace_init( 1, ngpu, nqueue, (magma_queue_t *)queues );
         /* Copy the matrix to the GPU */
         if (1 <= n-nx) {
             magma_zhtodhe( ngpu, uplo, n, nb, A, lda, dA, ldda, queues, &iinfo );

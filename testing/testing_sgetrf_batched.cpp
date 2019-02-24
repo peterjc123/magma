@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.4.0) --
+   -- MAGMA (version 2.5.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date June 2018
+   @date January 2019
 
    @author Azzam Haidar
    @author Tingxing Dong
 
-   @generated from testing/testing_zgetrf_batched.cpp, normal z -> s, Mon Jun 25 18:24:23 2018
+   @generated from testing/testing_zgetrf_batched.cpp, normal z -> s, Wed Jan  2 14:18:53 2019
  */
 // includes, system
 #include <stdlib.h>
@@ -200,7 +200,7 @@ int main( int argc, char** argv)
                     lapackf77_sgetrf(&M, &N, h_A + s * lda * N, &lda, ipiv + s * min_mn, &locinfo);
                     if (locinfo != 0) {
                         printf("lapackf77_sgetrf matrix %lld returned error %lld: %s.\n",
-                               (long long) s, (long long) info, magma_strerror( info ));
+                               (long long) s, (long long) locinfo, magma_strerror( locinfo ));
                     }
                 }
                 #if !defined (BATCHED_DISABLE_PARCPU) && defined(_OPENMP)

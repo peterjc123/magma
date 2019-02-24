@@ -7,6 +7,8 @@ var group__magma__laswp =
     [ "magmablas_dlaswpx", "group__magma__laswp.html#ga263b2dba258c7cc095329a675b20244a", null ],
     [ "magmablas_dlaswp2", "group__magma__laswp.html#ga60f832bdcb80ea44e0e4b6929b978c9e", null ],
     [ "magmablas_dslaswp", "group__magma__laswp.html#ga6edb87d14bb3963f25692b24dd0dae50", null ],
+    [ "magmablas_hlaswp", "group__magma__laswp.html#ga7ab7fa679c5a57445a1f63bbc3fd2609", null ],
+    [ "magmablas_hlaswp2", "group__magma__laswp.html#gaac1fb11be02af53ec402d18bf3504c4c", null ],
     [ "magmablas_slaswp", "group__magma__laswp.html#ga7abb4df017da0f246f204f6d81a71b40", null ],
     [ "magmablas_slaswpx", "group__magma__laswp.html#ga00a515cee8982e3963035e4f61549bbc", null ],
     [ "magmablas_slaswp2", "group__magma__laswp.html#ga39dd6de5eacab970b30f5120a39cbe20", null ],

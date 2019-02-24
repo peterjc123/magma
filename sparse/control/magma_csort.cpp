@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from sparse/control/magma_zsort.cpp, normal z -> c, Mon Jun 25 18:24:28 2018
+       @generated from sparse/control/magma_zsort.cpp, normal z -> c, Wed Jan  2 14:18:54 2019
        @author Hartwig Anzt
 */
 
@@ -19,7 +19,7 @@
 #define SWAPM(a, b) { tmpv = val[a]; val[a] = val[b]; val[b] = tmpv;  \
                       tmpc = col[a]; col[a] = col[b]; col[b] = tmpc;  \
                       tmpr = row[a]; row[a] = row[b]; row[b] = tmpr; }
-                      
+
 #define UP 0
 #define DOWN 1
 
@@ -60,10 +60,10 @@ magma_csort(
     magma_queue_t queue )
 {
     magma_int_t info = 0;
-    
+
     magmaFloatComplex temp;
     magma_index_t pivot,j,i;
-    
+
     if(first<last){
          pivot=first;
          i=first;
@@ -104,11 +104,11 @@ cleanup:
     @param[in,out]
     x           magmaFloatComplex*
                 array to sort
-                
+
     @param[in,out]
     col         magma_index_t*
                 Target array, will be modified during operation.
-                
+
     @param[in,out]
     row         magma_index_t*
                 Target array, will be modified during operation.
@@ -139,10 +139,10 @@ magma_cmsort(
     magma_queue_t queue )
 {
     magma_int_t info = 0;
-    
+
     magmaFloatComplex temp;
     magma_index_t pivot,j,i, tmpcol, tmprow;
-    
+
     if(first<last){
          pivot=first;
          i=first;
@@ -214,7 +214,7 @@ magma_cindexsort(
     magma_queue_t queue )
 {
     magma_int_t info = 0;
-    
+
     magma_index_t pivot,j,temp,i;
 
     if(first<last){
@@ -257,7 +257,7 @@ cleanup:
     @param[in,out]
     x           magma_index_t*
                 array to sort
-                
+
     @param[in,out]
     y           magmaFloatComplex*
                 array to sort
@@ -287,7 +287,7 @@ magma_cindexsortval(
     magma_queue_t queue )
 {
     magma_int_t info = 0;
-    
+
     magma_index_t pivot,j,temp,i;
     magmaFloatComplex tempval;
 
@@ -314,7 +314,7 @@ magma_cindexsortval(
         temp=x[pivot];
         x[pivot]=x[j];
         x[j]=temp;
-        
+
         tempval=y[pivot];
         y[pivot]=y[j];
         y[j]=tempval;
@@ -331,21 +331,21 @@ cleanup:
     Purpose
     -------
 
-    Identifies the kth smallest/largest element in an array and reorders 
+    Identifies the kth smallest/largest element in an array and reorders
     such that these elements come to the front. The related arrays col and row
     are also reordered.
 
     Arguments
     ---------
-    
+
     @param[in,out]
     val         magmaFloatComplex*
                 Target array, will be modified during operation.
-                
+
     @param[in,out]
     col         magma_index_t*
                 Target array, will be modified during operation.
-                
+
     @param[in,out]
     row         magma_index_t*
                 Target array, will be modified during operation.
@@ -357,15 +357,15 @@ cleanup:
     @param[in]
     k           magma_int_t
                 Element to be identified (largest/smallest).
-                
+
     @param[in]
     r           magma_int_t
                 rule how to sort: '1' -> largest, '0' -> smallest
-                
+
     @param[out]
     element     magmaFloatComplex*
                 location of the respective element
-                
+
     @param[in]
     queue       magma_queue_t
                 Queue to execute in.
@@ -402,11 +402,11 @@ magma_cmorderstatistics(
             SWAPM(i, st);
             st++;
         }
-     
+
         SWAPM(length-1, st);
-     
+
         if ( k == st ){
-            *element = val[st];    
+            *element = val[st];
         }
         else if ( st > k ) {
             CHECK( magma_cmorderstatistics( val, col, row, st, k, r, element, queue ));
@@ -427,11 +427,11 @@ magma_cmorderstatistics(
             SWAPM(i, st);
             st++;
         }
-     
+
         SWAPM(length-1, st);
-     
+
         if ( k == st ){
-            *element = val[st];    
+            *element = val[st];
         }
         else if ( st > k ) {
             CHECK( magma_cmorderstatistics( val, col, row, st, k, r, element, queue ));
@@ -440,7 +440,7 @@ magma_cmorderstatistics(
             CHECK( magma_cmorderstatistics( val+st, col+st, row+st, length-st, k-st, r, element, queue ));
         }
     }
-    
+
 cleanup:
     return info;
 }
@@ -455,7 +455,7 @@ cleanup:
 
     Arguments
     ---------
-    
+
     @param[in,out]
     val         magmaFloatComplex*
                 Target array, will be modified during operation.
@@ -467,15 +467,15 @@ cleanup:
     @param[in]
     k           magma_int_t
                 Element to be identified (largest/smallest).
-                
+
     @param[in]
     r           magma_int_t
                 rule how to sort: '1' -> largest, '0' -> smallest
-                
+
     @param[out]
     element     magmaFloatComplex*
                 location of the respective element
-                
+
     @param[in]
     queue       magma_queue_t
                 Queue to execute in.
@@ -510,11 +510,11 @@ magma_corderstatistics(
             SWAP(i, st);
             st++;
         }
-     
+
         SWAP(length-1, st);
-     
+
         if ( k == st ){
-            *element = val[st];    
+            *element = val[st];
         }
         else if ( st > k ) {
             CHECK( magma_corderstatistics( val, st, k, r, element, queue ));
@@ -535,11 +535,11 @@ magma_corderstatistics(
             SWAP(i, st);
             st++;
         }
-     
+
         SWAP(length-1, st);
-     
+
         if ( k == st ){
-            *element = val[st];    
+            *element = val[st];
         }
         else if ( st > k ) {
             CHECK( magma_corderstatistics( val, st, k, r, element, queue ));
@@ -548,7 +548,7 @@ magma_corderstatistics(
              CHECK( magma_corderstatistics( val+st, length-st, k-st, r, element, queue ));
         }
     }
-    
+
 cleanup:
     return info;
 }
@@ -564,7 +564,7 @@ cleanup:
 
     Arguments
     ---------
-    
+
     @param[in,out]
     val         magmaFloatComplex*
                 Target array, will be modified during operation.
@@ -576,19 +576,19 @@ cleanup:
     @param[in]
     k           magma_int_t
                 Element to be identified (largest/smallest).
-                
+
     @param[in]
     inc         magma_int_t
                 Stepsize in the approximation.
-                
+
     @param[in]
     r           magma_int_t
                 rule how to sort: '1' -> largest, '0' -> smallest
-                
+
     @param[out]
     element     magmaFloatComplex*
                 location of the respective element
-                
+
     @param[in]
     queue       magma_queue_t
                 Queue to execute in.
@@ -624,11 +624,11 @@ magma_corderstatistics_inc(
             SWAP(i, st);
             st=st+inc;
         }
-     
+
         SWAP(length-inc, st);
-     
+
         if ( k == st ){
-            *element = val[st];    
+            *element = val[st];
         }
         else if ( st > k ) {
             CHECK( magma_corderstatistics( val, st, k, r, element, queue ));
@@ -649,11 +649,11 @@ magma_corderstatistics_inc(
             SWAP(i, st);
             st=st+inc;
         }
-     
+
         SWAP(length-inc, st);
-     
+
         if ( k == st ){
-            *element = val[st];    
+            *element = val[st];
         }
         else if ( st > k ) {
             CHECK( magma_corderstatistics( val, st, k, r, element, queue ));
@@ -662,7 +662,7 @@ magma_corderstatistics_inc(
              CHECK( magma_corderstatistics( val+st, length-st, k-st, r, element, queue ));
         }
     }
-    
+
 cleanup:
     return info;
 }
@@ -688,8 +688,8 @@ void swap(magmaFloatComplex *a, magmaFloatComplex *b)
 
     Arguments
     ---------
-    
-    @param[in]                                                                                                                                                         
+
+    @param[in]
     start       magma_int_t
                 Start position of the target array.
 
@@ -704,7 +704,7 @@ void swap(magmaFloatComplex *a, magmaFloatComplex *b)
     @param[in]
     flag        magma_int_t
                 ???
-                
+
     @param[in]
     queue       magma_queue_t
                 Queue to execute in.
@@ -715,18 +715,18 @@ void swap(magmaFloatComplex *a, magmaFloatComplex *b)
 extern "C"
 magma_int_t
 magma_cbitonic_sort(
-    magma_int_t start, 
-    magma_int_t length, 
-    magmaFloatComplex *seq, 
+    magma_int_t start,
+    magma_int_t length,
+    magmaFloatComplex *seq,
     magma_int_t flag,
     magma_queue_t queue )
 {
-    
+
     magma_int_t info =0;
-    
+
     magma_int_t m, i, num_threads=1;
     magma_int_t split_length;
-    
+
 #ifdef _OPENMP
     #pragma omp parallel
     {

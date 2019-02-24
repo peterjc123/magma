@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.4.0) --
+   -- MAGMA (version 2.5.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date June 2018
+   @date January 2019
 
    @author Azzam Haidar
    @author Adrien Remy
 
-   @generated from src/zgetf2_nopiv_batched.cpp, normal z -> s, Mon Jun 25 18:24:10 2018
+   @generated from src/zgetf2_nopiv_batched.cpp, normal z -> s, Wed Jan  2 14:18:50 2019
 */
 
 #include "magma_internal.h"
@@ -46,6 +46,14 @@
             On entry, each pointer is an M-by-N matrix to be factored.
             On exit, the factors L and U from the factorization
             A = P*L*U; the unit diagonal elements of L are not stored.
+
+    @param[in]
+    ai      INTEGER
+            Row offset for A.
+
+    @param[in]
+    aj      INTEGER
+            Column offset for A.
 
     @param[in]
     ldda    INTEGER

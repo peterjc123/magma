@@ -10,7 +10,7 @@ var group__magma__thread =
       [ "quit", "classmagma__thread__queue.html#a289689493610414cfa716dce2561e6cf", null ],
       [ "pop_task", "classmagma__thread__queue.html#a2819b023e5d04949f96d5f142eeec13d", null ],
       [ "task_done", "classmagma__thread__queue.html#ad9ee2c11aae7957647606d6ea06b0db6", null ],
-      [ "get_thread_index", "classmagma__thread__queue.html#a19bd7d488572a5f11f51f0bc9594b2a5", null ],
+      [ "get_thread_index", "classmagma__thread__queue.html#a65afbd1d75b551159d75e69dc0258b0f", null ],
       [ "magma_thread_main", "classmagma__thread__queue.html#a67218e4b6080631da1d3b04dd2f44ab9", null ]
     ] ],
     [ "magma_get_parallel_numthreads", "group__magma__thread.html#gad07446b16b26c7e36cc08e6601845460", null ],

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from magmablas/zgemm_batched.cpp, normal z -> d, Mon Jun 25 18:24:14 2018
+       @generated from magmablas/zgemm_batched.cpp, normal z -> d, Wed Jan  2 14:18:51 2019
 
        @author Jakub Kurzak
        @author Stan Tomov
@@ -212,6 +212,37 @@ magmablas_dgemm_batched( magma_trans_t transA, magma_trans_t transB,
                        dB_array, 0, 0, lddb,
                  beta, dC_array, 0, 0, lddc, 
                 batchCount, queue );
+}
+
+
+/******************************************************************************/
+extern "C" void
+magmablas_dgemm_batched_strided( magma_trans_t transA, magma_trans_t transB, 
+                     magma_int_t m, magma_int_t n, magma_int_t k,
+                     double alpha,
+                     double const * dA, magma_int_t ldda, magma_int_t strideA, 
+                     double const * dB, magma_int_t lddb, magma_int_t strideB, 
+                     double beta,
+                     double       * dC, magma_int_t lddc, magma_int_t strideC,  
+                     magma_int_t batchCount, magma_queue_t queue )
+{
+    double** dAarray = (double**)queue->get_dAarray();
+    double** dBarray = (double**)queue->get_dBarray();
+    double** dCarray = (double**)queue->get_dCarray();
+    magma_int_t max_batchCount   = queue->get_maxBatch();
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount){
+        magma_int_t batch = min(max_batchCount, batchCount-i);
+        magma_dset_pointer(dAarray, (double*)(dA + i * strideA), ldda, 0, 0, strideA, batch, queue);
+        magma_dset_pointer(dBarray, (double*)(dB + i * strideB), lddb, 0, 0, strideB, batch, queue);
+        magma_dset_pointer(dCarray, dC + i * strideC, lddc, 0, 0, strideC, batch, queue);
+        magmablas_dgemm_batched_core( 
+            transA, transB,
+            m, n, k, 
+            alpha, dAarray, 0, 0, ldda, 
+                   dBarray, 0, 0, lddb, 
+            beta,  dCarray, 0, 0, lddc, 
+            batch, queue);
+    }
 }
 
 

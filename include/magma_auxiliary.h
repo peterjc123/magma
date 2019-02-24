@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 */
 
 #ifndef MAGMA_AUXILIARY_H
@@ -225,6 +225,14 @@ magma_setdevice( magma_device_t dev );
 size_t
 magma_mem_size( magma_queue_t queue );
 
+magma_int_t
+magma_getdevice_multiprocessor_count();
+
+size_t
+magma_getdevice_shmem_block();
+
+size_t
+magma_getdevice_shmem_multiprocessor();
 
 // =============================================================================
 // queue support

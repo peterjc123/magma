@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from testing/testing_zpotrf_gpu.cpp, normal z -> s, Mon Jun 25 18:24:19 2018
+       @generated from testing/testing_zpotrf_gpu.cpp, normal z -> s, Wed Jan  2 14:18:52 2019
 */
 // includes, system
 #include <stdlib.h>
@@ -71,7 +71,12 @@ int main( int argc, char** argv)
                Performs operation using MAGMA
                =================================================================== */
             gpu_time = magma_wtime();
-            magma_spotrf_gpu( opts.uplo, N, d_A, ldda, &info );
+            if(opts.version == 1){
+                magma_spotrf_gpu( opts.uplo, N, d_A, ldda, &info );
+            }
+            else if(opts.version == 2){
+                magma_spotrf_native(opts.uplo, N, d_A, ldda, &info );
+            }
             gpu_time = magma_wtime() - gpu_time;
             gpu_perf = gflops / gpu_time;
             if (info != 0) {

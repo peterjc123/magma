@@ -176,5 +176,7 @@ var group__magmasparse__caux =
     [ "magma_cmconjugate", "group__magmasparse__caux.html#ga42c856528a2584b0cdf5301611eeba1a", null ],
     [ "magma_cmcsrcompressor_gpu", "group__magmasparse__caux.html#gac958bb98e26067d2035de9c25fbe909f", null ],
     [ "magma_cpreselect_gpu", "group__magmasparse__caux.html#ga27dfc2c33bd3314ab741b8659bdd1750", null ],
+    [ "magma_csampleselect", "group__magmasparse__caux.html#ga8e61ba153d61f6c9dd16526a69fa148e", null ],
+    [ "magma_csampleselect_approx", "group__magmasparse__caux.html#ga41c1a70eb86245ec243f4f7981c0e2b9", null ],
     [ "magma_cthrsholdrm_gpu", "group__magmasparse__caux.html#gacb7a12801fb11003a021a500dbcb162e", null ]
 ];

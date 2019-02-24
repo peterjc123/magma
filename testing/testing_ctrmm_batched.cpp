@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from testing/testing_ztrmm_batched.cpp, normal z -> c, Mon Jun 25 18:24:22 2018
+       @generated from testing/testing_ztrmm_batched.cpp, normal z -> c, Wed Jan  2 14:18:53 2019
        @author Chongxiao Cao
 */
 
@@ -44,6 +44,7 @@ int main( int argc, char** argv)
     magma_int_t ISEED[4] = {0,0,0,1};
     
     magmaFloatComplex **dA_array, **dB_array;
+    magmaFloatComplex **hA_array, **hB_array;
     magmaFloatComplex *h_A, *h_B, *h_Bmagma;
     magmaFloatComplex_ptr d_A, d_B;
     magmaFloatComplex c_neg_one = MAGMA_C_NEG_ONE;
@@ -59,6 +60,9 @@ int main( int argc, char** argv)
     TESTING_CHECK( magma_smalloc_cpu( &Anorm, batchCount ));
     TESTING_CHECK( magma_smalloc_cpu( &Bnorm, batchCount ));
     
+    TESTING_CHECK( magma_malloc_cpu((void**)&hA_array, batchCount*sizeof(magmaFloatComplex*)) );
+    TESTING_CHECK( magma_malloc_cpu((void**)&hB_array, batchCount*sizeof(magmaFloatComplex*)) );
+
     TESTING_CHECK( magma_malloc((void**)&dA_array, batchCount*sizeof(magmaFloatComplex*)) );
     TESTING_CHECK( magma_malloc((void**)&dB_array, batchCount*sizeof(magmaFloatComplex*)) );
     
@@ -142,23 +146,17 @@ int main( int argc, char** argv)
                Performs operation using CPU BLAS
                =================================================================== */
             if ( opts.lapack ) {
-                cpu_time = magma_wtime();
-                #if !defined (BATCHED_DISABLE_PARCPU) && defined(_OPENMP)
-                magma_int_t nthreads = magma_get_lapack_numthreads();
-                magma_set_lapack_numthreads(1);
-                magma_set_omp_numthreads(nthreads);
-                #pragma omp parallel for schedule(dynamic)
-                #endif
-                for (int s=0; s < batchCount; s++){
-                    blasf77_ctrmm( lapack_side_const(opts.side), lapack_uplo_const(opts.uplo),
-                                   lapack_trans_const(opts.transA), lapack_diag_const(opts.diag),
-                                   &M, &N,
-                                   &alpha, h_A+s*lda*Ak, &lda,
-                                           h_B+s*ldb*N,  &ldb );
+                // populate pointer arrays on the host
+                for(int s = 0; s < batchCount; s++){
+                    hA_array[s] = h_A+s*lda*Ak;
+                    hB_array[s] = h_B+s*ldb*N;
                 }
-                #if !defined (BATCHED_DISABLE_PARCPU) && defined(_OPENMP)
-                magma_set_lapack_numthreads(nthreads);
-                #endif
+                cpu_time = magma_wtime();
+                blas_ctrmm_batched( 
+                    opts.side, opts.uplo, opts.transA, opts.diag, 
+                    M, N, 
+                    alpha, hA_array, lda, 
+                           hB_array, ldb, batchCount );
                 cpu_time = magma_wtime() - cpu_time;
                 cpu_perf = gflops / cpu_time;
             }
@@ -210,6 +208,9 @@ int main( int argc, char** argv)
             printf( "\n" );
         }
     }
+
+    magma_free_cpu( hA_array );
+    magma_free_cpu( hB_array );
 
     magma_free( dA_array );
     magma_free( dB_array );

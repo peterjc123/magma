@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from testing/testing_zcgesv_gpu.cpp, mixed zc -> ds, Mon Jun 25 18:24:18 2018
+       @generated from testing/testing_zcgesv_gpu.cpp, mixed zc -> ds, Wed Jan  2 14:18:52 2019
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +17,7 @@
 #include "magma_lapack.h"
 #include "testings.h"
 
-
+#define REAL 
 int main(int argc, char **argv)
 {
     TESTING_CHECK( magma_init() );
@@ -53,7 +53,16 @@ int main(int argc, char **argv)
     nrhs = opts.nrhs;
     
     printf("%% trans = %s\n", lapack_trans_const(opts.transA) );
+    #ifdef REAL
+    if ( opts.version == 3 ) {
+        printf("%%   N  NRHS   DP-Factor  DP-Solve  HP-Factor  HP-Solve  MP: FP16->FP64-Solve  Iter   |b-Ax|/N|A|\n");
+    }
+    else{
+        printf("%%   N  NRHS   DP-Factor  DP-Solve  SP-Factor  SP-Solve  MP: FP32->FP64-Solve  Iter   |b-Ax|/N|A|\n");
+    }
+    #else
     printf("%%   N  NRHS   DP-Factor  DP-Solve  SP-Factor  SP-Solve  MP-Solve  Iter   |b-Ax|/N|A|\n");
+    #endif
     printf("%%=========================================================================================\n");
     for( int itest = 0; itest < opts.ntest; ++itest ) {
         for( int iter = 0; iter < opts.niter; ++iter ) {
@@ -91,10 +100,26 @@ int main(int argc, char **argv)
             //              MIXED - GPU
             //=====================================================================
             gpu_time = magma_wtime();
-            magma_dsgesv_gpu( opts.transA, N, nrhs,
-                              d_A, ldda, h_ipiv, d_ipiv,
-                              d_B, lddb, d_X, lddx,
-                              d_WORKD, d_WORKS, &gesv_iter, &info);
+            if ( opts.version == 1 ) {
+                magma_dsgesv_gpu( opts.transA, N, nrhs,
+                        d_A, ldda, h_ipiv, d_ipiv,
+                        d_B, lddb, d_X, lddx,
+                        d_WORKD, d_WORKS, &gesv_iter, &info);
+            }
+            #ifdef REAL
+            else if ( opts.version == 2 ) {
+                magma_dsgesv_iteref_gpu( opts.transA, N, nrhs,
+                        d_A, ldda, h_ipiv, d_ipiv,
+                        d_B, lddb, d_X, lddx,
+                        d_WORKD, d_WORKS, &gesv_iter, &info);
+            }
+            else if ( opts.version == 3 ) {
+                magma_dhgesv_iteref_gpu( opts.transA, N, nrhs,
+                        d_A, ldda, h_ipiv, d_ipiv,
+                        d_B, lddb, d_X, lddx,
+                        d_WORKD, d_WORKS, &gesv_iter, &info);
+            }
+            #endif
             gpu_time = magma_wtime() - gpu_time;
             gpu_perf = gflopsS / gpu_time;
             if (info != 0) {
@@ -157,7 +182,15 @@ int main(int argc, char **argv)
             magmablas_dlag2s( N, nrhs, d_B, lddb, d_Bs, lddb, opts.queue, &info );
             
             gpu_time = magma_wtime();
-            magma_sgetrf_gpu(N, N, d_As, ldda, h_ipiv, &info);
+            #ifdef REAL
+            if ( opts.version == 3 ) {
+                magma_htgetrf_gpu( N, N,    d_As, ldda, h_ipiv, &info);
+            }
+            else
+            #endif
+            {
+                magma_sgetrf_gpu(N, N, d_As, ldda, h_ipiv, &info);
+            }
             gpu_time = magma_wtime() - gpu_time;
             gpu_perfsf = gflopsF / gpu_time;
             if (info != 0) {
@@ -172,7 +205,15 @@ int main(int argc, char **argv)
             magmablas_dlag2s(N, nrhs, d_B, lddb, d_Bs, lddb, opts.queue, &info );
             
             gpu_time = magma_wtime();
-            magma_sgetrf_gpu( N, N,    d_As, ldda, h_ipiv, &info);
+            #ifdef REAL
+            if ( opts.version == 3 ) {
+                magma_htgetrf_gpu( N, N,    d_As, ldda, h_ipiv, &info);
+            }
+            else
+            #endif
+            {
+                magma_sgetrf_gpu(N, N, d_As, ldda, h_ipiv, &info);
+            }
             magma_sgetrs_gpu( opts.transA, N, nrhs, d_As, ldda, h_ipiv,
                               d_Bs, lddb, &info);
             gpu_time = magma_wtime() - gpu_time;
@@ -182,7 +223,7 @@ int main(int argc, char **argv)
                        (long long) info, magma_strerror( info ));
             }
             
-            printf("%5lld %5lld   %7.2f   %7.2f   %7.2f   %7.2f   %7.2f     %4lld   %8.2e   %s\n",
+            printf("%5lld %5lld   %7.2f    %7.2f   %7.2f    %7.2f   %7.2f            %4lld   %8.2e   %s\n",
                    (long long) N, (long long) nrhs,
                    gpu_perfdf, gpu_perfds, gpu_perfsf, gpu_perfss, gpu_perf,
                    (long long) gesv_iter, error, (error < tol ? "ok" : "failed"));

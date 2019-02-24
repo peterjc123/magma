@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
        
        @author Raffaele Solca
        
-       @generated from src/dlaex0_m.cpp, normal d -> s, Mon Jun 25 18:24:08 2018
+       @generated from src/dlaex0_m.cpp, normal d -> s, Wed Jan  2 14:18:49 2019
 */
 #include "magma_internal.h"
 #include "magma_timer.h"
@@ -268,7 +268,7 @@ magma_slaex0_m(
         ++curlvl;
         
         timer_stop( time );
-        timer_printf( "%lld: time: %6.2f\n", (long long) curlvl, time );
+        //timer_printf( "%lld: time: %6.2f\n", (long long) curlvl, time );
     }
 
     // Re-merge the eigenvalues/vectors which were deflated at the final

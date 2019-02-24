@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
        
        @author Raffaele Solca
        @precisions normal d -> s
@@ -456,7 +456,7 @@ magma_dlaex3_m(
         return *info;
 
     timer_stop( time );
-    timer_printf( "eigenvalues/vector D+zzT = %6.2f\n", time );
+    //timer_printf( "eigenvalues/vector D+zzT = %6.2f\n", time );
 
 #else
     // -------------------------------------------------------------------------
@@ -538,7 +538,7 @@ magma_dlaex3_m(
     }
 
     timer_stop( time );
-    timer_printf( "eigenvalues/vector D+zzT = %6.2f\n", time );
+    //timer_printf( "eigenvalues/vector D+zzT = %6.2f\n", time );
 
 #endif //_OPENMP
 
@@ -684,7 +684,7 @@ magma_dlaex3_m(
         }
     }
     timer_stop( time );
-    timer_printf( "gemms = %6.2f\n", time );
+    //timer_printf( "gemms = %6.2f\n", time );
 
     magma_setdevice( orig_dev );
     

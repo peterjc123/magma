@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.4.0) --
+#   -- MAGMA (version 2.5.0) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date June 2018
+#      @date January 2019
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -95,6 +95,7 @@ testing_src += \
 # LU, GPU interface
 testing_src += \
 	$(cdir)/testing_zcgesv_gpu.cpp	\
+	$(cdir)/testing_dxgesv_gpu.cpp	\
 	\
 	$(cdir)/testing_zgesv_gpu.cpp	\
 	$(cdir)/testing_zgetrf_gpu.cpp	\
@@ -223,6 +224,11 @@ testing_src += \
 	$(cdir)/testing_ztrsm_vbatched.cpp	\
 	\
 	$(cdir)/testing_zpotrf_vbatched.cpp	\
+
+# ----------
+# half precision files
+testing_src += \
+	$(cdir)/testing_hgemm.cpp	\
 
 # ----------
 # fortran.c and fortran_thunking.c are provided by NVIDIA in $(CUDADIR)/src

@@ -31,7 +31,12 @@ control/magma_sf77.cpp
 control/magma_df77.cpp
 control/magma_cf77.cpp
 control/magma_zf77.cpp
+control/magmablas_sf77.cpp
+control/magmablas_df77.cpp
+control/magmablas_cf77.cpp
+control/magmablas_zf77.cpp
 interface_cuda/alloc.cpp
+interface_cuda/blas_h_v2.cpp
 interface_cuda/blas_z_v1.cpp
 interface_cuda/blas_z_v2.cpp
 interface_cuda/copy_v1.cpp
@@ -58,6 +63,10 @@ src/ztrtri.cpp
 src/zpotrf_m.cpp
 src/zcgesv_gpu.cpp
 src/zcgetrs_gpu.cpp
+src/dgmres_plu_gpu.cpp
+src/dxgesv_gmres_gpu.cpp
+src/xshgetrf_gpu.cpp
+src/xhsgetrf_gpu.cpp
 src/zgerfs_nopiv_gpu.cpp
 src/zgesv_gpu.cpp
 src/zgesv_nopiv_gpu.cpp
@@ -253,6 +262,9 @@ src/zgeqrf_expert_batched.cpp
 src/zpotf2_vbatched.cpp
 src/zpotrf_panel_vbatched.cpp
 src/zpotrf_vbatched.cpp
+src/zgetf2_native.cpp
+src/zgetrf_panel_native.cpp
+src/zpotrf_panel_native.cpp
 magmablas/zaxpycp.cu
 magmablas/zcaxpycp.cu
 magmablas/zgeadd.cu
@@ -327,12 +339,14 @@ magmablas/zgetf2.cu
 magmablas/zgeqr2.cpp
 magmablas/zgeqr2x_gpu-v4.cu
 magmablas/zpotf2.cu
+magmablas/zgetf2_native_kernel.cu
 magmablas/zgeadd_batched.cu
 magmablas/zgemm_batched.cpp
 magmablas/cgemm_batched_core.cu
 magmablas/dgemm_batched_core.cu
 magmablas/sgemm_batched_core.cu
 magmablas/zgemm_batched_core.cu
+magmablas/zgemm_batched_smallsq.cu
 magmablas/cgemv_batched_core.cu
 magmablas/dgemv_batched_core.cu
 magmablas/sgemv_batched_core.cu
@@ -396,6 +410,11 @@ magmablas/zpotf2_kernels_var.cu
 magmablas/prefix_sum.cu
 magmablas/vbatched_aux.cu
 magmablas/vbatched_check.cu
+magmablas/blas_zbatched.cpp
+magmablas/slag2h.cu
+magmablas/hlag2s.cu
+magmablas/hlaconvert.cu
+magmablas/hlaswp.cu
 control/magma_sauxiliary.cpp
 control/magma_dauxiliary.cpp
 control/magma_cauxiliary.cpp
@@ -937,6 +956,15 @@ src/cpotrf_panel_vbatched.cpp
 src/spotrf_vbatched.cpp
 src/dpotrf_vbatched.cpp
 src/cpotrf_vbatched.cpp
+src/sgetf2_native.cpp
+src/dgetf2_native.cpp
+src/cgetf2_native.cpp
+src/sgetrf_panel_native.cpp
+src/dgetrf_panel_native.cpp
+src/cgetrf_panel_native.cpp
+src/spotrf_panel_native.cpp
+src/dpotrf_panel_native.cpp
+src/cpotrf_panel_native.cpp
 magmablas/saxpycp.cu
 magmablas/daxpycp.cu
 magmablas/caxpycp.cu
@@ -1137,12 +1165,18 @@ magmablas/cgeqr2x_gpu-v4.cu
 magmablas/spotf2.cu
 magmablas/dpotf2.cu
 magmablas/cpotf2.cu
+magmablas/sgetf2_native_kernel.cu
+magmablas/dgetf2_native_kernel.cu
+magmablas/cgetf2_native_kernel.cu
 magmablas/sgeadd_batched.cu
 magmablas/dgeadd_batched.cu
 magmablas/cgeadd_batched.cu
 magmablas/sgemm_batched.cpp
 magmablas/dgemm_batched.cpp
 magmablas/cgemm_batched.cpp
+magmablas/sgemm_batched_smallsq.cu
+magmablas/dgemm_batched_smallsq.cu
+magmablas/cgemm_batched_smallsq.cu
 magmablas/ssymv_batched_core.cu
 magmablas/dsymv_batched_core.cu
 magmablas/chemv_batched_core.cu
@@ -1251,6 +1285,9 @@ magmablas/ctrsm_vbatched.cpp
 magmablas/spotf2_kernels_var.cu
 magmablas/dpotf2_kernels_var.cu
 magmablas/cpotf2_kernels_var.cu
+magmablas/blas_sbatched.cpp
+magmablas/blas_dbatched.cpp
+magmablas/blas_cbatched.cpp
 )
 
 set( libblas_fix_src
@@ -1409,6 +1446,7 @@ testing/testing_zhesv_nopiv_gpu.cpp
 testing/testing_zsysv_nopiv_gpu.cpp
 testing/testing_zhetrf.cpp
 testing/testing_zcgesv_gpu.cpp
+testing/testing_dxgesv_gpu.cpp
 testing/testing_zgesv_gpu.cpp
 testing/testing_zgetrf_gpu.cpp
 testing/testing_zgetf2_gpu.cpp
@@ -1492,6 +1530,7 @@ testing/testing_zsyr2k_vbatched.cpp
 testing/testing_ztrmm_vbatched.cpp
 testing/testing_ztrsm_vbatched.cpp
 testing/testing_zpotrf_vbatched.cpp
+testing/testing_hgemm.cpp
 testing/testing_caxpy.cpp
 testing/testing_daxpy.cpp
 testing/testing_saxpy.cpp
@@ -1912,6 +1951,7 @@ sparse/blas/zparilut_kernels.cu
 sparse/blas/zparilut_candidates.cu
 sparse/blas/magma_zthrsrm.cu
 sparse/blas/magma_zpreselect.cu
+sparse/blas/magma_zsampleselect.cu
 sparse/blas/zcompact.cu
 sparse/blas/magma_zmcsrcompressor_gpu.cu
 sparse/blas/magma_zdiagcheck.cu
@@ -2157,6 +2197,9 @@ sparse/blas/magma_sthrsrm.cu
 sparse/blas/magma_cpreselect.cu
 sparse/blas/magma_dpreselect.cu
 sparse/blas/magma_spreselect.cu
+sparse/blas/magma_ssampleselect.cu
+sparse/blas/magma_dsampleselect.cu
+sparse/blas/magma_csampleselect.cu
 sparse/blas/scompact.cu
 sparse/blas/dcompact.cu
 sparse/blas/ccompact.cu

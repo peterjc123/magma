@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from sparse/control/magma_zmcsrpass.cpp, normal z -> c, Mon Jun 25 18:24:26 2018
+       @generated from sparse/control/magma_zmcsrpass.cpp, normal z -> c, Wed Jan  2 14:18:54 2019
        @author Hartwig Anzt
 */
 
@@ -72,6 +72,7 @@ magma_ccsrset(
     A->num_rows = m;
     A->num_cols = n;
     A->nnz = row[m];
+    A->true_nnz = row[m];
     A->storage_type = Magma_CSR;
     A->memory_location = Magma_CPU;
     A->val = val;

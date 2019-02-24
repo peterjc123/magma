@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.4.0) --
+   -- MAGMA (version 2.5.0) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date June 2018
+   @date January 2019
 
    @author Azzam Haidar
    @author Ahmad Ahmad
 
-   @generated from magmablas/zpotf2_kernels.cu, normal z -> c, Mon Jun 25 18:24:16 2018
+   @generated from magmablas/zpotf2_kernels.cu, normal z -> c, Wed Jan  2 14:18:51 2019
  */
 #include "magma_internal.h"
 #include "batched_kernel_param.h"
@@ -44,9 +44,9 @@ __global__ void cpotf2_smlpin_fixwidth_kernel(int m, magmaFloatComplex *dA, int 
 {
     #pragma unroll
     for(int i = 0; i < m; i+= POTF2_NB){
-        //if(threadIdx.x < m-i){
+        if(threadIdx.x < m-i){
             cpotf2_smlpout_fixwidth_device(m-i, A(localstep+i, 0), A(localstep+i, localstep+i), ldda, localstep+i, gbstep, dinfo);
-        //}
+        }
     }
 }
 /******************************************************************************/
@@ -55,9 +55,9 @@ __global__ void cpotf2_smlpin_anywidth_kernel(int m, magmaFloatComplex *dA, int 
     #pragma unroll
     for(int i = 0; i < m; i+= POTF2_NB){
         int ib = min(m-i, POTF2_NB);
-        //if(threadIdx.x < m-i){
+        if(threadIdx.x < m-i){
             cpotf2_smlpout_anywidth_device(m-i, ib, A(localstep+i, 0), A(localstep+i, localstep+i), ldda, localstep+i, gbstep, dinfo);
-        //}
+        }
     }
 }
 /******************************************************************************/

@@ -169,6 +169,8 @@ var group__magmasparse__zaux =
     [ "magma_zmconjugate", "group__magmasparse__zaux.html#ga16ac97fb5a9ca7344026a43194c759b9", null ],
     [ "magma_zmcsrcompressor_gpu", "group__magmasparse__zaux.html#ga96e61391a60a7f29bb3fd0de79951c54", null ],
     [ "magma_zpreselect_gpu", "group__magmasparse__zaux.html#ga77aa575f6943ad0b0a5012a76bf8a48f", null ],
+    [ "magma_zsampleselect", "group__magmasparse__zaux.html#gaf45bf1a64b12d8654bdd3f2803166119", null ],
+    [ "magma_zsampleselect_approx", "group__magmasparse__zaux.html#ga4285367f09eb3fd8de02a8adb6664b2d", null ],
     [ "magma_zthrsholdrm_gpu", "group__magmasparse__zaux.html#gad56aa1f6e29adc54429cc4a2d1243a5c", null ],
     [ "magma_zthrsholdselect", "group__magmasparse__zaux.html#ga0586dc09aad85c77961f90eb80f5cafc", null ],
     [ "magma_zmisai_blockstruct_gpu", "group__magmasparse__zaux.html#ga764852bf4e5da7689ecc8388d5fec5ff", null ],

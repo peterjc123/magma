@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from sparse/control/magma_zvinit.cpp, normal z -> c, Mon Jun 25 18:24:27 2018
+       @generated from sparse/control/magma_zvinit.cpp, normal z -> c, Wed Jan  2 14:18:54 2019
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"
@@ -191,7 +191,7 @@ magma_cvinit_rand(
         
         CHECK( magma_cmalloc_cpu( &x->val, x->nnz ));
         for( magma_int_t i=0; i<x->nnz; i++) {
-             x->val[i] = MAGMA_C_MAKE( ((float)(rand()))/ RAND_MAX - .5, ((float)(rand()))/ RAND_MAX - .5 );
+             x->val[i] = MAGMA_C_MAKE( ((float)(2*rand()))/ RAND_MAX - 1., ((float)(2*rand()))/ RAND_MAX - 1. );
         }
     }
     else if ( mem_loc == Magma_DEV ) {

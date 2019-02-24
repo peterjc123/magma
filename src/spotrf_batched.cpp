@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
        
        @author Azzam Haidar
        @author Tingxing Dong
        @author Ahmad Abdelfattah
 
-       @generated from src/zpotrf_batched.cpp, normal z -> s, Mon Jun 25 18:24:10 2018
+       @generated from src/zpotrf_batched.cpp, normal z -> s, Wed Jan  2 14:18:50 2019
 */
 #include <cuda_runtime.h>
 
@@ -34,18 +34,15 @@ magma_spotrf_lg_batched(
     magma_getdevice( &cdev );
 
     // queues for streamed herk
-    magma_int_t streamid;
-    const magma_int_t nbstreams=10;
+    magma_int_t create_stream, streamid;
+    const magma_int_t nbstreams=4;
     magma_queue_t queues[nbstreams];
-    for (k=0; k < nbstreams; k++) {
-        magma_queue_create( cdev, &queues[k] );
-    }
+
     // aux array for streamed herk
     float** cpuAarray = NULL;
     magma_malloc_cpu((void**) &cpuAarray, batchCount*sizeof(float*));
     if(cpuAarray == NULL) goto fin;
     magma_getvector( batchCount, sizeof(float*), dA_array, 1, cpuAarray, 1, queue);
-
 
     if ( n > 2048 ) {
         #ifndef MAGMA_NOWARNING
@@ -58,7 +55,14 @@ magma_spotrf_lg_batched(
 
     magma_int_t nb, recnb;
     magma_get_spotrf_batched_nbparam(n, &nb, &recnb);
-    nb = recnb = 192;
+
+    // queues for streamed herk
+    create_stream = magma_srecommend_cublas_gemm_stream(MagmaNoTrans, MagmaConjTrans, n-nb, n-nb, nb);
+    if(create_stream){
+        for (k=0; k < nbstreams; k++) {
+            magma_queue_create( cdev, &queues[k] );
+        }
+    }
 
     if (uplo == MagmaUpper) {
         printf("Upper side is unavailable\n");
@@ -88,11 +92,8 @@ magma_spotrf_lg_batched(
                             d_neg_one, (const float*) cpuAarray[k] + j+ib+j*ldda     , ldda, 
                             d_one,                                 cpuAarray[k] + j+ib+(j+ib)*ldda, ldda, queues[streamid] );
                     }
-                    // if queue is not NULL, must sync before starting next panel
-                    if (queue != NULL) {
-                        for (magma_int_t s=0; s < nbstreams; s++)
-                            magma_queue_sync(queues[s]);
-                    }
+                    for (magma_int_t s=0; s < nbstreams; s++)
+                        magma_queue_sync(queues[s]);
                 }
                 else{
                     magmablas_ssyrk_batched_core( uplo, MagmaNoTrans, n-j-ib, ib,
@@ -102,6 +103,11 @@ magma_spotrf_lg_batched(
                                           batchCount, queue );
                 }
             } 
+        }
+    }
+    if(create_stream){
+        for (k=0; k < nbstreams; k++) {
+            magma_queue_destroy( queues[k] );
         }
     }
 

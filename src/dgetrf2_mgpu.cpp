@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from src/zgetrf2_mgpu.cpp, normal z -> d, Mon Jun 25 18:24:04 2018
+       @generated from src/zgetrf2_mgpu.cpp, normal z -> d, Wed Jan  2 14:18:49 2019
 
 */
 #include "magma_internal.h"
@@ -168,7 +168,7 @@ magma_dgetrf2_mgpu(
         /* workspaces */
         d_panel[d] = &(d_lAP[d][h*nb*maxm]);   /* temporary panel storage */
     }
-    trace_init( 1, ngpu, 2, queues );
+    trace_init( 1, ngpu, 2, (magma_queue_t *)queues );
 
     /* start sending the panel to cpu */
     nb0 = min(mindim, nb);

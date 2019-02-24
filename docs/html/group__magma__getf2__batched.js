@@ -1,9 +1,13 @@
 var group__magma__getf2__batched =
 [
     [ "magma_cgetf2_batched_v1", "group__magma__getf2__batched.html#gac19aed6f3363427172657db65f717a2e", null ],
+    [ "magma_cgetf2_native", "group__magma__getf2__batched.html#gaf9c098555af894379a01492fdbdbe633", null ],
     [ "magma_dgetf2_batched_v1", "group__magma__getf2__batched.html#gac0b0d9332b15b4a691830cc4c10a381a", null ],
+    [ "magma_dgetf2_native", "group__magma__getf2__batched.html#gae1d1428310b4a4d4fcf3be1132e7aaa4", null ],
     [ "magma_sgetf2_batched_v1", "group__magma__getf2__batched.html#gaf3ddc138896d18a444e04f51c07aeea0", null ],
+    [ "magma_sgetf2_native", "group__magma__getf2__batched.html#ga84f992b3027fbae00c43289f6cd0ca28", null ],
     [ "magma_zgetf2_batched_v1", "group__magma__getf2__batched.html#ga25014d60bb51c15d9dd2e249b6cf4e95", null ],
+    [ "magma_zgetf2_native", "group__magma__getf2__batched.html#ga2df30f07d7b31c9c76a89b8fe6c582d7", null ],
     [ "magma_cgetf2trsm_batched", "group__magma__getf2__batched.html#ga7d3e0e75a7c9889736700ca94e4a537b", null ],
     [ "magma_cgetf2_fused_batched", "group__magma__getf2__batched.html#ga8fd5ee9c273bab3f86abf2e47699e76a", null ],
     [ "magma_dgetf2trsm_batched", "group__magma__getf2__batched.html#ga8538bff76340ac0504158b4e0514d146", null ],

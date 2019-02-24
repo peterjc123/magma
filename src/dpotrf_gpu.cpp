@@ -1,14 +1,16 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Stan Tomov
        @author Mark Gates
+       @author Azzam Haidar
+       @author Ahmad Abdelfattah
        
-       @generated from src/zpotrf_gpu.cpp, normal z -> d, Mon Jun 25 18:24:02 2018
+       @generated from src/zpotrf_gpu.cpp, normal z -> d, Wed Jan  2 14:18:48 2019
 */
 #include "magma_internal.h"
 
@@ -68,13 +70,18 @@
                   positive definite, and the factorization could not be
                   completed.
 
+    @param[in]
+    mode    magma_mode_t
+      -     = MagmaNative:  Factorize dA using GPU only mode (only uplo=MagmaLower is available);
+      -     = MagmaHybrid:  Factorize dA using Hybrid (CPU/GPU) mode.
+
     @ingroup magma_potrf
 *******************************************************************************/
 extern "C" magma_int_t
-magma_dpotrf_gpu(
+magma_dpotrf_LL_expert_gpu(
     magma_uplo_t uplo, magma_int_t n,
     magmaDouble_ptr dA, magma_int_t ldda,
-    magma_int_t *info )
+    magma_int_t *info, magma_mode_t mode )
 {
     #ifdef HAVE_clBLAS
     #define dA(i_, j_)  dA, ((i_) + (j_)*ldda + dA_offset)
@@ -89,14 +96,12 @@ magma_dpotrf_gpu(
     const double d_neg_one = -1.0;
     
     /* Local variables */
-    const char* uplo_ = lapack_uplo_const( uplo );
-    bool upper = (uplo == MagmaUpper);
-    
-    magma_int_t j, jb, nb;
+    magma_int_t j, jb, nb, recnb;
     double *work;
+    magma_int_t *dinfo;
 
     *info = 0;
-    if (! upper && uplo != MagmaLower) {
+    if (uplo != MagmaUpper && uplo != MagmaLower) {
         *info = -1;
     } else if (n < 0) {
         *info = -2;
@@ -109,53 +114,70 @@ magma_dpotrf_gpu(
     }
     
     nb = magma_get_dpotrf_nb( n );
+    recnb = 128;
     
-    if (MAGMA_SUCCESS != magma_dmalloc_pinned( &work, nb*nb )) {
-        *info = MAGMA_ERR_HOST_ALLOC;
-        return *info;
+    if( mode == MagmaHybrid ) {
+        if (MAGMA_SUCCESS != magma_dmalloc_pinned( &work, nb*nb )) {
+            *info = MAGMA_ERR_HOST_ALLOC;
+            goto cleanup;
+        }
+    }
+    else{
+        if (MAGMA_SUCCESS != magma_imalloc( &dinfo, 1 ) ) {
+            /* alloc failed for workspace */
+            *info = MAGMA_ERR_DEVICE_ALLOC;
+            goto cleanup;
+        }
     }
     
     magma_queue_t queues[2];
+    magma_event_t events[2];
     magma_device_t cdev;
     magma_getdevice( &cdev );
     magma_queue_create( cdev, &queues[0] );
     magma_queue_create( cdev, &queues[1] );
+    magma_event_create(&events[0]);
+    magma_event_create(&events[1]);
+    if( mode == MagmaNative ) 
+        magma_setvector( 1, sizeof(magma_int_t), info, 1, dinfo, 1, queues[0]);
     
-    if (nb <= 1 || nb >= n) {
-        /* Use unblocked code. */
-        magma_dgetmatrix( n, n, dA(0,0), ldda, work, n, queues[0] );
-        lapackf77_dpotrf( uplo_, &n, work, &n, info );
-        magma_dsetmatrix( n, n, work, n, dA(0,0), ldda, queues[0] );
-    }
-    else {
-        /* Use blocked code. */
-        if (upper) {
-            //=========================================================
-            /* Compute the Cholesky factorization A = U'*U. */
-            for (j=0; j < n; j += nb) {
-                // apply all previous updates to diagonal block,
-                // then transfer it to CPU
-                jb = min( nb, n-j );
-                magma_dsyrk( MagmaUpper, MagmaConjTrans, jb, j,
-                             d_neg_one, dA(0, j), ldda,
-                             d_one,     dA(j, j), ldda, queues[1] );
-                
+    if (uplo == MagmaUpper) {
+        //=========================================================
+        /* Compute the Cholesky factorization A = U'*U. */
+        for (j=0; j < n; j += nb) {
+            // apply all previous updates to diagonal block,
+            // then transfer it to CPU
+            jb = min( nb, n-j );
+            magma_dsyrk( MagmaUpper, MagmaConjTrans, jb, j,
+                         d_neg_one, dA(0, j), ldda,
+                         d_one,     dA(j, j), ldda, queues[1] );
+            
+            if(mode == MagmaHybrid){
                 magma_queue_sync( queues[1] );
                 magma_dgetmatrix_async( jb, jb,
                                         dA(j, j), ldda,
                                         work,     jb, queues[0] );
-                
-                // apply all previous updates to block row right of diagonal block
-                if (j+jb < n) {
-                    magma_dgemm( MagmaConjTrans, MagmaNoTrans,
-                                 jb, n-j-jb, j,
-                                 c_neg_one, dA(0, j   ), ldda,
-                                            dA(0, j+jb), ldda,
-                                 c_one,     dA(j, j+jb), ldda, queues[1] );
-                }
-                
-                // simultaneous with above dgemm, transfer diagonal block,
-                // factor it on CPU, and test for positive definiteness
+            }
+            else{
+                //Azzam: need to add events to allow overlap
+                magma_dpotrf_rectile_native(MagmaUpper, jb, recnb, 
+                                            dA(j, j), ldda, j, 
+                                            dinfo, info, queues[1] );
+            }
+
+            
+            // apply all previous updates to block row right of diagonal block
+            if (j+jb < n) {
+                magma_dgemm( MagmaConjTrans, MagmaNoTrans,
+                             jb, n-j-jb, j,
+                             c_neg_one, dA(0, j   ), ldda,
+                                        dA(0, j+jb), ldda,
+                             c_one,     dA(j, j+jb), ldda, queues[1] );
+            }
+            
+            // simultaneous with above dgemm, transfer diagonal block,
+            // factor it on CPU, and test for positive definiteness
+            if(mode == MagmaHybrid){
                 magma_queue_sync( queues[0] );
                 lapackf77_dpotrf( MagmaUpperStr, &jb, work, &jb, info );
                 magma_dsetmatrix_async( jb, jb,
@@ -165,68 +187,121 @@ magma_dpotrf_gpu(
                     *info = *info + j;
                     break;
                 }
-                
-                // apply diagonal block to block row right of diagonal block
-                if (j+jb < n) {
-                    magma_dtrsm( MagmaLeft, MagmaUpper, MagmaConjTrans, MagmaNonUnit,
-                                 jb, n-j-jb,
-                                 c_one, dA(j, j),    ldda,
-                                        dA(j, j+jb), ldda, queues[1] );
-                }
+            }
+            
+            // apply diagonal block to block row right of diagonal block
+            if (j+jb < n) {
+                magma_dtrsm( MagmaLeft, MagmaUpper, MagmaConjTrans, MagmaNonUnit,
+                             jb, n-j-jb,
+                             c_one, dA(j, j),    ldda,
+                                    dA(j, j+jb), ldda, queues[1] );
             }
         }
-        else {
-            //=========================================================
-            // Compute the Cholesky factorization A = L*L'.
-            for (j=0; j < n; j += nb) {
-                // apply all previous updates to diagonal block,
-                // then transfer it to CPU
-                jb = min( nb, n-j );
-                magma_dsyrk( MagmaLower, MagmaNoTrans, jb, j,
-                             d_neg_one, dA(j, 0), ldda,
-                             d_one,     dA(j, j), ldda, queues[1] );
-                
-                magma_queue_sync( queues[1] );
+    }
+    else {
+        //=========================================================
+        // Compute the Cholesky factorization A = L*L'.
+        for (j=0; j < n; j += nb) {
+            // apply all previous updates to diagonal block,
+            // then transfer it to CPU
+            jb = min( nb, n-j );
+            magma_dsyrk( MagmaLower, MagmaNoTrans, jb, j,
+                         d_neg_one, dA(j, 0), ldda,
+                         d_one,     dA(j, j), ldda, queues[0] );
+            // Azzam: this section of "ifthenelse" can be moved down to the factorize section and I don't think performane wil be affected.
+            if(mode == MagmaHybrid){
                 magma_dgetmatrix_async( jb, jb,
                                         dA(j, j), ldda,
                                         work,     jb, queues[0] );
-                
-                // apply all previous updates to block column below diagonal block
-                if (j+jb < n) {
-                    magma_dgemm( MagmaNoTrans, MagmaConjTrans,
-                                 n-j-jb, jb, j,
-                                 c_neg_one, dA(j+jb, 0), ldda,
-                                            dA(j,    0), ldda,
-                                 c_one,     dA(j+jb, j), ldda, queues[1] );
-                }
-                
-                // simultaneous with above dgemm, transfer diagonal block,
-                // factor it on CPU, and test for positive definiteness
+            }
+            else{
+                magma_dpotrf_rectile_native(MagmaLower, jb, recnb, 
+                                            dA(j, j), ldda, j, 
+                                            dinfo, info, queues[0] );
+            }
+            
+            // apply all previous updates to block column below diagonal block
+            if (j+jb < n) {
+                magma_queue_wait_event(queues[1], events[0]);
+                magma_dgemm( MagmaNoTrans, MagmaConjTrans,
+                             n-j-jb, jb, j,
+                             c_neg_one, dA(j+jb, 0), ldda,
+                                        dA(j,    0), ldda,
+                             c_one,     dA(j+jb, j), ldda, queues[1] );
+                magma_event_record(events[1], queues[1]);
+            }
+            
+            // simultaneous with above dgemm, transfer diagonal block,
+            // factor it on CPU, and test for positive definiteness
+            // Azzam: The above section can be moved here the code will look cleaner.
+            if(mode == MagmaHybrid){
                 magma_queue_sync( queues[0] );
                 lapackf77_dpotrf( MagmaLowerStr, &jb, work, &jb, info );
                 magma_dsetmatrix_async( jb, jb,
                                         work,     jb,
-                                        dA(j, j), ldda, queues[1] );
+                                        dA(j, j), ldda, queues[0] );
                 if (*info != 0) {
                     *info = *info + j;
                     break;
                 }
-                
-                // apply diagonal block to block column below diagonal
-                if (j+jb < n) {
-                    magma_dtrsm( MagmaRight, MagmaLower, MagmaConjTrans, MagmaNonUnit,
-                                 n-j-jb, jb,
-                                 c_one, dA(j,    j), ldda,
-                                        dA(j+jb, j), ldda, queues[1] );
-                }
+            }
+            
+            // apply diagonal block to block column below diagonal
+            if (j+jb < n) {
+                magma_queue_wait_event(queues[0], events[1]);
+                magma_dtrsm( MagmaRight, MagmaLower, MagmaConjTrans, MagmaNonUnit,
+                             n-j-jb, jb,
+                             c_one, dA(j,    j), ldda,
+                                    dA(j+jb, j), ldda, queues[0] );
+                magma_event_record(events[0], queues[0]);
             }
         }
     }
-    
+    if( mode == MagmaNative ) 
+        magma_getvector( 1, sizeof(magma_int_t), dinfo, 1, info, 1, queues[0]);
+
+cleanup:
+    magma_queue_sync( queues[0] );
+    magma_queue_sync( queues[1] );
+    magma_event_destroy( events[0] );
+    magma_event_destroy( events[1] );
     magma_queue_destroy( queues[0] );
     magma_queue_destroy( queues[1] );
     
-    magma_free_pinned( work );
+    if( mode == MagmaHybrid ) {
+        magma_free_pinned( work );
+    }
+    else{
+        magma_free( dinfo );
+    }
     
     return *info;
-} /* magma_dpotrf_gpu */
+} /* magma_dpotrf_LL_expert_gpu */
+
+/*******************************************************************************/
+/// @see magma_dpotrf_LL_expert_gpu
+extern "C" magma_int_t
+magma_dpotrf_gpu(
+    magma_uplo_t uplo, magma_int_t n,
+    magmaDouble_ptr dA, magma_int_t ldda,
+    magma_int_t *info )
+{
+    magma_mode_t mode = MagmaHybrid;
+    magma_dpotrf_LL_expert_gpu(uplo, n, dA, ldda, info, mode);
+    return *info;
+}
+
+/*******************************************************************************/
+/// @see magma_dpotrf_LL_expert_gpu
+extern "C" magma_int_t
+magma_dpotrf_native(
+    magma_uplo_t uplo, magma_int_t n,
+    magmaDouble_ptr dA, magma_int_t ldda,
+    magma_int_t *info )
+{
+    magma_mode_t mode = MagmaNative;
+    magma_dpotrf_LL_expert_gpu(uplo, n, dA, ldda, info, mode);
+    return *info;
+}
+
+/*******************************************************************************/

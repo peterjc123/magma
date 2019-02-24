@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -599,6 +599,11 @@ magma_zsolverinfo_init(
     precond_par->cuinfoU = NULL;
     precond_par->cuinfoLT = NULL;
     precond_par->cuinfoUT = NULL;
+    
+    precond_par->L_dgraphindegree = NULL;
+    precond_par->U_dgraphindegree = NULL;
+    precond_par->L_dgraphindegree_bak = NULL;
+    precond_par->U_dgraphindegree_bak = NULL;
 
 cleanup:
     if( info != 0 ){

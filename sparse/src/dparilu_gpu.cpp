@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Hartwig Anzt
 
-       @generated from sparse/src/zparilu_gpu.cpp, normal z -> d, Mon Jun 25 18:24:31 2018
+       @generated from sparse/src/zparilu_gpu.cpp, normal z -> d, Wed Jan  2 14:18:55 2019
 */
 
 #include "magmasparse_internal.h"

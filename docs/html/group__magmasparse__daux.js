@@ -173,5 +173,7 @@ var group__magmasparse__daux =
     [ "magma_dmconjugate", "group__magmasparse__daux.html#gaf9f9a6a5d887e6c8717e41b3b7764cf9", null ],
     [ "magma_dmcsrcompressor_gpu", "group__magmasparse__daux.html#ga18f5b3cc55b9682f1d2ff68b8c3c57d0", null ],
     [ "magma_dpreselect_gpu", "group__magmasparse__daux.html#ga60d02a31272421e7fa4a4774511e2ff1", null ],
+    [ "magma_dsampleselect", "group__magmasparse__daux.html#ga684471559f34b0d5fcbd5120403c819e", null ],
+    [ "magma_dsampleselect_approx", "group__magmasparse__daux.html#gaec7327357289e0e75e26ff381235a6ee", null ],
     [ "magma_dthrsholdrm_gpu", "group__magmasparse__daux.html#ga408c3dc1dc83a13a047da5a33c2e6bac", null ]
 ];

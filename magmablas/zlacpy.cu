@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Mark Gates
        @author Azzam Haidar
@@ -516,6 +516,14 @@ magmablas_zlacpy_batched(
       -     = MagmaUpper:      Upper triangular part
       -     = MagmaLower:      Lower triangular part
             Otherwise:  All of each matrix dA
+    
+    @param[in]
+    max_m   INTEGER.
+            maximum value of m.
+    
+    @param[in]
+    max_n   INTEGER.
+            maximum value of n.
     
     @param[in]
     m       INTEGER array, dimension (batchCount).

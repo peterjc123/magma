@@ -60,7 +60,6 @@ else()
 	message( WARNING "The compiler ${CMAKE_C_COMPILER} doesn't support the -std=c99 flag. Some code may not compile.")
 endif()
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -fno-exceptions")
 
 # ----------------------------------------
 # check Fortran name mangling
@@ -238,6 +237,7 @@ if ( CUDA_FOUND )
 		message( STATUS "    compile for CUDA arch 7.1 (Volta)" )
 	endif()
 
+
 	if ( ${GPU_TARGET} MATCHES "All")
 	  set( MIN_ARCH 350)
 	  SET( NV_SM "-gencode arch=compute_35,code=sm_35 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_61,code=sm_61 -gencode arch=compute_70,code=sm_70 ")
@@ -249,7 +249,7 @@ if ( CUDA_FOUND )
 		message( FATAL_ERROR "GPU_TARGET must contain one or more of Fermi, Kepler, Maxwell, Pascal, Volta, or valid sm_[0-9][0-9]" )
 	endif()
 	
-	set( CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -DHAVE_CUBLAS -Xfatbin -compress-all -Xcompiler -fPIC ${NV_SM} ${NV_COMP} ${FORTRAN_CONVENTION}" )
+	set( CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -DHAVE_CUBLAS -Xfatbin -compress-all -std=c++11 ${NV_SM} ${NV_COMP} ${FORTRAN_CONVENTION}" )
 	MESSAGE(STATUS "CUDA_NVCC_FLAGS: ${CUDA_NVCC_FLAGS}")
 	add_definitions( "-DHAVE_CUBLAS -DMIN_CUDA_ARCH=${MIN_ARCH}" )
 	message( STATUS "Define -DHAVE_CUBLAS -DMIN_CUDA_ARCH=${MIN_ARCH}" )
@@ -464,7 +464,7 @@ target_link_libraries( magma_sparse
 )
 set( LIBS_SPARSE ${LIBS} magma_sparse )
 
-set_target_properties(magma_sparse PROPERTIES POSITION_INDEPENDENT_CODE ON)
+# set_target_properties(magma_sparse PROPERTIES POSITION_INDEPENDENT_CODE ON)
 # ----------------------------------------
 # compile each tester
 

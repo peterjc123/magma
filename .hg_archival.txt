@@ -1,6 +1,6 @@
 repo: 61a00a24972561df6719b865bad047779f4f5389
-node: 9ccfa1e7a37d44035c53e66937dcbcddcfef600c
+node: 89706c0efbdbfd48bf8a2c20cc0d73e53c3f387e
 branch: default
-latesttag: v2.2.0
-latesttagdistance: 412
-changessincelatesttag: 450
+latesttag: v2.4.0
+latesttagdistance: 149
+changessincelatesttag: 176

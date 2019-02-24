@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
-       @generated from sparse/control/magma_zsolverinfo.cpp, normal z -> c, Mon Jun 25 18:24:27 2018
+       @generated from sparse/control/magma_zsolverinfo.cpp, normal z -> c, Wed Jan  2 14:18:54 2019
        @author Hartwig Anzt
 
 */
@@ -599,6 +599,11 @@ magma_csolverinfo_init(
     precond_par->cuinfoU = NULL;
     precond_par->cuinfoLT = NULL;
     precond_par->cuinfoUT = NULL;
+    
+    precond_par->L_dgraphindegree = NULL;
+    precond_par->U_dgraphindegree = NULL;
+    precond_par->L_dgraphindegree_bak = NULL;
+    precond_par->U_dgraphindegree_bak = NULL;
 
 cleanup:
     if( info != 0 ){

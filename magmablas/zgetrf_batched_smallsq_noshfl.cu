@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Azzam Haidar
        @author Ahmad Abdelfattah
@@ -70,7 +70,7 @@ zgetrf_batched_smallsq_noshfl_kernel( magmaDoubleComplex** dA_array, int ldda,
                 rx_abs_max = dsx[j];
             }
         }
-        linfo = ( rx_abs_max == MAGMA_D_ZERO ) ? i+1 : 0;
+        linfo = ( rx_abs_max == MAGMA_D_ZERO && linfo == 0) ? (i+1) : linfo;
         
         if(rowid == max_id){
             sipiv[i] = max_id;

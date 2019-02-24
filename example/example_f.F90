@@ -26,13 +26,13 @@ subroutine zfill_matrix( m, n, A, lda )
     complex*16 :: A(:,:)
     
     integer :: i, j
-    real*16 :: re, im
+    real*8 :: re, im
     
     do j = 1, n
         do i = 1, m
             call random_number( re )
             call random_number( im )
-            A(i,j) = complex( re, im )
+            A(i,j) = cmplx( re, im )
         end do
     end do
 end subroutine

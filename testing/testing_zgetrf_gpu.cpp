@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @precisions normal z -> c d s
        @author Mark Gates
@@ -236,6 +236,9 @@ int main( int argc, char** argv)
             }
             else if ( opts.version == 2 ) {
                 magma_zgetrf_nopiv_gpu( M, N, d_A, ldda, &info);
+            }
+            else if ( opts.version == 3 ) {
+                magma_zgetrf_native( M, N, d_A, ldda, ipiv, &info);
             }
             gpu_time = magma_wtime() - gpu_time;
             gpu_perf = gflops / gpu_time;

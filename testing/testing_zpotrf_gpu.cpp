@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @precisions normal z -> c d s
 */
@@ -71,7 +71,12 @@ int main( int argc, char** argv)
                Performs operation using MAGMA
                =================================================================== */
             gpu_time = magma_wtime();
-            magma_zpotrf_gpu( opts.uplo, N, d_A, ldda, &info );
+            if(opts.version == 1){
+                magma_zpotrf_gpu( opts.uplo, N, d_A, ldda, &info );
+            }
+            else if(opts.version == 2){
+                magma_zpotrf_native(opts.uplo, N, d_A, ldda, &info );
+            }
             gpu_time = magma_wtime() - gpu_time;
             gpu_perf = gflops / gpu_time;
             if (info != 0) {

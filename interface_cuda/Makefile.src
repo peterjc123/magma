@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.4.0) --
+#   -- MAGMA (version 2.5.0) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date June 2018
+#      @date January 2019
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -15,6 +15,7 @@ cdir      := interface_cuda
 # alphabetic order by base name (ignoring precision)
 libmagma_src += \
 	$(cdir)/alloc.cpp	\
+	$(cdir)/blas_h_v2.cpp	\
 	$(cdir)/blas_z_v1.cpp	\
 	$(cdir)/blas_z_v2.cpp	\
 	$(cdir)/copy_v1.cpp	\

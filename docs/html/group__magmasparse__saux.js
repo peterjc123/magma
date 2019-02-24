@@ -166,6 +166,8 @@ var group__magmasparse__saux =
     [ "magma_smconjugate", "group__magmasparse__saux.html#ga75e001c010df2280dbe29438f9da80c4", null ],
     [ "magma_smcsrcompressor_gpu", "group__magmasparse__saux.html#ga12b7a6e97e9f5d2ae9c67e36394fb4da", null ],
     [ "magma_spreselect_gpu", "group__magmasparse__saux.html#ga9020096a0f3f0de1a0c2316a155c3142", null ],
+    [ "magma_ssampleselect", "group__magmasparse__saux.html#ga73636b27f29ea14ce9dae15e56cb5eac", null ],
+    [ "magma_ssampleselect_approx", "group__magmasparse__saux.html#ga6beff3baa710cc1ba32ec3ce7f45a5bf", null ],
     [ "magma_sthrsholdrm_gpu", "group__magmasparse__saux.html#gae352b504aefe7bba50ada815d86a0884", null ],
     [ "magma_sisai_generator_regs", "group__magmasparse__saux.html#gabfab83e08f489514da33ebe56fc8932b", null ],
     [ "magma_sgeisai_maxblock", "group__magmasparse__saux.html#ga7fa50a7ff9b3c992161a59ad697d5225", null ],

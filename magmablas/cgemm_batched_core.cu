@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Jakub Kurzak
        @author Stan Tomov
@@ -209,6 +209,17 @@ magmablas_cgemm_batched_core(
     if ( m <= 0 || n <= 0 || k <= 0 )
         return;
 
+    // special case for small square matrices 
+    if( m == n && n == k && m <= magma_get_cgemm_batched_smallsq_limit(m)){
+        magmablas_cgemm_batched_smallsq(
+                transA, transB, 
+                m, n, k, 
+                alpha, dA_array, Ai, Aj, ldda, 
+                       dB_array, Bi, Bj, lddb, 
+                beta,  dC_array, Ci, Cj, lddc, batchCount, queue );
+        return;
+    }
+
     magma_int_t shape = 0;
     if      (transA == MagmaNoTrans   && transB == MagmaNoTrans)   { shape = 0; } // nn
     else if (transA == MagmaNoTrans   && transB == MagmaTrans)     { shape = 1; } // nt
@@ -219,7 +230,7 @@ magmablas_cgemm_batched_core(
     else if (transA == MagmaConjTrans && transB == MagmaNoTrans)   { shape = 6; } // cn
     else if (transA == MagmaConjTrans && transB == MagmaTrans)     { shape = 7; } // ct
     else if (transA == MagmaConjTrans && transB == MagmaConjTrans) { shape = 8; } // cc
-    
+
     switch(shape)
     {
         case 0: // nn

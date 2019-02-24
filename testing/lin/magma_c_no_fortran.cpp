@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.4.0) --
+    -- MAGMA (version 2.5.0) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date June 2018
+       @date January 2019
 
        @author Mark Gates
-       @generated from testing/lin/magma_z_no_fortran.cpp, normal z -> c, Mon Jun 25 18:24:16 2018
+       @generated from testing/lin/magma_z_no_fortran.cpp, normal z -> c, Wed Jan  2 14:18:52 2019
        
        This is simply a copy of part of magma_clapack.h,
        with the { printf(...); } function body added to each function.
@@ -129,11 +129,16 @@ void   lapackf77_cqrt02( const magma_int_t *m, const magma_int_t *n, const magma
                          { printf( format, __func__ ); }
 
 // testing/matgen
-void   lapackf77_clatms( magma_int_t *m, magma_int_t *n,
-                         const char *dist, magma_int_t *iseed, const char *sym, float *d,
-                         magma_int_t *mode, const float *cond, const float *dmax,
-                         magma_int_t *kl, magma_int_t *ku, const char *pack,
-                         magmaFloatComplex *a, magma_int_t *lda, magmaFloatComplex *work, magma_int_t *info )
+void   lapackf77_clatms( const magma_int_t *m, const magma_int_t *n,
+                         const char *dist, magma_int_t *iseed, const char *sym,
+                         float *d,
+                         const magma_int_t *mode, const float *cond,
+                         const float *dmax,
+                         const magma_int_t *kl, const magma_int_t *ku,
+                         const char *pack,
+                         magmaFloatComplex *A, const magma_int_t *lda,
+                         magmaFloatComplex *work,
+                         magma_int_t *info )
                          { printf( format, __func__ ); }
 
 #ifdef __cplusplus
