@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
 
        @author Stan Tomov
        @author Mark Gates
        
-       @generated from src/zlabrd_gpu.cpp, normal z -> s, Wed Jan  2 14:18:50 2019
+       @generated from src/zlabrd_gpu.cpp, normal z -> s, Fri Aug  2 17:10:09 2019
 
 */
 #include "magma_internal.h"

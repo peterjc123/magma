@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
        
        @author Raffaele Solca
        
-       @generated from src/dlaex3.cpp, normal d -> s, Wed Jan  2 14:18:49 2019
+       @generated from src/dlaex3.cpp, normal d -> s, Fri Aug  2 17:10:08 2019
 */
 
 #ifdef _OPENMP
@@ -341,7 +341,7 @@ magma_slaex3(
             lapackf77_slaed4(&k, &tmpp, dlamda, w, Q(0,j), &rho, &d[j], &iinfo);
             // If the zero finder fails, the computation is terminated.
             if (iinfo != 0) {
-                #pragma omp critical (info)
+                #pragma omp critical (magma_slaex3)
                 *info = iinfo;
                 break;
             }

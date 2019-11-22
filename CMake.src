@@ -2,6 +2,8 @@
 # ----------------------------------------
 set( libmagma_all
 control/magma_f77.cpp
+control/magma_param.F90
+control/magma.F90
 control/abs.cpp
 control/affinity.cpp
 control/auxiliary.cpp
@@ -31,10 +33,18 @@ control/magma_sf77.cpp
 control/magma_df77.cpp
 control/magma_cf77.cpp
 control/magma_zf77.cpp
+control/magma_sfortran.F90
+control/magma_dfortran.F90
+control/magma_cfortran.F90
+control/magma_zfortran.F90
 control/magmablas_sf77.cpp
 control/magmablas_df77.cpp
 control/magmablas_cf77.cpp
 control/magmablas_zf77.cpp
+control/magmablas_sfortran.F90
+control/magmablas_dfortran.F90
+control/magmablas_cfortran.F90
+control/magmablas_zfortran.F90
 interface_cuda/alloc.cpp
 interface_cuda/blas_h_v2.cpp
 interface_cuda/blas_z_v1.cpp
@@ -278,6 +288,7 @@ magmablas/zgerbt_kernels.cu
 magmablas/zgetmatrix_transpose.cpp
 magmablas/zhemv.cu
 magmablas/zhemv_upper.cu
+magmablas/zherk_small_reduce.cu
 magmablas/zlacpy.cu
 magmablas/zlacpy_conj.cu
 magmablas/zlacpy_sym_in.cu
@@ -1002,6 +1013,9 @@ magmablas/chemv.cu
 magmablas/ssymv_upper.cu
 magmablas/dsymv_upper.cu
 magmablas/chemv_upper.cu
+magmablas/ssyrk_small_reduce.cu
+magmablas/dsyrk_small_reduce.cu
+magmablas/cherk_small_reduce.cu
 magmablas/slacpy.cu
 magmablas/dlacpy.cu
 magmablas/clacpy.cu
@@ -1531,6 +1545,8 @@ testing/testing_ztrmm_vbatched.cpp
 testing/testing_ztrsm_vbatched.cpp
 testing/testing_zpotrf_vbatched.cpp
 testing/testing_hgemm.cpp
+testing/testing_zgetrf_gpu_f.F90
+testing/testing_zgetrf_f.f90
 testing/testing_caxpy.cpp
 testing/testing_daxpy.cpp
 testing/testing_saxpy.cpp
@@ -1906,6 +1922,12 @@ testing/testing_strsm_vbatched.cpp
 testing/testing_spotrf_vbatched.cpp
 testing/testing_dpotrf_vbatched.cpp
 testing/testing_cpotrf_vbatched.cpp
+testing/testing_cgetrf_gpu_f.F90
+testing/testing_dgetrf_gpu_f.F90
+testing/testing_sgetrf_gpu_f.F90
+testing/testing_cgetrf_f.f90
+testing/testing_dgetrf_f.f90
+testing/testing_sgetrf_f.f90
 )
 
 set( libsparse_all
@@ -2557,6 +2579,9 @@ sparse/src/cresidualvec.cpp
 sparse/src/sjacobidomainoverlap.cpp
 sparse/src/djacobidomainoverlap.cpp
 sparse/src/cjacobidomainoverlap.cpp
+sparse/blas/magma_dsampleselect_core.cu
+sparse/blas/magma_sampleselect.cu
+sparse/blas/magma_ssampleselect_core.cu
 )
 
 set( sparse_testing_all

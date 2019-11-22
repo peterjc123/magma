@@ -1,5 +1,17 @@
 var NAVTREEINDEX4 =
 {
+"group__magma__hetrf.html#ga6d96339685a66c344b23b236f8078a8d":[9,3,0,4,1,0],
+"group__magma__hetrf.html#gaad027d1a463d4cd44e228f167a1dca67":[9,3,0,4,1,3],
+"group__magma__hetrf.html#gac35791cdbb100521b26bf4e6e6766130":[9,3,0,4,1,2],
+"group__magma__hetrf__aasen.html":[9,3,0,4,2],
+"group__magma__hetrf__aasen.html#ga3cc6f4e8d6dd3133518b80d7dea9d49c":[9,3,0,4,2,1],
+"group__magma__hetrf__aasen.html#ga5601154e2c0051bcd378c0d0a270220f":[9,3,0,4,2,0],
+"group__magma__hetrf__aasen.html#ga928950105a476d9a6696882d8096dec1":[9,3,0,4,2,3],
+"group__magma__hetrf__aasen.html#gac4ac22ffa6248ad8c0ad686241cd35e3":[9,3,0,4,2,2],
+"group__magma__hetrf__batched.html":[9,4,0,4,2],
+"group__magma__hetrf__nopiv.html":[9,3,0,4,4,1],
+"group__magma__hetrf__nopiv.html#ga44722b4c108648dbe08040f4c0df30b3":[9,3,0,4,4,1,5],
+"group__magma__hetrf__nopiv.html#ga488b320ec54ab4814ce5671b094cdbb1":[9,3,0,4,4,1,6],
 "group__magma__hetrf__nopiv.html#ga7623b865f5e9d8e3442ce7980774105b":[9,3,0,4,4,1,2],
 "group__magma__hetrf__nopiv.html#ga8009a926922392cf58441667a06b236e":[9,3,0,4,4,1,7],
 "group__magma__hetrf__nopiv.html#ga8a201a5dcb4216e9c9f994ecd334f49d":[9,3,0,4,4,1,1],
@@ -237,17 +249,5 @@ var NAVTREEINDEX4 =
 "group__magma__laswp.html#gae32bcfebb99f74822ab77f7a8afc7e88":[9,3,0,0,4,1,14],
 "group__magma__laswp.html#gaeb9dfce6edc887df26ea90638dcec558":[9,3,0,0,4,1,2],
 "group__magma__laswp.html#gaf3797d65e49d4306acbaf241e6616f64":[9,3,0,0,4,1,0],
-"group__magma__laswp__batched.html":[9,4,0,0,5,1],
-"group__magma__laswp__sym.html":[9,3,0,4,3,1],
-"group__magma__laswp__sym.html#ga2822950d1fbf94d8ef4c85017a29421d":[9,3,0,4,3,1,0],
-"group__magma__laswp__sym.html#ga6ef57f00251055712cc2512dba7dae7c":[9,3,0,4,3,1,3],
-"group__magma__laswp__sym.html#gaa861185ddc5ce2a89eeb595485c0dade":[9,3,0,4,3,1,1],
-"group__magma__laswp__sym.html#gaec6967da7397403255d59aecb8a7fa9f":[9,3,0,4,3,1,2],
-"group__magma__lasyf__batched.html":[9,4,0,5,6,0],
-"group__magma__lat2.html":[9,3,4,5,1],
-"group__magma__lat2.html#ga3e6d6648684c3fe051f6613a977c231b":[9,3,4,5,1,1],
-"group__magma__lat2.html#ga3eaa0acee1fb02fb1b589385523ccd5b":[9,3,4,5,1,2],
-"group__magma__lat2.html#ga6c3bd9070e5b53a84f5ddcee68fb783e":[9,3,4,5,1,0],
-"group__magma__lat2.html#ga70a81d5a406c3eaa13b341d683fca10f":[9,3,4,5,1,3],
-"group__magma__lat2__batched.html":[9,4,2,4,1]
+"group__magma__laswp__batched.html":[9,4,0,0,5,1]
 };

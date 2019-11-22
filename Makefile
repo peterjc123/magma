@@ -83,6 +83,8 @@ endif
 ifneq ($(findstring Turing, $(GPU_TARGET)),)
     GPU_TARGET += sm_75
 endif
+# Remember to add to CMakeLists.txt too!
+
 
 # Next, add compile options for specific smXX
 # sm_xx is binary, compute_xx is PTX for forward compatability
@@ -411,6 +413,7 @@ test: testing
 testers_f: $(testers_f)
 
 sparse-test: sparse/testing
+sparse-testing: sparse/testing
 
 # cleangen is defined in Makefile.gen; cleanall also does cleanmake in Makefile.internal
 cleanall: clean cleangen
@@ -528,6 +531,8 @@ sparse/src:     $(sparse_src_obj)
 
 sparse/testing: $(sparse_testers)
 
+run_test: test
+	cd testing && python ./run_tests.py
 
 # ----------
 # sub-directory clean
@@ -680,9 +685,9 @@ $(testers): %: %.$(o_ext)
 	$(LIBS)
 
 # link Fortran testing_foo from testing_foo.o
-$(testers_f): %: %.$(o_ext) testing/fortran.o
+$(testers_f): %: %.$(o_ext)
 	$(FORT) $(LDFLAGS) $(RPATH) \
-	-o $@ $< testing/fortran.o \
+	-o $@ $< \
 	-L./testing -ltest \
 	-L./testing/lin -llapacktest \
 	-L./lib -lmagma \
@@ -721,7 +726,11 @@ install: lib sparse-lib install_dirs
 	cp include/*.mod       $(DESTDIR)$(prefix)/include
 	cp sparse/include/*.h  $(DESTDIR)$(prefix)/include
 	cp $(libs)             $(DESTDIR)$(prefix)/lib$(LIB_SUFFIX)
+	${MAKE} pkgconfig
+
+pkgconfig:
 	# pkgconfig
+	mkdir -p $(DESTDIR)$(prefix)/lib$(LIB_SUFFIX)/pkgconfig
 	cat lib/pkgconfig/magma.pc.in                   | \
 	sed -e s:@INSTALL_PREFIX@:"$(prefix)":          | \
 	sed -e s:@CFLAGS@:"$(INSTALL_FLAGS) $(INC)":    | \

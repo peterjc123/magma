@@ -37,7 +37,7 @@
   <td id="projectlogo"><img alt="Logo" src="magma-logo.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">MAGMA
-   &#160;<span id="projectnumber">2.5.0</span>
+   &#160;<span id="projectnumber">2.5.1</span>
    </div>
    <div id="projectbrief">Matrix Algebra for GPU and Multicore Architectures</div>
   </td>
@@ -122,6 +122,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ga6d46ea872ab89e50229655b4ed4d610d"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga6d46ea872ab89e50229655b4ed4d610d">magma_cpotrf_LL_expert_gpu</a> (magma_uplo_t uplo, magma_int_t n, magmaFloatComplex_ptr dA, magma_int_t ldda, magma_int_t *info, magma_mode_t mode)</td></tr>
 <tr class="memdesc:ga6d46ea872ab89e50229655b4ed4d610d"><td class="mdescLeft">&#160;</td><td class="mdescRight">CPOTRF computes the Cholesky factorization of a complex Hermitian positive definite matrix dA.  <a href="#ga6d46ea872ab89e50229655b4ed4d610d">More...</a><br/></td></tr>
 <tr class="separator:ga6d46ea872ab89e50229655b4ed4d610d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga18a6903c31791afda5d02338589cc6cf"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga18a6903c31791afda5d02338589cc6cf">magma_cpotrf_gpu</a> (magma_uplo_t uplo, magma_int_t n, magmaFloatComplex_ptr dA, magma_int_t ldda, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga18a6903c31791afda5d02338589cc6cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_cpotrf_LL_expert_gpu with mode = MagmaHybrid.  <a href="#ga18a6903c31791afda5d02338589cc6cf">More...</a><br/></td></tr>
+<tr class="separator:ga18a6903c31791afda5d02338589cc6cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga643b1d0f8380e6d04b033881dd9434ad"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga643b1d0f8380e6d04b033881dd9434ad">magma_cpotrf_native</a> (magma_uplo_t uplo, magma_int_t n, magmaFloatComplex_ptr dA, magma_int_t ldda, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga643b1d0f8380e6d04b033881dd9434ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_cpotrf_LL_expert_gpu with mode = MagmaNative.  <a href="#ga643b1d0f8380e6d04b033881dd9434ad">More...</a><br/></td></tr>
+<tr class="separator:ga643b1d0f8380e6d04b033881dd9434ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4f3d3f4005846d2d56607a1c4eefe494"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga4f3d3f4005846d2d56607a1c4eefe494">magma_cpotrf_m</a> (magma_int_t ngpu, magma_uplo_t uplo, magma_int_t n, magmaFloatComplex *A, magma_int_t lda, magma_int_t *info)</td></tr>
 <tr class="memdesc:ga4f3d3f4005846d2d56607a1c4eefe494"><td class="mdescLeft">&#160;</td><td class="mdescRight">CPOTRF computes the Cholesky factorization of a complex Hermitian positive definite matrix A.  <a href="#ga4f3d3f4005846d2d56607a1c4eefe494">More...</a><br/></td></tr>
 <tr class="separator:ga4f3d3f4005846d2d56607a1c4eefe494"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,6 +146,12 @@ Functions</h2></td></tr>
 <tr class="memitem:gac8e35bc0c7da3819b08171fd04ca630a"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#gac8e35bc0c7da3819b08171fd04ca630a">magma_dpotrf_LL_expert_gpu</a> (magma_uplo_t uplo, magma_int_t n, magmaDouble_ptr dA, magma_int_t ldda, magma_int_t *info, magma_mode_t mode)</td></tr>
 <tr class="memdesc:gac8e35bc0c7da3819b08171fd04ca630a"><td class="mdescLeft">&#160;</td><td class="mdescRight">DPOTRF computes the Cholesky factorization of a real symmetric positive definite matrix dA.  <a href="#gac8e35bc0c7da3819b08171fd04ca630a">More...</a><br/></td></tr>
 <tr class="separator:gac8e35bc0c7da3819b08171fd04ca630a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga95db876a9eb3392b00dbd846f229bc79"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga95db876a9eb3392b00dbd846f229bc79">magma_dpotrf_gpu</a> (magma_uplo_t uplo, magma_int_t n, magmaDouble_ptr dA, magma_int_t ldda, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga95db876a9eb3392b00dbd846f229bc79"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_dpotrf_LL_expert_gpu with mode = MagmaHybrid.  <a href="#ga95db876a9eb3392b00dbd846f229bc79">More...</a><br/></td></tr>
+<tr class="separator:ga95db876a9eb3392b00dbd846f229bc79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gace203fa5ccc97dd0c796336ddb203f0f"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#gace203fa5ccc97dd0c796336ddb203f0f">magma_dpotrf_native</a> (magma_uplo_t uplo, magma_int_t n, magmaDouble_ptr dA, magma_int_t ldda, magma_int_t *info)</td></tr>
+<tr class="memdesc:gace203fa5ccc97dd0c796336ddb203f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_dpotrf_LL_expert_gpu with mode = MagmaNative.  <a href="#gace203fa5ccc97dd0c796336ddb203f0f">More...</a><br/></td></tr>
+<tr class="separator:gace203fa5ccc97dd0c796336ddb203f0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga31587a1e9768a115d5fadccfb31e0f84"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga31587a1e9768a115d5fadccfb31e0f84">magma_dpotrf_m</a> (magma_int_t ngpu, magma_uplo_t uplo, magma_int_t n, double *A, magma_int_t lda, magma_int_t *info)</td></tr>
 <tr class="memdesc:ga31587a1e9768a115d5fadccfb31e0f84"><td class="mdescLeft">&#160;</td><td class="mdescRight">DPOTRF computes the Cholesky factorization of a real symmetric positive definite matrix A.  <a href="#ga31587a1e9768a115d5fadccfb31e0f84">More...</a><br/></td></tr>
 <tr class="separator:ga31587a1e9768a115d5fadccfb31e0f84"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,6 +170,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ga5e2a65ebcba93db9b0cfd89e4f0ce2fd"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga5e2a65ebcba93db9b0cfd89e4f0ce2fd">magma_spotrf_LL_expert_gpu</a> (magma_uplo_t uplo, magma_int_t n, magmaFloat_ptr dA, magma_int_t ldda, magma_int_t *info, magma_mode_t mode)</td></tr>
 <tr class="memdesc:ga5e2a65ebcba93db9b0cfd89e4f0ce2fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">SPOTRF computes the Cholesky factorization of a real symmetric positive definite matrix dA.  <a href="#ga5e2a65ebcba93db9b0cfd89e4f0ce2fd">More...</a><br/></td></tr>
 <tr class="separator:ga5e2a65ebcba93db9b0cfd89e4f0ce2fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad22d666b533c835430ccab5f2fc7069e"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#gad22d666b533c835430ccab5f2fc7069e">magma_spotrf_gpu</a> (magma_uplo_t uplo, magma_int_t n, magmaFloat_ptr dA, magma_int_t ldda, magma_int_t *info)</td></tr>
+<tr class="memdesc:gad22d666b533c835430ccab5f2fc7069e"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_spotrf_LL_expert_gpu with mode = MagmaHybrid.  <a href="#gad22d666b533c835430ccab5f2fc7069e">More...</a><br/></td></tr>
+<tr class="separator:gad22d666b533c835430ccab5f2fc7069e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga475958696af669d9c03572868e3e3bdd"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga475958696af669d9c03572868e3e3bdd">magma_spotrf_native</a> (magma_uplo_t uplo, magma_int_t n, magmaFloat_ptr dA, magma_int_t ldda, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga475958696af669d9c03572868e3e3bdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_spotrf_LL_expert_gpu with mode = MagmaNative.  <a href="#ga475958696af669d9c03572868e3e3bdd">More...</a><br/></td></tr>
+<tr class="separator:ga475958696af669d9c03572868e3e3bdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae584741657f7dc0841462e5a6ae07fe1"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#gae584741657f7dc0841462e5a6ae07fe1">magma_spotrf_m</a> (magma_int_t ngpu, magma_uplo_t uplo, magma_int_t n, float *A, magma_int_t lda, magma_int_t *info)</td></tr>
 <tr class="memdesc:gae584741657f7dc0841462e5a6ae07fe1"><td class="mdescLeft">&#160;</td><td class="mdescRight">SPOTRF computes the Cholesky factorization of a real symmetric positive definite matrix A.  <a href="#gae584741657f7dc0841462e5a6ae07fe1">More...</a><br/></td></tr>
 <tr class="separator:gae584741657f7dc0841462e5a6ae07fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,6 +194,12 @@ Functions</h2></td></tr>
 <tr class="memitem:gab5bb3c56da964a9dd268c7851ef842f0"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#gab5bb3c56da964a9dd268c7851ef842f0">magma_zpotrf_LL_expert_gpu</a> (magma_uplo_t uplo, magma_int_t n, magmaDoubleComplex_ptr dA, magma_int_t ldda, magma_int_t *info, magma_mode_t mode)</td></tr>
 <tr class="memdesc:gab5bb3c56da964a9dd268c7851ef842f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZPOTRF computes the Cholesky factorization of a complex Hermitian positive definite matrix dA.  <a href="#gab5bb3c56da964a9dd268c7851ef842f0">More...</a><br/></td></tr>
 <tr class="separator:gab5bb3c56da964a9dd268c7851ef842f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8b3257063d4dca90fc64cd6709c4a7dd"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#ga8b3257063d4dca90fc64cd6709c4a7dd">magma_zpotrf_gpu</a> (magma_uplo_t uplo, magma_int_t n, magmaDoubleComplex_ptr dA, magma_int_t ldda, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga8b3257063d4dca90fc64cd6709c4a7dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_zpotrf_LL_expert_gpu with mode = MagmaHybrid.  <a href="#ga8b3257063d4dca90fc64cd6709c4a7dd">More...</a><br/></td></tr>
+<tr class="separator:ga8b3257063d4dca90fc64cd6709c4a7dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabe3c58d6c6784f56ebb40325ff211d31"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#gabe3c58d6c6784f56ebb40325ff211d31">magma_zpotrf_native</a> (magma_uplo_t uplo, magma_int_t n, magmaDoubleComplex_ptr dA, magma_int_t ldda, magma_int_t *info)</td></tr>
+<tr class="memdesc:gabe3c58d6c6784f56ebb40325ff211d31"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_zpotrf_LL_expert_gpu with mode = MagmaNative.  <a href="#gabe3c58d6c6784f56ebb40325ff211d31">More...</a><br/></td></tr>
+<tr class="separator:gabe3c58d6c6784f56ebb40325ff211d31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae4e9f7e8272cb75031524671c277be8c"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__potrf.html#gae4e9f7e8272cb75031524671c277be8c">magma_zpotrf_m</a> (magma_int_t ngpu, magma_uplo_t uplo, magma_int_t n, magmaDoubleComplex *A, magma_int_t lda, magma_int_t *info)</td></tr>
 <tr class="memdesc:gae4e9f7e8272cb75031524671c277be8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZPOTRF computes the Cholesky factorization of a complex Hermitian positive definite matrix A.  <a href="#gae4e9f7e8272cb75031524671c277be8c">More...</a><br/></td></tr>
 <tr class="separator:gae4e9f7e8272cb75031524671c277be8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -488,6 +512,102 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="ga18a6903c31791afda5d02338589cc6cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_cpotrf_gpu </td>
+          <td>(</td>
+          <td class="paramtype">magma_uplo_t&#160;</td>
+          <td class="paramname"><em>uplo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaFloatComplex_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_cpotrf_LL_expert_gpu with mode = MagmaHybrid. </p>
+<p>Computation is hybrid, part on CPU (panels), part on GPU (matrix updates). </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__potrf.html#ga6d46ea872ab89e50229655b4ed4d610d" title="CPOTRF computes the Cholesky factorization of a complex Hermitian positive definite matrix dA...">magma_cpotrf_LL_expert_gpu</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ga643b1d0f8380e6d04b033881dd9434ad"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_cpotrf_native </td>
+          <td>(</td>
+          <td class="paramtype">magma_uplo_t&#160;</td>
+          <td class="paramname"><em>uplo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaFloatComplex_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_cpotrf_LL_expert_gpu with mode = MagmaNative. </p>
+<p>Computation is done only on the GPU, not on the CPU. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__potrf.html#ga6d46ea872ab89e50229655b4ed4d610d" title="CPOTRF computes the Cholesky factorization of a complex Hermitian positive definite matrix dA...">magma_cpotrf_LL_expert_gpu</a> </dd></dl>
 
 </div>
 </div>
@@ -1048,6 +1168,102 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ga95db876a9eb3392b00dbd846f229bc79"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_dpotrf_gpu </td>
+          <td>(</td>
+          <td class="paramtype">magma_uplo_t&#160;</td>
+          <td class="paramname"><em>uplo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaDouble_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_dpotrf_LL_expert_gpu with mode = MagmaHybrid. </p>
+<p>Computation is hybrid, part on CPU (panels), part on GPU (matrix updates). </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__potrf.html#gac8e35bc0c7da3819b08171fd04ca630a" title="DPOTRF computes the Cholesky factorization of a real symmetric positive definite matrix dA...">magma_dpotrf_LL_expert_gpu</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="gace203fa5ccc97dd0c796336ddb203f0f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_dpotrf_native </td>
+          <td>(</td>
+          <td class="paramtype">magma_uplo_t&#160;</td>
+          <td class="paramname"><em>uplo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaDouble_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_dpotrf_LL_expert_gpu with mode = MagmaNative. </p>
+<p>Computation is done only on the GPU, not on the CPU. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__potrf.html#gac8e35bc0c7da3819b08171fd04ca630a" title="DPOTRF computes the Cholesky factorization of a real symmetric positive definite matrix dA...">magma_dpotrf_LL_expert_gpu</a> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ga31587a1e9768a115d5fadccfb31e0f84"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1605,6 +1821,102 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="gad22d666b533c835430ccab5f2fc7069e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_spotrf_gpu </td>
+          <td>(</td>
+          <td class="paramtype">magma_uplo_t&#160;</td>
+          <td class="paramname"><em>uplo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaFloat_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_spotrf_LL_expert_gpu with mode = MagmaHybrid. </p>
+<p>Computation is hybrid, part on CPU (panels), part on GPU (matrix updates). </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__potrf.html#ga5e2a65ebcba93db9b0cfd89e4f0ce2fd" title="SPOTRF computes the Cholesky factorization of a real symmetric positive definite matrix dA...">magma_spotrf_LL_expert_gpu</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ga475958696af669d9c03572868e3e3bdd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_spotrf_native </td>
+          <td>(</td>
+          <td class="paramtype">magma_uplo_t&#160;</td>
+          <td class="paramname"><em>uplo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaFloat_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_spotrf_LL_expert_gpu with mode = MagmaNative. </p>
+<p>Computation is done only on the GPU, not on the CPU. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__potrf.html#ga5e2a65ebcba93db9b0cfd89e4f0ce2fd" title="SPOTRF computes the Cholesky factorization of a real symmetric positive definite matrix dA...">magma_spotrf_LL_expert_gpu</a> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="gae584741657f7dc0841462e5a6ae07fe1"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2159,6 +2471,102 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="ga8b3257063d4dca90fc64cd6709c4a7dd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_zpotrf_gpu </td>
+          <td>(</td>
+          <td class="paramtype">magma_uplo_t&#160;</td>
+          <td class="paramname"><em>uplo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaDoubleComplex_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_zpotrf_LL_expert_gpu with mode = MagmaHybrid. </p>
+<p>Computation is hybrid, part on CPU (panels), part on GPU (matrix updates). </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__potrf.html#gab5bb3c56da964a9dd268c7851ef842f0" title="ZPOTRF computes the Cholesky factorization of a complex Hermitian positive definite matrix dA...">magma_zpotrf_LL_expert_gpu</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="gabe3c58d6c6784f56ebb40325ff211d31"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_zpotrf_native </td>
+          <td>(</td>
+          <td class="paramtype">magma_uplo_t&#160;</td>
+          <td class="paramname"><em>uplo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaDoubleComplex_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_zpotrf_LL_expert_gpu with mode = MagmaNative. </p>
+<p>Computation is done only on the GPU, not on the CPU. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__potrf.html#gab5bb3c56da964a9dd268c7851ef842f0" title="ZPOTRF computes the Cholesky factorization of a complex Hermitian positive definite matrix dA...">magma_zpotrf_LL_expert_gpu</a> </dd></dl>
 
 </div>
 </div>

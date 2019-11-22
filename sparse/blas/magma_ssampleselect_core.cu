@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
 
        @author Tobias Ribizel
 
-       @generated from sparse/blas/magma_dsampleselect_core.cu, normal d -> s, Wed Jan  2 14:18:55 2019
+       @generated from sparse/blas/magma_dsampleselect_core.cu, normal d -> s, Fri Aug  2 17:10:14 2019
 */
 
 #include "magma_sampleselect.h"
@@ -195,6 +195,7 @@ __global__ void collect_bucket_indirect(const float* __restrict__ data,
 
 __device__ void launch_sampleselect(float* __restrict__ in, float* __restrict__ tmp, float* __restrict__ tree,
                                     float* __restrict__ out, int32_t* __restrict__ count_tmp, int32_t size, int32_t rank) {
+#if (__CUDA_ARCH >= 350)
     if (threadIdx.x != 0) {
         return;
     }
@@ -222,6 +223,7 @@ __device__ void launch_sampleselect(float* __restrict__ in, float* __restrict__ 
     sampleselect_findbucket<<<1, searchtree_width / 2>>>(totalcounts, rank, bucket_idx, rank_out);
     collect_bucket_indirect<<<num_grouped_blocks, block_size>>>(in, oracles, localcounts, tmp, size, bucket_idx, nullptr, local_work);
     sampleselect_tailcall<<<1, 1>>>(tmp, in, tree, count_tmp, out);
+#endif
 }
 
 __global__ void sampleselect_tailcall(float* __restrict__ in, float* __restrict__ tmp, float* __restrict__ tree,

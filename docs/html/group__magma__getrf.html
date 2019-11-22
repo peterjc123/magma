@@ -37,7 +37,7 @@
   <td id="projectlogo"><img alt="Logo" src="magma-logo.png"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">MAGMA
-   &#160;<span id="projectnumber">2.5.0</span>
+   &#160;<span id="projectnumber">2.5.1</span>
    </div>
    <div id="projectbrief">Matrix Algebra for GPU and Multicore Architectures</div>
   </td>
@@ -122,6 +122,12 @@ Functions</h2></td></tr>
 <tr class="memitem:gacd85aa165e599663274a3eee1c497a53"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#gacd85aa165e599663274a3eee1c497a53">magma_cgetrf_gpu_expert</a> (magma_int_t m, magma_int_t n, magmaFloatComplex_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info, magma_mode_t mode)</td></tr>
 <tr class="memdesc:gacd85aa165e599663274a3eee1c497a53"><td class="mdescLeft">&#160;</td><td class="mdescRight">CGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row interchanges.  <a href="#gacd85aa165e599663274a3eee1c497a53">More...</a><br/></td></tr>
 <tr class="separator:gacd85aa165e599663274a3eee1c497a53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga68286a831ed717ac8ec4e898768f5665"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga68286a831ed717ac8ec4e898768f5665">magma_cgetrf_gpu</a> (magma_int_t m, magma_int_t n, magmaFloatComplex_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga68286a831ed717ac8ec4e898768f5665"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_cgetrf_gpu_expert with mode = MagmaHybrid.  <a href="#ga68286a831ed717ac8ec4e898768f5665">More...</a><br/></td></tr>
+<tr class="separator:ga68286a831ed717ac8ec4e898768f5665"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8f855c6c337ba5e2348d89ce74e8c596"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga8f855c6c337ba5e2348d89ce74e8c596">magma_cgetrf_native</a> (magma_int_t m, magma_int_t n, magmaFloatComplex_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga8f855c6c337ba5e2348d89ce74e8c596"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_cgetrf_gpu_expert with mode = MagmaNative.  <a href="#ga8f855c6c337ba5e2348d89ce74e8c596">More...</a><br/></td></tr>
+<tr class="separator:ga8f855c6c337ba5e2348d89ce74e8c596"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga331186c774f18aa62343921600f55d5d"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga331186c774f18aa62343921600f55d5d">magma_cgetrf_m</a> (magma_int_t ngpu, magma_int_t m, magma_int_t n, magmaFloatComplex *A, magma_int_t lda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
 <tr class="memdesc:ga331186c774f18aa62343921600f55d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">CGETRF_m computes an LU factorization of a general M-by-N matrix A using partial pivoting with row interchanges.  <a href="#ga331186c774f18aa62343921600f55d5d">More...</a><br/></td></tr>
 <tr class="separator:ga331186c774f18aa62343921600f55d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,6 +143,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ga7f0b65487d875a319bf6456fbc6b11f1"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga7f0b65487d875a319bf6456fbc6b11f1">magma_dgetrf_gpu_expert</a> (magma_int_t m, magma_int_t n, magmaDouble_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info, magma_mode_t mode)</td></tr>
 <tr class="memdesc:ga7f0b65487d875a319bf6456fbc6b11f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">DGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row interchanges.  <a href="#ga7f0b65487d875a319bf6456fbc6b11f1">More...</a><br/></td></tr>
 <tr class="separator:ga7f0b65487d875a319bf6456fbc6b11f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8e4051dcd379c3601163c34fec8d2d12"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga8e4051dcd379c3601163c34fec8d2d12">magma_dgetrf_gpu</a> (magma_int_t m, magma_int_t n, magmaDouble_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga8e4051dcd379c3601163c34fec8d2d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_dgetrf_gpu_expert with mode = MagmaHybrid.  <a href="#ga8e4051dcd379c3601163c34fec8d2d12">More...</a><br/></td></tr>
+<tr class="separator:ga8e4051dcd379c3601163c34fec8d2d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga670f86338d161dbea6283b89cf740fc5"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga670f86338d161dbea6283b89cf740fc5">magma_dgetrf_native</a> (magma_int_t m, magma_int_t n, magmaDouble_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga670f86338d161dbea6283b89cf740fc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_dgetrf_gpu_expert with mode = MagmaNative.  <a href="#ga670f86338d161dbea6283b89cf740fc5">More...</a><br/></td></tr>
+<tr class="separator:ga670f86338d161dbea6283b89cf740fc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga19ebf095fb940c11ca63d5e68f9e0167"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga19ebf095fb940c11ca63d5e68f9e0167">magma_dgetrf_m</a> (magma_int_t ngpu, magma_int_t m, magma_int_t n, double *A, magma_int_t lda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
 <tr class="memdesc:ga19ebf095fb940c11ca63d5e68f9e0167"><td class="mdescLeft">&#160;</td><td class="mdescRight">DGETRF_m computes an LU factorization of a general M-by-N matrix A using partial pivoting with row interchanges.  <a href="#ga19ebf095fb940c11ca63d5e68f9e0167">More...</a><br/></td></tr>
 <tr class="separator:ga19ebf095fb940c11ca63d5e68f9e0167"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,6 +164,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ga149c598973e64b7283e2c8ab2d228fbb"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga149c598973e64b7283e2c8ab2d228fbb">magma_sgetrf_gpu_expert</a> (magma_int_t m, magma_int_t n, magmaFloat_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info, magma_mode_t mode)</td></tr>
 <tr class="memdesc:ga149c598973e64b7283e2c8ab2d228fbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">SGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row interchanges.  <a href="#ga149c598973e64b7283e2c8ab2d228fbb">More...</a><br/></td></tr>
 <tr class="separator:ga149c598973e64b7283e2c8ab2d228fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae1751a9b0d4ca3137eb6fbcd28ea2d55"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#gae1751a9b0d4ca3137eb6fbcd28ea2d55">magma_sgetrf_gpu</a> (magma_int_t m, magma_int_t n, magmaFloat_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
+<tr class="memdesc:gae1751a9b0d4ca3137eb6fbcd28ea2d55"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_sgetrf_gpu_expert with mode = MagmaHybrid.  <a href="#gae1751a9b0d4ca3137eb6fbcd28ea2d55">More...</a><br/></td></tr>
+<tr class="separator:gae1751a9b0d4ca3137eb6fbcd28ea2d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga105f9eda4524255d319f94137bce3c97"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga105f9eda4524255d319f94137bce3c97">magma_sgetrf_native</a> (magma_int_t m, magma_int_t n, magmaFloat_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga105f9eda4524255d319f94137bce3c97"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_sgetrf_gpu_expert with mode = MagmaNative.  <a href="#ga105f9eda4524255d319f94137bce3c97">More...</a><br/></td></tr>
+<tr class="separator:ga105f9eda4524255d319f94137bce3c97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga69e5a5981166ebf61da2fd67dad03afe"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga69e5a5981166ebf61da2fd67dad03afe">magma_sgetrf_m</a> (magma_int_t ngpu, magma_int_t m, magma_int_t n, float *A, magma_int_t lda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
 <tr class="memdesc:ga69e5a5981166ebf61da2fd67dad03afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">SGETRF_m computes an LU factorization of a general M-by-N matrix A using partial pivoting with row interchanges.  <a href="#ga69e5a5981166ebf61da2fd67dad03afe">More...</a><br/></td></tr>
 <tr class="separator:ga69e5a5981166ebf61da2fd67dad03afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,6 +197,12 @@ Functions</h2></td></tr>
 <tr class="memitem:gacdf66f4ea47eb0d531f3d9806af4b9b0"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#gacdf66f4ea47eb0d531f3d9806af4b9b0">magma_zgetrf_gpu_expert</a> (magma_int_t m, magma_int_t n, magmaDoubleComplex_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info, magma_mode_t mode)</td></tr>
 <tr class="memdesc:gacdf66f4ea47eb0d531f3d9806af4b9b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row interchanges.  <a href="#gacdf66f4ea47eb0d531f3d9806af4b9b0">More...</a><br/></td></tr>
 <tr class="separator:gacdf66f4ea47eb0d531f3d9806af4b9b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf34253452a16f3d182d4fb0aaaeea13b"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#gaf34253452a16f3d182d4fb0aaaeea13b">magma_zgetrf_gpu</a> (magma_int_t m, magma_int_t n, magmaDoubleComplex_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
+<tr class="memdesc:gaf34253452a16f3d182d4fb0aaaeea13b"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_zgetrf_gpu_expert with mode = MagmaHybrid.  <a href="#gaf34253452a16f3d182d4fb0aaaeea13b">More...</a><br/></td></tr>
+<tr class="separator:gaf34253452a16f3d182d4fb0aaaeea13b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga26bc2820bfa3a352736c30642218899e"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga26bc2820bfa3a352736c30642218899e">magma_zgetrf_native</a> (magma_int_t m, magma_int_t n, magmaDoubleComplex_ptr dA, magma_int_t ldda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
+<tr class="memdesc:ga26bc2820bfa3a352736c30642218899e"><td class="mdescLeft">&#160;</td><td class="mdescRight">magma_zgetrf_gpu_expert with mode = MagmaNative.  <a href="#ga26bc2820bfa3a352736c30642218899e">More...</a><br/></td></tr>
+<tr class="separator:ga26bc2820bfa3a352736c30642218899e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8c55497af548c1a7078e16865e4512dd"><td class="memItemLeft" align="right" valign="top">magma_int_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__magma__getrf.html#ga8c55497af548c1a7078e16865e4512dd">magma_zgetrf_m</a> (magma_int_t ngpu, magma_int_t m, magma_int_t n, magmaDoubleComplex *A, magma_int_t lda, magma_int_t *ipiv, magma_int_t *info)</td></tr>
 <tr class="memdesc:ga8c55497af548c1a7078e16865e4512dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">ZGETRF_m computes an LU factorization of a general M-by-N matrix A using partial pivoting with row interchanges.  <a href="#ga8c55497af548c1a7078e16865e4512dd">More...</a><br/></td></tr>
 <tr class="separator:ga8c55497af548c1a7078e16865e4512dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -458,6 +482,114 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="ga68286a831ed717ac8ec4e898768f5665"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_cgetrf_gpu </td>
+          <td>(</td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaFloatComplex_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>ipiv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_cgetrf_gpu_expert with mode = MagmaHybrid. </p>
+<p>Computation is hybrid, part on CPU (panels), part on GPU (matrix updates). </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__getrf.html#gacd85aa165e599663274a3eee1c497a53" title="CGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row inte...">magma_cgetrf_gpu_expert</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ga8f855c6c337ba5e2348d89ce74e8c596"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_cgetrf_native </td>
+          <td>(</td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaFloatComplex_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>ipiv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_cgetrf_gpu_expert with mode = MagmaNative. </p>
+<p>Computation is done only on the GPU, not on the CPU. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__getrf.html#gacd85aa165e599663274a3eee1c497a53" title="CGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row inte...">magma_cgetrf_gpu_expert</a> </dd></dl>
 
 </div>
 </div>
@@ -891,6 +1023,114 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ga8e4051dcd379c3601163c34fec8d2d12"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_dgetrf_gpu </td>
+          <td>(</td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaDouble_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>ipiv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_dgetrf_gpu_expert with mode = MagmaHybrid. </p>
+<p>Computation is hybrid, part on CPU (panels), part on GPU (matrix updates). </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__getrf.html#ga7f0b65487d875a319bf6456fbc6b11f1" title="DGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row inte...">magma_dgetrf_gpu_expert</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ga670f86338d161dbea6283b89cf740fc5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_dgetrf_native </td>
+          <td>(</td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaDouble_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>ipiv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_dgetrf_gpu_expert with mode = MagmaNative. </p>
+<p>Computation is done only on the GPU, not on the CPU. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__getrf.html#ga7f0b65487d875a319bf6456fbc6b11f1" title="DGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row inte...">magma_dgetrf_gpu_expert</a> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ga19ebf095fb940c11ca63d5e68f9e0167"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1318,6 +1558,114 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="gae1751a9b0d4ca3137eb6fbcd28ea2d55"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_sgetrf_gpu </td>
+          <td>(</td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaFloat_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>ipiv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_sgetrf_gpu_expert with mode = MagmaHybrid. </p>
+<p>Computation is hybrid, part on CPU (panels), part on GPU (matrix updates). </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__getrf.html#ga149c598973e64b7283e2c8ab2d228fbb" title="SGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row inte...">magma_sgetrf_gpu_expert</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ga105f9eda4524255d319f94137bce3c97"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_sgetrf_native </td>
+          <td>(</td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaFloat_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>ipiv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_sgetrf_gpu_expert with mode = MagmaNative. </p>
+<p>Computation is done only on the GPU, not on the CPU. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__getrf.html#ga149c598973e64b7283e2c8ab2d228fbb" title="SGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row inte...">magma_sgetrf_gpu_expert</a> </dd></dl>
 
 </div>
 </div>
@@ -2062,6 +2410,114 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="gaf34253452a16f3d182d4fb0aaaeea13b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_zgetrf_gpu </td>
+          <td>(</td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaDoubleComplex_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>ipiv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_zgetrf_gpu_expert with mode = MagmaHybrid. </p>
+<p>Computation is hybrid, part on CPU (panels), part on GPU (matrix updates). </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__getrf.html#gacdf66f4ea47eb0d531f3d9806af4b9b0" title="ZGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row inte...">magma_zgetrf_gpu_expert</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ga26bc2820bfa3a352736c30642218899e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">magma_int_t magma_zgetrf_native </td>
+          <td>(</td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>m</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magmaDoubleComplex_ptr&#160;</td>
+          <td class="paramname"><em>dA</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t&#160;</td>
+          <td class="paramname"><em>ldda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>ipiv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">magma_int_t *&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>magma_zgetrf_gpu_expert with mode = MagmaNative. </p>
+<p>Computation is done only on the GPU, not on the CPU. </p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__magma__getrf.html#gacdf66f4ea47eb0d531f3d9806af4b9b0" title="ZGETRF computes an LU factorization of a general M-by-N matrix A using partial pivoting with row inte...">magma_zgetrf_gpu_expert</a> </dd></dl>
 
 </div>
 </div>

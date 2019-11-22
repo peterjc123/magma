@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
        
        @author Mark Gates
        @author Tingxing Dong
        @author Azzam Haidar
 
-       @generated from magmablas/zgemv_fermi.cu, normal z -> d, Wed Jan  2 14:18:50 2019
+       @generated from magmablas/zgemv_fermi.cu, normal z -> d, Fri Aug  2 17:10:09 2019
 */
 #include "magma_internal.h"
 #include "commonblas_d.h"

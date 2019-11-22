@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
 
        @author Azzam Haidar
        
@@ -92,7 +92,7 @@ magma_xshgetrf_gpu(
     magma_mp_type_t enable_tc,
     magma_mp_type_t mp_algo_type )
 {
-#if CUDA_VERSION >= 7500
+#if CUDA_VERSION >= 9000
     #ifdef HAVE_clBLAS
     #define  dA(i_, j_) dA,  (dA_offset  + (i_)       + (j_)*ldda)
     #define dAT(i_, j_) dAT, (dAT_offset + (i_)*lddat + (j_))

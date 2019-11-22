@@ -1,11 +1,11 @@
 !
-!   -- MAGMA (version 2.5.0) --
+!   -- MAGMA (version 2.5.1) --
 !      Univ. of Tennessee, Knoxville
 !      Univ. of California, Berkeley
 !      Univ. of Colorado, Denver
-!      @date January 2019
+!      @date August 2019
 !
-!  @generated from testing/testing_zgetrf_f.f90, normal z -> d, Wed Jan  2 14:18:53 2019
+!  @generated from testing/testing_zgetrf_f.f90, normal z -> d, Fri Aug  2 17:10:12 2019
 !
       program testing_dgetrf_f
 
@@ -28,8 +28,6 @@
 
       PARAMETER          ( nrhs = 1, c_one = 1., c_neg_one = -1. )
       
-      call cublas_init()
-
       n   = 2048
       lda = n
  
@@ -101,9 +99,6 @@
 
 !---- Free CPU memory
       deallocate(A, A2, B, X, ipiv, work)
-
-!---- Free GPU memory
-      call cublas_shutdown()
 
  105  format((a35,es10.3))
 

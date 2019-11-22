@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
 
-       @generated from include/magmablas_z.h, normal z -> d, Wed Jan  2 14:18:55 2019
+       @generated from include/magmablas_z.h, normal z -> d, Fri Aug  2 17:10:14 2019
 */
 
 #ifndef MAGMABLAS_D_H
@@ -1299,6 +1299,14 @@ magma_dsyrk(
     double beta,
     magmaDouble_ptr       dC, magma_int_t lddc,
     magma_queue_t queue );
+
+void 
+magmablas_dsyrk_small_reduce( 
+    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_int_t n, magma_int_t k, 
+    double alpha, double* dA, magma_int_t ldda,
+    double beta,  double* dC, magma_int_t lddc, 
+    magma_int_t nthread_blocks, magma_queue_t queue );
 
 void
 magma_dsymm(

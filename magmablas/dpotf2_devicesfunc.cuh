@@ -1,15 +1,15 @@
 
 /*
-   -- MAGMA (version 2.5.0) --
+   -- MAGMA (version 2.5.1) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date January 2019
+   @date August 2019
 
    @author Azzam Haidar
    @author Ahmad Ahmad
 
-   @generated from magmablas/zpotf2_devicesfunc.cuh, normal z -> d, Wed Jan  2 14:18:55 2019
+   @generated from magmablas/zpotf2_devicesfunc.cuh, normal z -> d, Fri Aug  2 17:10:14 2019
  */
 
 
@@ -20,10 +20,12 @@
 extern __shared__ double shared_data[];
 
 /******************************************************************************/
-static inline __device__ void dpotf2_sminout_anywidth_device(const int m, const int n, double *A, const int lda)
+static inline __device__ void dpotf2_sminout_anywidth_device(const int m, const int n, double *A, const int lda, int* info)
 {
     const int tx = threadIdx.x;
     double factor;
+    int linfo = 0;
+
     #pragma unroll
     for (int iter=0; iter < n; iter++)
     {
@@ -32,7 +34,9 @@ static inline __device__ void dpotf2_sminout_anywidth_device(const int m, const 
         if ( tx >= iter && tx < m )
         {
         #endif
-            double xreal = sqrt(MAGMA_D_REAL(A[iter + iter * lda]));
+            double xreal = MAGMA_D_REAL(A[iter + iter * lda]);
+            linfo = ( linfo == 0 && (xreal <= MAGMA_D_ZERO) ) ? (iter+1) : linfo;
+            xreal = sqrt(xreal);
             factor = MAGMA_D_MAKE(1.0/xreal, 0.0);
         #ifdef ENABLE_COND1
         }
@@ -65,15 +69,18 @@ static inline __device__ void dpotf2_sminout_anywidth_device(const int m, const 
         #endif
         __syncthreads();
     }// end of iter
+    // ENABLE_COND1 must be disabled, which the default config., so that the right info is returned 
+    if(tx == 0) *info = linfo;
+    __syncthreads();
 }
 
 
 /******************************************************************************/
-static inline __device__ void dpotf2_sminout_fixsize_device(const int m, double *A, const int lda)
+static inline __device__ void dpotf2_sminout_fixsize_device(const int m, double *A, const int lda, int* info)
 {
     const int tx = threadIdx.x;
     double factor;
-    //__shared__ double row[POTF2_NB];
+    int linfo = 0;
 
     #pragma unroll
     for (int iter=0; iter < POTF2_NB; iter++)
@@ -83,7 +90,9 @@ static inline __device__ void dpotf2_sminout_fixsize_device(const int m, double 
         if ( tx >= iter && tx < m )
         {
         #endif
-            double xreal = sqrt(MAGMA_D_REAL(A[iter + iter * lda]));
+            double xreal = MAGMA_D_REAL(A[iter + iter * lda]);
+            linfo = ( linfo == 0 && (xreal <= MAGMA_D_ZERO || isnan(xreal)) ) ? (iter+1) : linfo;
+            xreal = sqrt(xreal);
             factor = MAGMA_D_MAKE(1.0/xreal, 0.0);
         #ifdef ENABLE_COND2
         }
@@ -122,6 +131,9 @@ static inline __device__ void dpotf2_sminout_fixsize_device(const int m, double 
         #endif
         __syncthreads();
     }// end of iter
+    // ENABLE_COND1 must be disabled, which the default config., so that the right info is returned
+    if(tx == 0) *info = linfo;
+    __syncthreads();
 }
 
 
@@ -362,6 +374,8 @@ static inline __device__ void dpotf2_smlpout_fixwidth_device(const int m,
     if (*info != 0 ) return;
     #endif
 
+    const int orginfo = (*info);
+    int panel_info = 0, newinfo = 0;
     const int tx = threadIdx.x;
     double *sdata_A = shared_data + threadIdx.y * (m+POTF2_NB)*POTF2_NB;
     double *sdata_B = sdata_A + m * POTF2_NB;
@@ -374,36 +388,19 @@ static inline __device__ void dpotf2_smlpout_fixwidth_device(const int m,
     dgemm_v20_1_anywidth_device(m, POTF2_NB, localstep, 
                        A0, lda, sdata_A, sdata_B);
     #endif
+
+    // panel fact. in shared memory
+    dpotf2_sminout_fixsize_device(m, sdata_A, m, &panel_info);
     //----------------------------------------------------
     // Check for not SPD generating info
     #ifndef BATCH_DISABLE_CHECKING
-    const int ty = threadIdx.y;
-    __shared__ int cleanup[MAX_NTCOL];
-    if ( tx == 0) {
-        cleanup[ty] = 0;
-        #pragma unroll
-        for (int i=0; i < POTF2_NB; i++)
-        {
-            if (MAGMA_D_REAL(sdata_A[i + i * m]) <= MAGMA_D_ZERO )
-            {
-                #if 0
-                if (cleanup[ty] == 0) *info = i + gbstep + 1;
-                cleanup[ty] = 1;
-                #else
-                *info = i + gbstep + 1;
-                cleanup[ty] = 1;
-                break;
-                #endif
-            }
-        }
+    if(tx == 0) {
+        newinfo = ( orginfo == 0 && panel_info != 0 ) ? panel_info + localstep + gbstep : orginfo;
+        (*info) = newinfo;
     }
     __syncthreads();
-    if (cleanup[ty] == 1) return;
     #endif
     //----------------------------------------------------
-
-    dpotf2_sminout_fixsize_device(m, sdata_A, m);
-    //dpotf2_sminout_anywidth_device(m, POTF2_NB, sdata_A, m);
 
     //copy sdata_A to A
     #ifdef ENABLE_COND6
@@ -436,6 +433,9 @@ static inline __device__ void dpotf2_smlpout_anywidth_device(const int m, const 
     #ifndef BATCH_DISABLE_CHECKING
     if (*info != 0 ) return;
     #endif
+    
+    const int orginfo = (*info);
+    int panel_info = 0, newinfo = 0;
     const int tx = threadIdx.x;
     double *sdata_A = shared_data + threadIdx.y * (m+POTF2_NB)*POTF2_NB;
     double *sdata_B = sdata_A + m * POTF2_NB;
@@ -447,35 +447,19 @@ static inline __device__ void dpotf2_smlpout_anywidth_device(const int m, const 
     #else
     dgemm_v20_1_anywidth_device(m, n, localstep, 
                        A0, lda, sdata_A, sdata_B);
+    #endif
+
+    dpotf2_sminout_anywidth_device(m, n, sdata_A, m, &panel_info);
     //----------------------------------------------------
     // Check for not SPD generating info
     #ifndef BATCH_DISABLE_CHECKING
-    const int ty = threadIdx.y;
-    __shared__ int cleanup[MAX_NTCOL];
-    if ( tx == 0) {
-        cleanup[ty] = 0;
-        #pragma unroll
-        for (int i=0; i < n; i++)
-        {
-            if (MAGMA_D_REAL(sdata_A[i + i * m]) <= MAGMA_D_ZERO )
-            {
-                #if 0
-                if (cleanup[ty] == 0) *info = i + gbstep + 1;
-                cleanup[ty] = 1;
-                #else
-                *info = i + gbstep + 1;
-                cleanup[ty] = 1;
-                break;
-                #endif
-            }
-        }
+    if(tx == 0) {
+        newinfo = ( orginfo == 0 && panel_info != 0 ) ? panel_info + localstep + gbstep : orginfo;
+        (*info) = newinfo;
     }
     __syncthreads();
-    if (cleanup[ty] == 1) return;
     #endif
     //----------------------------------------------------
-    dpotf2_sminout_anywidth_device(m, n, sdata_A, m);
-    #endif
 
 
     //copy sdata_A to A

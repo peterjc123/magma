@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
 
-       @generated from magmablas/zher2k_vbatched.cpp, normal z -> d, Wed Jan  2 14:18:51 2019
+       @generated from magmablas/zher2k_vbatched.cpp, normal z -> d, Fri Aug  2 17:10:11 2019
 
        @author Jakub Kurzak
        @author Stan Tomov

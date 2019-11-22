@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
 
        @precisions normal z -> s d c
 */
@@ -1299,6 +1299,14 @@ magma_zherk(
     double beta,
     magmaDoubleComplex_ptr       dC, magma_int_t lddc,
     magma_queue_t queue );
+
+void 
+magmablas_zherk_small_reduce( 
+    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_int_t n, magma_int_t k, 
+    double alpha, magmaDoubleComplex* dA, magma_int_t ldda,
+    double beta,  magmaDoubleComplex* dC, magma_int_t lddc, 
+    magma_int_t nthread_blocks, magma_queue_t queue );
 
 void
 magma_zsymm(

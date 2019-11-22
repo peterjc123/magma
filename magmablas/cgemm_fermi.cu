@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
 
-       @generated from magmablas/zgemm_fermi.cu, normal z -> c, Wed Jan  2 14:18:50 2019
+       @generated from magmablas/zgemm_fermi.cu, normal z -> c, Fri Aug  2 17:10:09 2019
 
        @author Jakub Kurzak
        @author Stan Tomov
@@ -209,25 +209,25 @@ magmablas_cgemm(
 
     #ifdef TEXTURE_1D
         // Set textures parameters
-        tex_ref_A.normalized = false;
-        tex_ref_A.filterMode = cudaFilterModePoint;
-        tex_ref_A.addressMode[0] = cudaAddressModeClamp;
+        tex_ref_Amagma_c.normalized = false;
+        tex_ref_Amagma_c.filterMode = cudaFilterModePoint;
+        tex_ref_Amagma_c.addressMode[0] = cudaAddressModeClamp;
 
-        tex_ref_B.normalized = false;
-        tex_ref_B.filterMode = cudaFilterModePoint;
-        tex_ref_B.addressMode[0] = cudaAddressModeClamp;
+        tex_ref_Bmagma_c.normalized = false;
+        tex_ref_Bmagma_c.filterMode = cudaFilterModePoint;
+        tex_ref_Bmagma_c.addressMode[0] = cudaAddressModeClamp;
 
         // Bind A and B to texture references
         cudaError_t err;
-        err = cudaBindTexture(&offsetA, tex_ref_A, dA, sizeA*sizeof(magmaFloatComplex));
+        err = cudaBindTexture(&offsetA, tex_ref_Amagma_c, dA, sizeA*sizeof(magmaFloatComplex));
         if ( err != cudaSuccess ) {
             fprintf( stderr, "cannot bind A to texture: %s (%d)\n", cudaGetErrorString(err), err );
             return;
         }
-        err = cudaBindTexture(&offsetB, tex_ref_B, dB, sizeB*sizeof(magmaFloatComplex));
+        err = cudaBindTexture(&offsetB, tex_ref_Bmagma_c, dB, sizeB*sizeof(magmaFloatComplex));
         if ( err != cudaSuccess ) {
             fprintf( stderr, "cannot bind B to texture: %s (%d)\n", cudaGetErrorString(err), err );
-            cudaUnbindTexture( tex_ref_A );
+            cudaUnbindTexture( tex_ref_Amagma_c );
             return;
         }
     #endif
@@ -303,7 +303,7 @@ magmablas_cgemm(
     }
 
     #ifdef TEXTURE_1D
-        cudaUnbindTexture( tex_ref_A );
-        cudaUnbindTexture( tex_ref_B );
+        cudaUnbindTexture( tex_ref_Amagma_c );
+        cudaUnbindTexture( tex_ref_Bmagma_c );
     #endif
 }

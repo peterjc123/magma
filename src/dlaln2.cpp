@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.0) --
+    -- MAGMA (version 2.5.1) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date January 2019
+       @date August 2019
 
        Originally translated from lapack dlaln2.f to dlaln2.c using f2c.
        Later cleaned up by hand, particularly to be thread-safe (no static variables).
