@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.5.1) --
+   -- MAGMA (version 2.5.2) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date August 2019
+   @date November 2019
 
    @author Azzam Haidar
    @author Ahmad Ahmad
 
-   @generated from magmablas/zpotf2_kernels.cu, normal z -> c, Fri Aug  2 17:10:10 2019
+   @generated from magmablas/zpotf2_kernels.cu, normal z -> c, Sun Nov 24 14:37:32 2019
  */
 #include "magma_internal.h"
 #include "batched_kernel_param.h"

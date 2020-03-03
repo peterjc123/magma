@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Mark Gates
-       @generated from interface_cuda/blas_z_v1.cpp, normal z -> s, Fri Aug  2 17:10:07 2019
+       @generated from interface_cuda/blas_z_v1.cpp, normal z -> s, Sun Nov 24 14:37:19 2019
 */
 #ifndef MAGMA_NO_V1
 

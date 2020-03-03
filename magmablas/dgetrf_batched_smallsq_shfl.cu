@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Azzam Haidar
        @author Ahmad Abdelfattah
 
-       @generated from magmablas/zgetrf_batched_smallsq_shfl.cu, normal z -> d, Fri Aug  2 17:10:10 2019
+       @generated from magmablas/zgetrf_batched_smallsq_shfl.cu, normal z -> d, Sun Nov 24 14:37:32 2019
 */
 
 #include "magma_internal.h"
@@ -34,9 +34,11 @@ dgetrf_batched_smallsq_shfl_kernel( double** dA_array, int ldda,
     magma_int_t* ipiv = ipiv_array[batchid];
     magma_int_t* info = &info_array[batchid];
     
-    double rA[N] = {MAGMA_D_ZERO};
-    double  y[N] = {MAGMA_D_ZERO};
-    double reg = MAGMA_D_ZERO; 
+    double rA[N]  = {MAGMA_D_ZERO};
+    double  y[N]  = {MAGMA_D_ZERO};
+    double reg    = MAGMA_D_ZERO; 
+    double update = MAGMA_D_ZERO;
+ 
     int max_id, current_piv_tx, rowid = tx, linfo = 0;
     double rx_abs_max = MAGMA_D_ZERO;
     // shared memory pointers
@@ -57,6 +59,7 @@ dgetrf_batched_smallsq_shfl_kernel( double** dA_array, int ldda,
     #pragma unroll
     for(int i = 0; i < N; i++){
         sx[ rowid ] = fabs(MAGMA_D_REAL( rA[i] )) + fabs(MAGMA_D_IMAG( rA[i] ));
+        magmablas_syncwarp();
         rx_abs_max = sx[i];
         max_id = i; 
         #pragma unroll
@@ -67,7 +70,7 @@ dgetrf_batched_smallsq_shfl_kernel( double** dA_array, int ldda,
             }
         }
         linfo = ( rx_abs_max == MAGMA_D_ZERO && linfo == 0) ? (i+1) : linfo;
-        //linfo = ( rx_abs_max == MAGMA_D_ZERO ) ? min(linfo, i+1) : 0;
+        update = ( rx_abs_max == MAGMA_D_ZERO ) ? MAGMA_D_ZERO : MAGMA_D_ONE;
 
         if(rowid == max_id){
             sipiv[i] = max_id;
@@ -78,12 +81,13 @@ dgetrf_batched_smallsq_shfl_kernel( double** dA_array, int ldda,
             rowid = max_id; 
         }
         current_piv_tx = (*scurrent_piv_tx);
+        magmablas_syncwarp();
         
         #pragma unroll
         for(int j = i; j < N; j++){
-            y[j] = magmablas_dshfl( rA[j], current_piv_tx, NSHFL);
+            y[j] = update * magmablas_dshfl( rA[j], current_piv_tx, NSHFL);
         }
-        reg = MAGMA_D_DIV(MAGMA_D_ONE, y[i] ); 
+        reg = ( rx_abs_max == MAGMA_D_ZERO ) ? MAGMA_D_ONE : MAGMA_D_DIV(MAGMA_D_ONE, y[i] ); 
         // scal and ger
         if( rowid > i ){
             rA[i] *= reg;

@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Tobias Ribizel
 
-       @generated from sparse/blas/magma_dsampleselect_core.cu, normal d -> s, Fri Aug  2 17:10:14 2019
+       @generated from sparse/blas/magma_dsampleselect_core.cu, normal d -> s, Sun Nov 24 14:37:48 2019
 */
 
 #include "magma_sampleselect.h"

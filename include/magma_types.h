@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 */
 
 #ifndef MAGMA_TYPES_H
@@ -325,7 +325,7 @@ float  magma_cabsf( magmaFloatComplex  x );
 // -----------------------------------------------------------------------------
 #define MAGMA_VERSION_MAJOR 2
 #define MAGMA_VERSION_MINOR 5
-#define MAGMA_VERSION_MICRO 1
+#define MAGMA_VERSION_MICRO 2
 
 // stage is "svn", "beta#", "rc#" (release candidate), or blank ("") for final release
 #define MAGMA_VERSION_STAGE ""

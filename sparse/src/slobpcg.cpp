@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
 
-       @date August 2019
+       @date November 2019
             
        @author Stan Tomov
        @author Hartwig Anzt
 
-       @generated from sparse/src/zlobpcg.cpp, normal z -> s, Fri Aug  2 17:10:14 2019
+       @generated from sparse/src/zlobpcg.cpp, normal z -> s, Sun Nov 24 14:37:48 2019
 */
 #include "magmasparse_internal.h"
 

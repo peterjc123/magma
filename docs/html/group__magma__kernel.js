@@ -8,6 +8,7 @@ var group__magma__kernel =
     [ "magma_max_nan_reduce_n", "group__magma__kernel.html#ga2ae860cbbacc3262a052f498d21b0f29", null ],
     [ "magma_max_nan_kernel", "group__magma__kernel.html#gaa2f3fb968b84889b1ddbb312c4f782aa", null ],
     [ "magma_sum_reduce", "group__magma__kernel.html#gaf7526da62283b9d366aed4866f18c6ca", null ],
+    [ "magma_sum_reduce_kernel", "group__magma__kernel.html#ga37db10afbe04133693f7b7829fa10def", null ],
     [ "magma_sum_reduce_n", "group__magma__kernel.html#gab610851faace7a02a36ba995e6fe3227", null ],
     [ "magma_sum_reduce_2d", "group__magma__kernel.html#gafc48bf4eff66dbac6968e1c861b9cc99", null ],
     [ "magma_sum_reduce_3d", "group__magma__kernel.html#gabc0be3995939601580e0e8e2bbbee02e", null ]

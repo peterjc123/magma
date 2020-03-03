@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Ahmad Abdelfattah
 */
@@ -25,9 +25,15 @@ void hlag2s_device(
 #if CUDA_VERSION >= 7500
     const int gtx = blockIdx.x * BLK_X + threadIdx.x;
     const int gty = blockIdx.y * BLK_Y + threadIdx.y;
-    
-    if(gtx < m && gty < n) {
-        SA[gty * ldsa + gtx] = __half2float( A[gty * lda + gtx] );
+
+    for(int j = 0; j < n; j+= gridDim.y) {
+        const int gty_ = gty + j;
+        for(int i = 0; i < m; i+= gridDim.x) {
+            const int gtx_ = gtx + i;
+            if(gtx_ < m && gty_ < n) {
+                SA[gty_ * ldsa + gtx_] = __half2float( A[gty_ * lda + gtx_] );
+            }
+        }
     }
 #endif
 }
@@ -82,7 +88,7 @@ magmablas_hlag2s(
     }
     
     dim3 threads( BLK_X, BLK_Y );
-    dim3 grid(magma_ceildiv( m, BLK_X ), magma_ceildiv( n, BLK_Y ), 1);
+    dim3 grid(magma_ceildiv( m, BLK_X ), min(50000, magma_ceildiv(n, BLK_Y)), 1);
     hlag2s_kernel<<< grid, threads, 0, queue->cuda_stream() >>>
     ( m, n, dA, lda, dSA, ldsa );
 }

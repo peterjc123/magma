@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"group__magma__trsm.html#ga3f9a59151941cbedec0dd3f040d201b7":[9,3,4,3,8,9],
 "group__magma__trsm.html#ga4b3c1f67ca2a490c462db74eb60fd128":[9,3,4,3,8,11],
 "group__magma__trsm.html#ga4b5da790f7d47c391d975a68ca1ac8df":[9,3,4,3,8,19],
 "group__magma__trsm.html#ga50b767f3e78533cfad40b7e03b2df3a2":[9,3,4,3,8,12],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "group__magma__ungqr.html":[9,3,1,0,4],
 "group__magma__ungqr.html#ga0763ba33f969ebf9225c731c9c647157":[9,3,1,0,4,1],
 "group__magma__ungqr.html#ga09f0829a12ccf16d66983440f47f35dd":[9,3,1,0,4,5],
-"group__magma__ungqr.html#ga3bac95ab48acfac1f425c6c8870ee322":[9,3,1,0,4,2],
-"group__magma__ungqr.html#ga3eaf1476be8170dc55ef3a8f880f160a":[9,3,1,0,4,0]
+"group__magma__ungqr.html#ga3bac95ab48acfac1f425c6c8870ee322":[9,3,1,0,4,2]
 };

@@ -1,10 +1,10 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
 
-       @generated from testing/testing_cblas_z.cpp, normal z -> s, Fri Aug  2 17:10:11 2019
+       @generated from testing/testing_cblas_z.cpp, normal z -> s, Sun Nov 24 14:37:34 2019
        @author Mark Gates
        
        These tests ensure that the MAGMA implementations of CBLAS routines

@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Tingxing Dong
        @author Azzam Haidar
@@ -17,8 +17,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
-#include <cuda.h>  // for CUDA_VERSION
 
 // includes, project
 #include "flops.h"

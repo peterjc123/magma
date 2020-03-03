@@ -1,5 +1,6 @@
 var NAVTREEINDEX11 =
 {
+"group__magmasparse__dgepr.html#ga983d846fcffd7d16a849402f944193e5":[9,5,2,0,1,24],
 "group__magmasparse__dgepr.html#ga98815844d976e62f09fa3f0e4eeec3b2":[9,5,2,0,1,10],
 "group__magmasparse__dgepr.html#ga9dffd504a734a55cb45c7aa965c9b561":[9,5,2,0,1,23],
 "group__magmasparse__dgepr.html#gaa2d7054dc66672e898210d05fc9f1a2e":[9,5,2,0,1,6],
@@ -248,6 +249,5 @@ var NAVTREEINDEX11 =
 "group__magmasparse__saux.html#gaded1780d2ad575a6fddf001af6923daf":[9,5,5,0,161],
 "group__magmasparse__saux.html#gadfc1df3141fd526aff96c8a86a6e722d":[9,5,5,0,130],
 "group__magmasparse__saux.html#gae0477597e0c81aa8e60ed1bc748166e0":[9,5,5,0,3],
-"group__magmasparse__saux.html#gae0e00e2f939ddc4a036258e107eee72b":[9,5,5,0,65],
-"group__magmasparse__saux.html#gae3413cf7a13c317b563eaceab56aba11":[9,5,5,0,141]
+"group__magmasparse__saux.html#gae0e00e2f939ddc4a036258e107eee72b":[9,5,5,0,65]
 };

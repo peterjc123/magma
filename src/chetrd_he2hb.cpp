@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Azzam Haidar
        @author Stan Tomov
 
-       @generated from src/zhetrd_he2hb.cpp, normal z -> c, Fri Aug  2 17:10:09 2019
+       @generated from src/zhetrd_he2hb.cpp, normal z -> c, Sun Nov 24 14:37:24 2019
 
 */
 #include <cuda_runtime.h>

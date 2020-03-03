@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
-       @generated from sparse/control/magma_zvtranspose.cpp, normal z -> c, Fri Aug  2 17:10:13 2019
+       @generated from sparse/control/magma_zvtranspose.cpp, normal z -> c, Sun Nov 24 14:37:45 2019
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"

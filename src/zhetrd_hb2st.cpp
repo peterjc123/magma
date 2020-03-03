@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
        
        @author Azzam Haidar
        @author Stan Tomov
@@ -348,9 +348,9 @@ static void *magma_zhetrd_hb2st_parallel_section(void *arg)
 
     // with MKL and when using omp_set_num_threads instead of mkl_set_num_threads
     // it need that all threads setting it to 1.
-    //magma_set_omp_numthreads(1);
-    magma_set_lapack_numthreads(1);
     magma_set_omp_numthreads(1);
+    //magma_set_lapack_numthreads(1);
+
 /*
 #ifndef MAGMA_NOAFFINITY
     // bind threads 

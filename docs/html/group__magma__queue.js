@@ -10,8 +10,8 @@ var group__magma__queue =
       [ "get_dCarray", "structmagma__queue.html#ab12f0e50de4627c32a44579c46693155", null ],
       [ "get_maxBatch", "structmagma__queue.html#af4dd88f831b782ee69c5040ffadad6ba", null ]
     ] ],
-    [ "magma_queue_create", "group__magma__queue.html#ga205a412834f6a9f42fea219076a4a609", null ],
-    [ "magma_queue_create_from_cuda", "group__magma__queue.html#gab4b6b55d2de83c31b74d3779dfb32ace", null ],
+    [ "magma_queue_create", "group__magma__queue.html#ga72512182b2996e2eb107edd47446fcbe", null ],
+    [ "magma_queue_create_from_cuda", "group__magma__queue.html#gafcee9f0e585f5e41c6dca07a8f192796", null ],
     [ "magma_queue_destroy", "group__magma__queue.html#gacd3182186abc4a99def8a61a48af43fc", null ],
     [ "magma_queue_sync", "group__magma__queue.html#ga3faec119d7aaac0d726d22b540d67fde", null ],
     [ "magma_mem_size", "group__magma__queue.html#ga7a24bc34ee11fdd109e8c21b551400eb", null ],

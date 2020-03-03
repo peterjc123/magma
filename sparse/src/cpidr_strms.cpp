@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Hartwig Anzt
        @author Eduardo Ponce
        @author Moritz Kreutzer
 
-       @generated from sparse/src/zpidr_strms.cpp, normal z -> c, Fri Aug  2 17:10:14 2019
+       @generated from sparse/src/zpidr_strms.cpp, normal z -> c, Sun Nov 24 14:37:48 2019
 */
 
 #include "magmasparse_internal.h"

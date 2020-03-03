@@ -1,5 +1,6 @@
 var NAVTREEINDEX13 =
 {
+"group__magmasparse__zaux.html#ga563b7ce36969639caf217257a7c9f664":[9,5,5,3,5],
 "group__magmasparse__zaux.html#ga5a54a02a7396bff92109d57240eee65f":[9,5,5,3,184],
 "group__magmasparse__zaux.html#ga5b43db137e31193a5326aa20bb066815":[9,5,5,3,1],
 "group__magmasparse__zaux.html#ga5bc35fd955e7a1daacc083a77ce88d15":[9,5,5,3,141],
@@ -248,6 +249,5 @@ var NAVTREEINDEX13 =
 "group__magmasparse__zgesv.html":[9,5,0,0,3],
 "group__magmasparse__zgesv.html#ga04a9e6e65fbc2e5fb4ac0b2fb9f6a8ed":[9,5,0,0,3,21],
 "group__magmasparse__zgesv.html#ga0db5bfc065a198f2e8892c62959cdfbc":[9,5,0,0,3,10],
-"group__magmasparse__zgesv.html#ga1c3ac14fb9883fb4821de495638d4fae":[9,5,0,0,3,3],
-"group__magmasparse__zgesv.html#ga1ce1070a8306fa2577600badba5c7cad":[9,5,0,0,3,18]
+"group__magmasparse__zgesv.html#ga1c3ac14fb9883fb4821de495638d4fae":[9,5,0,0,3,3]
 };

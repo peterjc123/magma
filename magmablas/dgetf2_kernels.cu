@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Azzam Haidar
        @author Tingxing Dong
        @author Ahmad Abdelfattah
 
-       @generated from magmablas/zgetf2_kernels.cu, normal z -> d, Fri Aug  2 17:10:10 2019
+       @generated from magmablas/zgetf2_kernels.cu, normal z -> d, Sun Nov 24 14:37:33 2019
 */
 
 #include "magma_internal.h"
@@ -998,14 +998,15 @@ dgetf2_fused_device( int m, double* dA, int ldda, magma_int_t* dipiv,
     const int ty = threadIdx.y;
 
     double rA[WIDTH] = {MAGMA_D_ZERO};
-    double reg = MAGMA_D_ZERO; 
+    double reg       = MAGMA_D_ZERO; 
+    double update    = MAGMA_D_ZERO;
     
     int max_id, rowid = tx;
-    int linfo = 0;
+    int linfo = (gbstep == 0) ? 0 : *info;
     double rx_abs_max = MAGMA_D_ZERO;
     // check from previous calls if the panel factorization failed previously
     // this is necessary to report the correct info value 
-    if(gbstep > 0 && *info != 0) return;
+    //if(gbstep > 0 && *info != 0) return;
     
     double *sx = (double*)(swork);
     double* dsx = (double*)(sx + blockDim.y * WIDTH);
@@ -1036,7 +1037,8 @@ dgetf2_fused_device( int m, double* dA, int ldda, magma_int_t* dipiv,
         magma_getidmax_n(m-i, tx, dsx+i, isx+i); // this devfunc has syncthreads at the end
         rx_abs_max = dsx[i];
         max_id = isx[i];
-        linfo = ( rx_abs_max == MAGMA_D_ZERO && linfo == 0) ? (gbstep+i+1) : linfo;
+        linfo  = ( rx_abs_max == MAGMA_D_ZERO && linfo == 0) ? (gbstep+i+1) : linfo;
+        update = ( rx_abs_max == MAGMA_D_ZERO ) ? MAGMA_D_ZERO : MAGMA_D_ONE;
         __syncthreads();
 
         if(rowid == max_id){
@@ -1044,7 +1046,7 @@ dgetf2_fused_device( int m, double* dA, int ldda, magma_int_t* dipiv,
             rowid = i;
             #pragma unroll
             for(int j = 0; j < WIDTH; j++){
-                sx[j] = rA[j];
+                sx[j] = update * rA[j];
             }
         }
         else if(rowid == i){

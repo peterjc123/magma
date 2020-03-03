@@ -422,10 +422,12 @@ magmablas/prefix_sum.cu
 magmablas/vbatched_aux.cu
 magmablas/vbatched_check.cu
 magmablas/blas_zbatched.cpp
+magmablas/hgemm_batched_core.cu
 magmablas/slag2h.cu
 magmablas/hlag2s.cu
 magmablas/hlaconvert.cu
 magmablas/hlaswp.cu
+magmablas/hset_pointer.cu
 control/magma_sauxiliary.cpp
 control/magma_dauxiliary.cpp
 control/magma_cauxiliary.cpp
@@ -1545,6 +1547,7 @@ testing/testing_ztrmm_vbatched.cpp
 testing/testing_ztrsm_vbatched.cpp
 testing/testing_zpotrf_vbatched.cpp
 testing/testing_hgemm.cpp
+testing/testing_hgemm_batched.cpp
 testing/testing_zgetrf_gpu_f.F90
 testing/testing_zgetrf_f.f90
 testing/testing_caxpy.cpp

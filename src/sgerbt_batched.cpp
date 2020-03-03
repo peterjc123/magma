@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
-       @generated from src/zgerbt_batched.cpp, normal z -> s, Fri Aug  2 17:10:09 2019
+       @generated from src/zgerbt_batched.cpp, normal z -> s, Sun Nov 24 14:37:27 2019
        @author Adrien REMY
 */
 #include "magma_internal.h"

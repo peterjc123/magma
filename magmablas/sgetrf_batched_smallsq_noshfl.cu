@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Azzam Haidar
        @author Ahmad Abdelfattah
 
-       @generated from magmablas/zgetrf_batched_smallsq_noshfl.cu, normal z -> s, Fri Aug  2 17:10:10 2019
+       @generated from magmablas/zgetrf_batched_smallsq_noshfl.cu, normal z -> s, Sun Nov 24 14:37:32 2019
 */
 
 #include "magma_internal.h"
@@ -34,8 +34,9 @@ sgetrf_batched_smallsq_noshfl_kernel( float** dA_array, int ldda,
     magma_int_t* ipiv = ipiv_array[batchid];
     magma_int_t* info = &info_array[batchid];
     
-    float rA[N] = {MAGMA_S_ZERO};
-    float reg = MAGMA_S_ZERO; 
+    float rA[N]  = {MAGMA_S_ZERO};
+    float reg    = MAGMA_S_ZERO; 
+    float update = MAGMA_S_ZERO;
     
     int max_id, rowid = tx;
     int linfo = 0;
@@ -70,14 +71,15 @@ sgetrf_batched_smallsq_noshfl_kernel( float** dA_array, int ldda,
                 rx_abs_max = dsx[j];
             }
         }
-        linfo = ( rx_abs_max == MAGMA_D_ZERO && linfo == 0) ? (i+1) : linfo;
+        linfo  = ( rx_abs_max == MAGMA_D_ZERO && linfo == 0) ? (i+1) : linfo;
+        update = ( rx_abs_max == MAGMA_D_ZERO ) ? MAGMA_S_ZERO : MAGMA_S_ONE;
         
         if(rowid == max_id){
             sipiv[i] = max_id;
             rowid = i;
             #pragma unroll
             for(int j = i; j < N; j++){
-                sx[j] = rA[j];
+                sx[j] = update * rA[j];
             }
         }
         else if(rowid == i){
@@ -85,7 +87,7 @@ sgetrf_batched_smallsq_noshfl_kernel( float** dA_array, int ldda,
         }
         magmablas_syncwarp();
         
-        reg = MAGMA_S_DIV(MAGMA_S_ONE, sx[i] );
+        reg = ( rx_abs_max == MAGMA_D_ZERO ) ? MAGMA_S_ONE : MAGMA_S_DIV(MAGMA_S_ONE, sx[i] );
         // scal and ger
         if( rowid > i ){
             rA[i] *= reg;

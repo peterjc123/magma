@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.1) --
+    -- MAGMA (version 2.5.2) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date August 2019
+       @date November 2019
 
        @author Mark Gates
-       @generated from src/zlatrsd.cpp, normal z -> c, Fri Aug  2 17:10:09 2019
+       @generated from src/zlatrsd.cpp, normal z -> c, Sun Nov 24 14:37:27 2019
        Making s,d precisions requires fixing dot call.
 */
 #include "magma_internal.h"

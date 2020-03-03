@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"group__magma__ungqr.html#ga3eaf1476be8170dc55ef3a8f880f160a":[9,3,1,0,4,0],
 "group__magma__ungqr.html#ga430ab583a760d099960d921673036d4a":[9,3,1,0,4,11],
 "group__magma__ungqr.html#ga4adecc3bd7162c443584833bb7d2f4c2":[9,3,1,0,4,10],
 "group__magma__ungqr.html#ga533c1e3a356b9ad35a73d4e01f0d23fb":[9,3,1,0,4,6],
@@ -248,6 +249,5 @@ var NAVTREEINDEX8 =
 "group__magmasparse__caux.html#gabd5b90a4680d41aa3e0c7251a1dcbcf6":[9,5,5,2,43],
 "group__magmasparse__caux.html#gabe5a068253b401dc67988c7138c175ad":[9,5,5,2,144],
 "group__magmasparse__caux.html#gabf84dc7a8129fe86759e7ffc77c29c42":[9,5,5,2,134],
-"group__magmasparse__caux.html#gabfa6cb944f8a07d1016f20e0353aacad":[9,5,5,2,15],
-"group__magmasparse__caux.html#gac0f039e1dd3e3d3ee16d8672569d5354":[9,5,5,2,47]
+"group__magmasparse__caux.html#gabfa6cb944f8a07d1016f20e0353aacad":[9,5,5,2,15]
 };
