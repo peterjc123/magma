@@ -1,16 +1,16 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
        
        dsymv.cu is nearly identical to dsymv.cu, just change names and drop MAGMA_D_CONJ.
        
        dsymv_kernel_U (upper) in dsymv_upper.cu is very similar to
        dsymv_kernel_L (lower) in dsymv.cu; diff the two files to compare.
        
-       @generated from magmablas/zhemv.cu, normal z -> d, Sun Nov 24 14:37:29 2019
+       @generated from magmablas/zhemv.cu, normal z -> d, Sun Mar 29 20:48:30 2020
        
        @author Mark Gates
 */

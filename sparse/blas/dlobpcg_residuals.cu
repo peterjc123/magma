@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
-       @generated from sparse/blas/zlobpcg_residuals.cu, normal z -> d, Sun Nov 24 14:37:41 2019
+       @generated from sparse/blas/zlobpcg_residuals.cu, normal z -> d, Sun Mar 29 20:48:34 2020
 
 */
 #include "magmasparse_internal.h"

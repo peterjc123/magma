@@ -1,5 +1,11 @@
 var NAVTREEINDEX14 =
 {
+"group__magmasparse__zgepr.html#gaed719a46175ebbc38bf315ddae5ae62e":[9,5,2,0,3,13],
+"group__magmasparse__zgepr.html#gaf0d13ce14dc3091636c9c08e7d8246d3":[9,5,2,0,3,26],
+"group__magmasparse__zgesv.html":[9,5,0,0,3],
+"group__magmasparse__zgesv.html#ga04a9e6e65fbc2e5fb4ac0b2fb9f6a8ed":[9,5,0,0,3,21],
+"group__magmasparse__zgesv.html#ga0db5bfc065a198f2e8892c62959cdfbc":[9,5,0,0,3,10],
+"group__magmasparse__zgesv.html#ga1c3ac14fb9883fb4821de495638d4fae":[9,5,0,0,3,3],
 "group__magmasparse__zgesv.html#ga1ce1070a8306fa2577600badba5c7cad":[9,5,0,0,3,18],
 "group__magmasparse__zgesv.html#ga23969bddd15f805ce15e18b2c718c476":[9,5,0,0,3,2],
 "group__magmasparse__zgesv.html#ga35c95662f2630cc19b120a084bd0af72":[9,5,0,0,3,6],

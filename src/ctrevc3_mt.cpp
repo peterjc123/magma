@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
        
        @author Mark Gates
        @author Azzam Haidar
        
-       @generated from src/ztrevc3_mt.cpp, normal z -> c, Sun Nov 24 14:37:27 2019
+       @generated from src/ztrevc3_mt.cpp, normal z -> c, Sun Mar 29 20:48:30 2020
 */
 #include "thread_queue.hpp"
 #include "magma_timer.h"

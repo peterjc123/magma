@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #
-# MAGMA (version 2.5.2) --
+# MAGMA (version 2.5.3) --
 # Univ. of Tennessee, Knoxville
 # Univ. of California, Berkeley
 # Univ. of Colorado, Denver
-# @date November 2019
+# @date March 2020
 
 ## @file
 #  @author Mark Gates
@@ -511,6 +511,12 @@ blas = (
 	('testing_zgemv',   '-T             -c',  mn,   ''),
 	('testing_zgemv',   '-C             -c',  mn,   ''),
 	
+	# left/right, lower/upper
+	('testing_zhemm',   '-SL -L         -c',  mn,    ''),
+	('testing_zhemm',   '-SL -U         -c',  mn,    ''),
+	('testing_zhemm',   '-SR -L         -c',  mn,    ''),
+	('testing_zhemm',   '-SR -U         -c',  mn,    ''),
+    
 	# lower/upper
 	('testing_zhemv',   '-L             -c',  n,    ''),
 	('testing_zhemv',   '-U             -c',  n,    ''),

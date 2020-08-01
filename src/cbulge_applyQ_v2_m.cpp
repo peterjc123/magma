@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
        @author Azzam Haidar
        @author Stan Tomov
        @author Raffaele Solca
   
-       @generated from src/zbulge_applyQ_v2_m.cpp, normal z -> c, Sun Nov 24 14:37:25 2019
+       @generated from src/zbulge_applyQ_v2_m.cpp, normal z -> c, Sun Mar 29 20:48:29 2020
 */
 #include <cuda_runtime.h>
 

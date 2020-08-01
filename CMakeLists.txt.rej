@@ -1,0 +1,11 @@
+--- CMakeLists.txt	2019-11-04 15:04:50.452110612 -0800
++++ CMakeLists.txt	2019-11-04 15:05:39.889521970 -0800
+@@ -560,7 +569,7 @@
+          LIBRARY DESTINATION lib
+          ARCHIVE DESTINATION lib )
+ file( GLOB headers include/*.h sparse/include/*.h )
+-install( FILES ${headers} ${modules}
++install( FILES ${headers} 
+          DESTINATION include )
+ 
+ # ----------------------------------------

@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
        @author Mark Gates
-       @generated from interface_cuda/blas_z_v2.cpp, normal z -> d, Sun Nov 24 14:37:21 2019
+       @generated from interface_cuda/blas_z_v2.cpp, normal z -> d, Sun Mar 29 20:48:28 2020
 */
 #include "magma_internal.h"
 #include "error.h"
@@ -1391,6 +1391,14 @@ magma_dsymm(
     magmaDouble_ptr       dC, magma_int_t lddc,
     magma_queue_t queue )
 {
+    #ifdef HAVE_HIP
+    // TODO: remove fallback when hipblas provides this routine
+    magmablas_dsymm(
+        side, uplo, m, n, 
+        alpha, (magmaDouble_ptr)dA, ldda, 
+               (magmaDouble_ptr)dB, lddb, 
+        beta,  dC, lddc, queue );
+    #else
     cublasDsymm(
         queue->cublas_handle(),
         cublas_side_const( side ),
@@ -1399,6 +1407,7 @@ magma_dsymm(
         &alpha, dA, int(ldda),
                 dB, int(lddb),
         &beta,  dC, int(lddc) );
+    #endif
 }
 #endif // COMPLEX
 
@@ -1460,6 +1469,13 @@ magma_dsyrk(
     magmaDouble_ptr       dC, magma_int_t lddc,
     magma_queue_t queue )
 {
+    #ifdef HAVE_HIP
+    // TODO: remove fallback when hipblas provides this routine
+    magmablas_dsyrk(
+        uplo, trans, n, k, 
+        alpha, (magmaDouble_ptr)dA, ldda, 
+        beta,  dC, lddc, queue );
+    #else
     cublasDsyrk(
         queue->cublas_handle(),
         cublas_uplo_const( uplo ),
@@ -1467,6 +1483,7 @@ magma_dsyrk(
         int(n), int(k),
         &alpha, dA, int(ldda),
         &beta,  dC, int(lddc) );
+    #endif
 }
 #endif // COMPLEX
 
@@ -1537,6 +1554,14 @@ magma_dsyr2k(
     magmaDouble_ptr       dC, magma_int_t lddc,
     magma_queue_t queue )
 {
+    #ifdef HAVE_HIP
+    // TODO: remove fallback when hipblas provides this routine
+    magmablas_dsyr2k(
+        uplo, trans, n, k, 
+        alpha, (magmaDouble_ptr)dA, ldda, 
+               (magmaDouble_ptr)dB, lddb, 
+        beta,  dC, lddc, queue );
+    #else
     cublasDsyr2k(
         queue->cublas_handle(),
         cublas_uplo_const( uplo ),
@@ -1545,6 +1570,7 @@ magma_dsyr2k(
         &alpha, dA, int(ldda),
                 dB, int(lddb),
         &beta,  dC, int(lddc) );
+    #endif
 }
 #endif // COMPLEX
 
@@ -1612,6 +1638,14 @@ magma_dsymm(
     magmaDouble_ptr       dC, magma_int_t lddc,
     magma_queue_t queue )
 {
+    #ifdef HAVE_HIP
+    // TODO: remove fallback when hipblas provides this routine
+    magmablas_dsymm(
+        side, uplo, m, n, 
+        alpha, (magmaDouble_ptr)dA, ldda, 
+               (magmaDouble_ptr)dB, lddb, 
+        beta,  dC, lddc, queue );
+    #else
     cublasDsymm(
         queue->cublas_handle(),
         cublas_side_const( side ),
@@ -1620,6 +1654,7 @@ magma_dsymm(
         &alpha, dA, int(ldda),
                 dB, int(lddb),
         &beta,  dC, int(lddc) );
+    #endif
 }
 
 
@@ -1679,6 +1714,13 @@ magma_dsyrk(
     magmaDouble_ptr       dC, magma_int_t lddc,
     magma_queue_t queue )
 {
+    #ifdef HAVE_HIP
+    // TODO: remove fallback when hipblas provides this routine
+    magmablas_dsyrk(
+        uplo, trans, n, k, 
+        alpha, (magmaDouble_ptr)dA, ldda, 
+        beta,  dC, lddc, queue );
+    #else
     cublasDsyrk(
         queue->cublas_handle(),
         cublas_uplo_const( uplo ),
@@ -1686,6 +1728,7 @@ magma_dsyrk(
         int(n), int(k),
         &alpha, dA, int(ldda),
         &beta,  dC, int(lddc) );
+    #endif
 }
 
 
@@ -1754,6 +1797,14 @@ magma_dsyr2k(
     magmaDouble_ptr       dC, magma_int_t lddc,
     magma_queue_t queue )
 {
+    #ifdef HAVE_HIP
+    // TODO: remove fallback when hipblas provides this routine
+    magmablas_dsyr2k(
+        uplo, trans, n, k, 
+        alpha, (magmaDouble_ptr)dA, ldda, 
+               (magmaDouble_ptr)dB, lddb, 
+        beta,  dC, lddc, queue );
+    #else
     cublasDsyr2k(
         queue->cublas_handle(),
         cublas_uplo_const( uplo ),
@@ -1762,6 +1813,7 @@ magma_dsyr2k(
         &alpha, dA, int(ldda),
                 dB, int(lddb),
         &beta,  dC, int(lddc) );
+    #endif
 }
 
 

@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.5.2) --
+#   -- MAGMA (version 2.5.3) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date November 2019
+#      @date March 2020
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -35,8 +35,11 @@ libmagma_src += \
 	$(cdir)/zgerbt.cu		\
 	$(cdir)/zgerbt_kernels.cu	\
 	$(cdir)/zgetmatrix_transpose.cpp	\
+	$(cdir)/zhemm.cu		\
 	$(cdir)/zhemv.cu		\
 	$(cdir)/zhemv_upper.cu		\
+	$(cdir)/zher2k.cpp	\
+	$(cdir)/zherk.cpp	\
 	$(cdir)/zherk_small_reduce.cu	\
 	$(cdir)/zlacpy.cu		\
 	$(cdir)/zlacpy_conj.cu		\
@@ -70,6 +73,7 @@ libmagma_src += \
 	$(cdir)/zswap.cu		\
 	$(cdir)/zswapblk.cu		\
 	$(cdir)/zswapdblk.cu		\
+	$(cdir)/zsymm.cu		\
 	$(cdir)/zsymmetrize.cu		\
 	$(cdir)/zsymmetrize_tiles.cu	\
 	$(cdir)/zsymv.cu		\

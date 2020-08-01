@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #
-# MAGMA (version 2.5.2) --
+# MAGMA (version 2.5.3) --
 # Univ. of Tennessee, Knoxville
 # Univ. of California, Berkeley
 # Univ. of Colorado, Denver
-# @date November 2019
+# @date March 2020
 
 ## @file run_summarize.py
 #  @author Mark Gates

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
-       @generated from testing/testing_zherk.cpp, normal z -> s, Sun Nov 24 14:37:34 2019
+       @generated from testing/testing_zherk.cpp, normal z -> s, Sun Mar 29 20:48:32 2020
        @author Chongxiao Cao
 */
 // includes, system
@@ -40,8 +40,8 @@ int main( int argc, char** argv)
     TESTING_CHECK( magma_init() );
     magma_print_environment();
 
-    real_Double_t   gflops, dev_perf, dev_time, cpu_perf, cpu_time;
-    float          dev_error, work[1];
+    real_Double_t   gflops, magma_perf, magma_time, dev_perf, dev_time, cpu_perf, cpu_time;
+    float      magma_error, dev_error, work[1];
     magma_int_t N, K;
     magma_int_t Ak, An;
     magma_int_t sizeA, sizeC;
@@ -49,7 +49,7 @@ int main( int argc, char** argv)
     magma_int_t ione     = 1;
     magma_int_t ISEED[4] = {0,0,0,1};
     
-    float *hA, *hC, *hCdev;
+    float *hA, *hC, *hCmagma, *hCdev;
     magmaFloat_ptr dA, dC;
     float c_neg_one = MAGMA_S_NEG_ONE;
     float alpha = MAGMA_D_MAKE(  0.29, -0.86 );
@@ -71,12 +71,23 @@ int main( int argc, char** argv)
     }
     #endif
     
-    printf("%% If running lapack (option --lapack), CUBLAS error is computed\n"
-           "%% relative to CPU BLAS result.\n\n");
+    #ifdef HAVE_CUBLAS
+    // for CUDA, we can check MAGMA vs. CUBLAS, without running LAPACK
+    printf("%% If running lapack (option --lapack), MAGMA and %s errors are both computed\n"
+           "%% relative to CPU BLAS result. Else, MAGMA error is computed relative to %s result.\n\n",
+            g_platform_str, g_platform_str );
+        
     printf("%% uplo = %s, transA = %s\n",
            lapack_uplo_const(opts.uplo), lapack_trans_const(opts.transA) );
-    printf("%%   N     K   CUBLAS Gflop/s (ms)   CPU Gflop/s (ms)  CUBLAS error\n");
-    printf("%%=================================================================\n");
+    printf("%%   N     K   MAGMA Gflop/s (ms)  CUBLAS Gflop/s (ms)   CPU Gflop/s (ms)   MAGMA error   CUBLAS error\n");
+   #else
+    // for others, we need LAPACK for check
+    opts.lapack |= opts.check;  // check (-c) implies lapack (-l)
+    printf("%% uplo = %s, transA = %s\n",
+           lapack_uplo_const(opts.uplo), lapack_trans_const(opts.transA) );
+    printf("%%   N     K   MAGMA Gflop/s (ms)   CPU Gflop/s (ms)  MAGMA error\n");
+    #endif
+    printf("%%===================================================================================================\n");
     for( int itest = 0; itest < opts.ntest; ++itest ) {
         for( int iter = 0; iter < opts.niter; ++iter ) {
             N = opts.nsize[itest];
@@ -99,9 +110,10 @@ int main( int argc, char** argv)
             sizeA = lda*Ak;
             sizeC = ldc*N;
             
-            TESTING_CHECK( magma_smalloc_cpu( &hA,    lda*Ak ));
-            TESTING_CHECK( magma_smalloc_cpu( &hC,    ldc*N  ));
-            TESTING_CHECK( magma_smalloc_cpu( &hCdev, ldc*N  ));
+            TESTING_CHECK( magma_smalloc_cpu( &hA,      lda*Ak ));
+            TESTING_CHECK( magma_smalloc_cpu( &hC,      ldc*N  ));
+            TESTING_CHECK( magma_smalloc_cpu( &hCmagma, ldc*N  ));
+            TESTING_CHECK( magma_smalloc_cpu( &hCdev,   ldc*N  ));
             
             TESTING_CHECK( magma_smalloc( &dA, ldda*Ak ));
             TESTING_CHECK( magma_smalloc( &dC, lddc*N  ));
@@ -115,18 +127,35 @@ int main( int argc, char** argv)
             float Cnorm = safe_lapackf77_slansy( "F", lapack_uplo_const(opts.uplo), &N, hC, &ldc, work );
             
             /* =====================================================================
-               Performs operation using cuBLAS / clBLAS
+               Performs operation using MAGMABLAS ( for CUDA and HIP)
                =================================================================== */
             magma_ssetmatrix( An, Ak, hA, lda, dA(0,0), ldda, opts.queue );
             magma_ssetmatrix( N, N, hC, ldc, dC(0,0), lddc, opts.queue );
 
+            magma_time = magma_sync_wtime( opts.queue );
+            magmablas_ssyrk( 
+                        opts.uplo, opts.transA, N, K, 
+                        alpha, dA(0,0), ldda,
+                        beta,  dC(0,0), lddc, opts.queue);
+            magma_time = magma_sync_wtime( opts.queue ) - magma_time;
+            magma_perf = gflops / magma_time;
+            
+            magma_sgetmatrix( N, N, dC(0,0), lddc, hCmagma, ldc, opts.queue );
+            
+            /* =====================================================================
+               Performs operation using cuBLAS / clBLAS
+               =================================================================== */
+            magma_ssetmatrix( N, N, hC, ldc, dC(0,0), lddc, opts.queue );
+
+            #if HAVE_CUBLAS
             dev_time = magma_sync_wtime( opts.queue );
             magma_ssyrk( opts.uplo, opts.transA, N, K,
                          alpha, dA(0,0), ldda,
                          beta,  dC(0,0), lddc, opts.queue );
             dev_time = magma_sync_wtime( opts.queue ) - dev_time;
             dev_perf = gflops / dev_time;
-            
+            #endif
+
             magma_sgetmatrix( N, N, dC(0,0), lddc, hCdev, ldc, opts.queue );
             
             /* =====================================================================
@@ -146,26 +175,58 @@ int main( int argc, char** argv)
                =================================================================== */
             if ( opts.lapack ) {
                 // See testing_sgemm for formula.
+                blasf77_saxpy( &sizeC, &c_neg_one, hC, &ione, hCmagma, &ione );
+                magma_error = safe_lapackf77_slansy( "F", lapack_uplo_const(opts.uplo), &N, hCmagma, &ldc, work )
+                            / (sqrt(float(K+2))*fabs(alpha)*Anorm*Anorm + 2*fabs(beta)*Cnorm);
+
+                #ifdef HAVE_CUBLAS
                 blasf77_saxpy( &sizeC, &c_neg_one, hC, &ione, hCdev, &ione );
                 dev_error = safe_lapackf77_slansy( "F", lapack_uplo_const(opts.uplo), &N, hCdev, &ldc, work )
                             / (sqrt(float(K+2))*fabs(alpha)*Anorm*Anorm + 2*fabs(beta)*Cnorm);
-                
-                bool okay = (dev_error < tol);
+
+                bool okay = (magma_error < tol && dev_error < tol);
+                status += ! okay;
+                printf("%5lld %5lld   %7.2f (%7.2f)   %7.2f (%7.2f)    %7.2f (%7.2f)   %8.2e      %8.2e   %s\n",
+                       (long long) N, (long long) K,
+                       magma_perf, 1000.*magma_time,
+                       dev_perf,   1000.*dev_time,
+                       cpu_perf,   1000.*cpu_time,
+                       magma_error, dev_error, (okay ? "ok" : "failed"));
+                #else
+                bool okay = (magma_error < tol);
                 status += ! okay;
                 printf("%5lld %5lld   %7.2f (%7.2f)   %7.2f (%7.2f)    %8.2e   %s\n",
                        (long long) N, (long long) K,
-                       dev_perf, 1000.*dev_time,
-                       cpu_perf, 1000.*cpu_time,
-                       dev_error, (okay ? "ok" : "failed"));
+                       magma_perf, 1000.*magma_time,
+                       cpu_perf,   1000.*cpu_time,
+                       magma_error, (okay ? "ok" : "failed"));
+                #endif
+                
             }
             else {
-                printf("%5lld %5lld   %7.2f (%7.2f)    ---   (  ---  )    ---     ---\n",
+                #ifdef HAVE_CUBLAS
+                blasf77_saxpy( &sizeC, &c_neg_one, hCdev, &ione, hCmagma, &ione );
+                magma_error = safe_lapackf77_slansy( "F", lapack_uplo_const(opts.uplo), &N, hCmagma, &ldc, work )
+                            / (sqrt(float(K+2))*fabs(alpha)*Anorm*Anorm + 2*fabs(beta)*Cnorm);
+
+                bool okay = (magma_error < tol);
+                status += ! okay;
+                printf("%5lld %5lld   %7.2f (%7.2f)   %7.2f (%7.2f)     ---   (  ---  )    %8.2e         ---      %s\n",
                        (long long) N, (long long) K,
-                       dev_perf, 1000.*dev_time);
+                       magma_perf, 1000.*magma_time,
+                       dev_perf,   1000.*dev_time,
+                       magma_error, (okay ? "ok" : "failed"));
+                #else
+                printf("%5lld %5lld   %7.2f (%7.2f)   ---   (  ---  )     ---  \n",
+                       (long long) N, (long long) K,
+                       magma_perf, 1000.*magma_time);
+                #endif
+                
             }
             
             magma_free_cpu( hA );
             magma_free_cpu( hC );
+            magma_free_cpu( hCmagma );
             magma_free_cpu( hCdev );
             
             magma_free( dA );

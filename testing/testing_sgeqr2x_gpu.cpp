@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
        
        @author Stan Tomov
        @author Mark Gates
 
-       @generated from testing/testing_zgeqr2x_gpu.cpp, normal z -> s, Sun Nov 24 14:37:37 2019
+       @generated from testing/testing_zgeqr2x_gpu.cpp, normal z -> s, Sun Mar 29 20:48:33 2020
 */
 
 // includes, system

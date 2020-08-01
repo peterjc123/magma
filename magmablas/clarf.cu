@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
-       @generated from magmablas/zlarf.cu, normal z -> c, Sun Nov 24 14:37:28 2019
+       @generated from magmablas/zlarf.cu, normal z -> c, Sun Mar 29 20:48:30 2020
        @author Azzam Haidar
 
 */

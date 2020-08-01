@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
        @author Tingxing Dong
 
-       @generated from magmablas/zlarfg_devicesfunc.cuh, normal z -> d, Sun Nov 24 14:37:49 2019
+       @generated from magmablas/zlarfg_devicesfunc.cuh, normal z -> d, Sun Mar 29 20:48:36 2020
 */
 
 #include "magma_templates.h"

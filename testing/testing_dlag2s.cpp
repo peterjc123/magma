@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
        @author Mark Gates
-       @generated from testing/testing_zlag2c.cpp, mixed zc -> ds, Sun Nov 24 14:37:33 2019
+       @generated from testing/testing_zlag2c.cpp, mixed zc -> ds, Sun Mar 29 20:48:32 2020
 */
 // includes, system
 #include <stdlib.h>

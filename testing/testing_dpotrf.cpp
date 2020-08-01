@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
-       @generated from testing/testing_zpotrf.cpp, normal z -> d, Sun Nov 24 14:37:35 2019
+       @generated from testing/testing_zpotrf.cpp, normal z -> d, Sun Mar 29 20:48:32 2020
 */
 // includes, system
 #include <stdlib.h>
@@ -95,8 +95,16 @@ int main( int argc, char** argv)
                    Check the result compared to LAPACK
                    =================================================================== */
                 blasf77_daxpy(&n2, &c_neg_one, h_A, &ione, h_R, &ione);
+                #ifndef HAVE_HIP
                 Anorm = lapackf77_dlange("f", &N, &N, h_A, &lda, work);
                 error = lapackf77_dlange("f", &N, &N, h_R, &lda, work) / Anorm;
+                #else
+                // TODO: use dlange when the herk/syrk implementations are standardized. 
+                // For HIP, the current herk/syrk routines overwrite the entire diagonal
+                // blocks of the matrix, so using dlange causes the error check to fail
+                Anorm = safe_lapackf77_dlansy( "f", lapack_uplo_const(opts.uplo), &N, h_A, &lda, work );
+                error = safe_lapackf77_dlansy( "f", lapack_uplo_const(opts.uplo), &N, h_R, &lda, work ) / Anorm;
+                #endif
                 
                 printf("%5lld   %7.2f (%7.2f)   %7.2f (%7.2f)   %8.2e   %s\n",
                        (long long) N, cpu_perf, cpu_time, gpu_perf, gpu_time,

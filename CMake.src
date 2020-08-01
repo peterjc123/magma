@@ -286,8 +286,11 @@ magmablas/zgemv_fermi.cu
 magmablas/zgerbt.cu
 magmablas/zgerbt_kernels.cu
 magmablas/zgetmatrix_transpose.cpp
+magmablas/zhemm.cu
 magmablas/zhemv.cu
 magmablas/zhemv_upper.cu
+magmablas/zher2k.cpp
+magmablas/zherk.cpp
 magmablas/zherk_small_reduce.cu
 magmablas/zlacpy.cu
 magmablas/zlacpy_conj.cu
@@ -321,6 +324,7 @@ magmablas/zsetmatrix_transpose.cpp
 magmablas/zswap.cu
 magmablas/zswapblk.cu
 magmablas/zswapdblk.cu
+magmablas/zsymm.cu
 magmablas/zsymmetrize.cu
 magmablas/zsymmetrize_tiles.cu
 magmablas/zsymv.cu
@@ -1009,12 +1013,19 @@ magmablas/cgerbt_kernels.cu
 magmablas/sgetmatrix_transpose.cpp
 magmablas/dgetmatrix_transpose.cpp
 magmablas/cgetmatrix_transpose.cpp
+magmablas/chemm.cu
 magmablas/ssymv.cu
 magmablas/dsymv.cu
 magmablas/chemv.cu
 magmablas/ssymv_upper.cu
 magmablas/dsymv_upper.cu
 magmablas/chemv_upper.cu
+magmablas/ssyr2k.cpp
+magmablas/dsyr2k.cpp
+magmablas/cher2k.cpp
+magmablas/ssyrk.cpp
+magmablas/dsyrk.cpp
+magmablas/cherk.cpp
 magmablas/ssyrk_small_reduce.cu
 magmablas/dsyrk_small_reduce.cu
 magmablas/cherk_small_reduce.cu
@@ -1104,6 +1115,9 @@ magmablas/cswapblk.cu
 magmablas/sswapdblk.cu
 magmablas/dswapdblk.cu
 magmablas/cswapdblk.cu
+magmablas/ssymm.cu
+magmablas/dsymm.cu
+magmablas/csymm.cu
 magmablas/ssymmetrize.cu
 magmablas/dsymmetrize.cu
 magmablas/csymmetrize.cu
@@ -1411,6 +1425,7 @@ set( testing_all
 testing/testing_zaxpy.cpp
 testing/testing_zgemm.cpp
 testing/testing_zgemv.cpp
+testing/testing_zhemm.cpp
 testing/testing_zhemv.cpp
 testing/testing_zherk.cpp
 testing/testing_zher2k.cpp
@@ -1559,6 +1574,9 @@ testing/testing_sgemm.cpp
 testing/testing_cgemv.cpp
 testing/testing_dgemv.cpp
 testing/testing_sgemv.cpp
+testing/testing_chemm.cpp
+testing/testing_dsymm.cpp
+testing/testing_ssymm.cpp
 testing/testing_chemv.cpp
 testing/testing_dsymv.cpp
 testing/testing_ssymv.cpp

@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
-       @generated from sparse/control/magma_zmio.cpp, normal z -> s, Sun Nov 24 14:37:46 2019
+       @generated from sparse/control/magma_zmio.cpp, normal z -> s, Sun Mar 29 20:48:34 2020
        @author Hartwig Anzt
        @author Mark Gates
 */

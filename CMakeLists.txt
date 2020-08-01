@@ -62,6 +62,8 @@ else()
     message( WARNING "The compiler ${CMAKE_CXX_COMPILER} doesn't support the -std=c++11 flag. Some code may not compile.")
 endif()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -fno-exceptions")
+
 CHECK_C_COMPILER_FLAG("-std=c99" COMPILER_SUPPORTS_C99)
 if (COMPILER_SUPPORTS_C99)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
@@ -88,7 +90,7 @@ endif()
 
 
 # ----------------------------------------
-# locate OpenMP
+# # locate OpenMP
 # find_package( OpenMP )
 # if (OPENMP_FOUND)
 #     message( STATUS "Found OpenMP" )
@@ -260,16 +262,16 @@ if (CUDA_FOUND)
     endif()
 
     if ( ${GPU_TARGET} MATCHES "All")
-        set( MIN_ARCH 370)
-        set( NV_SM -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70 )
-        set( NV_COMP "")
+      set( MIN_ARCH 370)
+      SET( NV_SM -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70 )
+      SET( NV_COMP "")
     endif()
-
+    
     if (NOT MIN_ARCH)
         message( FATAL_ERROR "GPU_TARGET must contain one or more of Fermi, Kepler, Maxwell, Pascal, Volta, Turing, or valid sm_[0-9][0-9]" )
     endif()
 
-        set( CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -DHAVE_CUBLAS -Xfatbin -compress-all ${NV_SM} ${NV_COMP} ${FORTRAN_CONVENTION} )
+        set( CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -DHAVE_CUBLAS -Xfatbin -compress-all -Xcompiler -fPIC -std=c++11 ${NV_SM} ${NV_COMP} ${FORTRAN_CONVENTION} )
         MESSAGE(STATUS "CUDA_NVCC_FLAGS: ${CUDA_NVCC_FLAGS}")
     add_definitions( "-DHAVE_CUBLAS -DMIN_CUDA_ARCH=${MIN_ARCH}" )
     message( STATUS "Define -DHAVE_CUBLAS -DMIN_CUDA_ARCH=${MIN_ARCH}" )
@@ -412,7 +414,7 @@ if (WIN32)
     #message( "libmagma_all_f   ${libmagma_all_f}"   )
 
     # on Windows, Fortran files aren't compiled if listed here...
-    cuda_add_library( magma STATIC ${libmagma_all_cpp} )
+    cuda_add_library( magma STATIC ${libmagma_all_cpp} OPTIONS --compiler-options "-fPIC")
     target_link_libraries( magma
         ${LAPACK_LIBRARIES}
         ${CUDA_CUDART_LIBRARY}
@@ -434,7 +436,7 @@ if (WIN32)
     ## make list of Fortran .mod files to install, as below
 else()
     # Unix doesn't seem to have a problem with mixing C, CUDA, and Fortran files
-    cuda_add_library( magma STATIC ${libmagma_all} )
+    cuda_add_library( magma STATIC ${libmagma_all} OPTIONS --compiler-options "-fPIC")
     target_link_libraries( magma
         ${blas_fix}
         ${LAPACK_LIBRARIES}
@@ -443,22 +445,24 @@ else()
         ${CUDA_cusparse_LIBRARY}
     )
 
-    # make list of Fortran .mod files to install
-    foreach( f ${libmagma_all} )
-        if (${f} MATCHES "\\.(f90|F90)$")
-            # mod files seem to wind up in root build directory
-            get_filename_component( fmod ${f} NAME_WE )
-            list( APPEND modules "${CMAKE_BINARY_DIR}/${fmod}.mod" )
-        endif()
-    endforeach()
+    if (USE_FORTRAN)
+        # make list of Fortran .mod files to install
+        foreach( f ${libmagma_all} )
+            if (${f} MATCHES "\\.(f90|F90)$")
+                # mod files seem to wind up in root build directory
+                get_filename_component( fmod ${f} NAME_WE )
+                list( APPEND modules "${CMAKE_BINARY_DIR}/${fmod}.mod" )
+            endif()
+        endforeach()
+    endif()
 endif()
 add_custom_target( lib DEPENDS magma )
+set_target_properties(magma PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-
-# ----------------------------------------
-# compile lapacktest library
-# If use fortran, compile only Fortran files, not magma_[sdcz]_no_fortran.cpp
-# else,           compile only C++     files, not Fortran files
+# # ----------------------------------------
+# # compile lapacktest library
+# # If use fortran, compile only Fortran files, not magma_[sdcz]_no_fortran.cpp
+# # else,           compile only C++     files, not Fortran files
 # if (USE_FORTRAN)
 #     foreach( f ${liblapacktest_all} )
 #         if (${f} MATCHES "\\.(f|f90|F90)$")
@@ -499,7 +503,7 @@ add_custom_target( lib DEPENDS magma )
 include_directories( sparse/include )
 include_directories( sparse/control )
 include_directories( testing )
-cuda_add_library( magma_sparse STATIC ${libsparse_all} )
+cuda_add_library( magma_sparse STATIC ${libsparse_all} OPTIONS --compiler-options "-fPIC")
 target_link_libraries( magma_sparse
     magma
     ${blas_fix}
@@ -510,9 +514,9 @@ target_link_libraries( magma_sparse
 )
 add_custom_target( sparse-lib DEPENDS magma_sparse )
 
-
+set_target_properties(magma_sparse PROPERTIES POSITION_INDEPENDENT_CODE ON)
 # ----------------------------------------
-# compile each tester
+# # compile each tester
 
 # # save testers to testing/
 # # save tester lib files to testing_lib/ to avoid cluttering lib/
@@ -558,8 +562,12 @@ install( TARGETS magma magma_sparse ${blas_fix}
          LIBRARY DESTINATION lib
          ARCHIVE DESTINATION lib )
 file( GLOB headers include/*.h sparse/include/*.h )
-install( FILES ${headers}
-         DESTINATION include )
+if (USE_FORTRAN)
+    install( FILES ${headers} ${modules}
+             DESTINATION include )
+else()
+    install( FILES ${headers} DESTINATION include )
+endif()
 
 # ----------------------------------------
 # pkg-config

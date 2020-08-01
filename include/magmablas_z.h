@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.2) --
+    -- MAGMA (version 2.5.3) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date November 2019
+       @date March 2020
 
        @precisions normal z -> s d c
 */
@@ -1280,12 +1280,33 @@ magma_zhemm(
     magma_queue_t queue );
 
 void
+magmablas_zhemm(
+    magma_side_t side, magma_uplo_t uplo,
+    magma_int_t m, magma_int_t n,
+    magmaDoubleComplex alpha,
+    magmaDoubleComplex_const_ptr dA, magma_int_t ldda,
+    magmaDoubleComplex_const_ptr dB, magma_int_t lddb,
+    magmaDoubleComplex beta,
+    magmaDoubleComplex_ptr       dC, magma_int_t lddc,
+    magma_queue_t queue );
+
+void
 magma_zher2k(
     magma_uplo_t uplo, magma_trans_t trans,
     magma_int_t n, magma_int_t k,
     magmaDoubleComplex alpha,
     magmaDoubleComplex_const_ptr dA, magma_int_t ldda,
     magmaDoubleComplex_const_ptr dB, magma_int_t lddb,
+    double beta,
+    magmaDoubleComplex_ptr       dC, magma_int_t lddc,
+    magma_queue_t queue );
+
+void magmablas_zher2k(
+    magma_uplo_t uplo, magma_trans_t trans,
+    magma_int_t n, magma_int_t k,
+    magmaDoubleComplex alpha,
+    magmaDoubleComplex_ptr dA, magma_int_t ldda,
+    magmaDoubleComplex_ptr dB, magma_int_t lddb,
     double beta,
     magmaDoubleComplex_ptr       dC, magma_int_t lddc,
     magma_queue_t queue );
@@ -1299,6 +1320,25 @@ magma_zherk(
     double beta,
     magmaDoubleComplex_ptr       dC, magma_int_t lddc,
     magma_queue_t queue );
+
+void magmablas_zherk(
+    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_int_t n, magma_int_t k, 
+    double alpha,
+    magmaDoubleComplex_ptr dA, magma_int_t ldda, 
+    double beta,
+    magmaDoubleComplex_ptr dC, magma_int_t lddc, 
+    magma_queue_t queue);
+
+void magmablas_zherk_internal(
+    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_int_t n, magma_int_t k, magma_int_t nb,
+    magmaDoubleComplex alpha,
+    magmaDoubleComplex_ptr dA, magma_int_t ldda, 
+    magmaDoubleComplex_ptr dB, magma_int_t lddb, 
+    magmaDoubleComplex beta,
+    magmaDoubleComplex_ptr dC, magma_int_t lddc, 
+    magma_int_t conjugate, magma_queue_t queue);
 
 void 
 magmablas_zherk_small_reduce( 
@@ -1320,6 +1360,17 @@ magma_zsymm(
     magma_queue_t queue );
 
 void
+magmablas_zsymm(
+    magma_side_t side, magma_uplo_t uplo,
+    magma_int_t m, magma_int_t n,
+    magmaDoubleComplex alpha,
+    magmaDoubleComplex_const_ptr dA, magma_int_t ldda,
+    magmaDoubleComplex_const_ptr dB, magma_int_t lddb,
+    magmaDoubleComplex beta,
+    magmaDoubleComplex_ptr       dC, magma_int_t lddc,
+    magma_queue_t queue );
+
+void
 magma_zsyr2k(
     magma_uplo_t uplo, magma_trans_t trans,
     magma_int_t n, magma_int_t k,
@@ -1328,6 +1379,16 @@ magma_zsyr2k(
     magmaDoubleComplex_const_ptr dB, magma_int_t lddb,
     magmaDoubleComplex beta,
     magmaDoubleComplex_ptr       dC, magma_int_t lddc,
+    magma_queue_t queue );
+
+void magmablas_zsyr2k(
+    magma_uplo_t uplo, magma_trans_t trans,
+    magma_int_t n, magma_int_t k,
+    magmaDoubleComplex alpha,
+    magmaDoubleComplex_ptr dA, magma_int_t ldda,
+    magmaDoubleComplex_ptr dB, magma_int_t lddb,
+    magmaDoubleComplex beta,
+    magmaDoubleComplex_ptr dC, magma_int_t lddc,
     magma_queue_t queue );
 
 void
@@ -1339,6 +1400,15 @@ magma_zsyrk(
     magmaDoubleComplex beta,
     magmaDoubleComplex_ptr       dC, magma_int_t lddc,
     magma_queue_t queue );
+
+void magmablas_zsyrk(
+    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_int_t n, magma_int_t k, 
+    magmaDoubleComplex alpha,
+    magmaDoubleComplex_ptr dA, magma_int_t ldda, 
+    magmaDoubleComplex beta,
+    magmaDoubleComplex_ptr dC, magma_int_t lddc, 
+    magma_queue_t queue);
 
 void
 magma_ztrmm(

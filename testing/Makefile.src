@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.5.2) --
+#   -- MAGMA (version 2.5.3) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date November 2019
+#      @date March 2020
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -22,6 +22,7 @@ testing_src += \
 	$(cdir)/testing_zaxpy.cpp	\
 	$(cdir)/testing_zgemm.cpp	\
 	$(cdir)/testing_zgemv.cpp	\
+	$(cdir)/testing_zhemm.cpp	\
 	$(cdir)/testing_zhemv.cpp	\
 	$(cdir)/testing_zherk.cpp	\
 	$(cdir)/testing_zher2k.cpp	\
