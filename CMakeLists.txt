@@ -500,21 +500,21 @@ set_target_properties(magma PROPERTIES POSITION_INDEPENDENT_CODE ON)
 # compile MAGMA sparse library
 
 # sparse doesn't have Fortran at the moment, so no need for above shenanigans
-include_directories( sparse/include )
-include_directories( sparse/control )
-include_directories( testing )
-cuda_add_library( magma_sparse STATIC ${libsparse_all} OPTIONS --compiler-options "-fPIC")
-target_link_libraries( magma_sparse
-    magma
-    ${blas_fix}
-    ${LAPACK_LIBRARIES}
-    ${CUDA_CUDART_LIBRARY}
-    ${CUDA_CUBLAS_LIBRARIES}
-    ${CUDA_cusparse_LIBRARY}
-)
-add_custom_target( sparse-lib DEPENDS magma_sparse )
+# include_directories( sparse/include )
+# include_directories( sparse/control )
+# include_directories( testing )
+# cuda_add_library( magma_sparse STATIC ${libsparse_all} OPTIONS --compiler-options "-fPIC")
+# target_link_libraries( magma_sparse
+#     magma
+#     ${blas_fix}
+#     ${LAPACK_LIBRARIES}
+#     ${CUDA_CUDART_LIBRARY}
+#     ${CUDA_CUBLAS_LIBRARIES}
+#     ${CUDA_cusparse_LIBRARY}
+# )
+# add_custom_target( sparse-lib DEPENDS magma_sparse )
 
-set_target_properties(magma_sparse PROPERTIES POSITION_INDEPENDENT_CODE ON)
+# set_target_properties(magma_sparse PROPERTIES POSITION_INDEPENDENT_CODE ON)
 # ----------------------------------------
 # # compile each tester
 
@@ -557,11 +557,11 @@ set_target_properties(magma_sparse PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # ----------------------------------------
 # what to install
-install( TARGETS magma magma_sparse ${blas_fix}
+install( TARGETS magma ${blas_fix}
          RUNTIME DESTINATION bin
          LIBRARY DESTINATION lib
          ARCHIVE DESTINATION lib )
-file( GLOB headers include/*.h sparse/include/*.h )
+file( GLOB headers include/*.h )
 if (USE_FORTRAN)
     install( FILES ${headers} ${modules}
              DESTINATION include )
