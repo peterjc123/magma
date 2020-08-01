@@ -458,7 +458,11 @@ magma_is_devptr( const void* A )
             err = cudaPointerGetAttributes( &attr, const_cast<void*>( A ));
             if ( ! err ) {
                 // definitely know type
+#if (CUDA_VERSION >= 11000)
+                return (attr.type == cudaMemoryTypeDevice);
+#else
                 return (attr.memoryType == cudaMemoryTypeDevice);
+#endif
             }
             else if ( err == cudaErrorInvalidValue ) {
                 // clear error; see http://icl.cs.utk.edu/magma/forum/viewtopic.php?f=2&t=529
