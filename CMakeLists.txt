@@ -119,7 +119,7 @@ if (CUDA_FOUND)
     set( NV_SM    "" )
     set( NV_COMP  "" )
 
-    set(CUDA_SEPARABLE_COMPILATION ON)
+    set(CUDA_SEPARABLE_COMPILATION OFF)
 
     # nvcc >= 6.5 supports -std=c++11, so propagate CXXFLAGS to NVCCFLAGS.
     # Older nvcc didn't support -std=c++11, so previously we disabled propagation.
