@@ -580,11 +580,11 @@ add_custom_target( lib DEPENDS magma )
 
 # ----------------------------------------
 # what to install
-install( TARGETS magma magma_sparse ${blas_fix}
+install( TARGETS magma ${blas_fix}
          RUNTIME DESTINATION bin
          LIBRARY DESTINATION lib
          ARCHIVE DESTINATION lib )
-file( GLOB headers include/*.h sparse/include/*.h )
+file( GLOB headers include/*.h )
 if (USE_FORTRAN)
     install( FILES ${headers} ${modules}
              DESTINATION include )
