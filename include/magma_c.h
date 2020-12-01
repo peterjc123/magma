@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from include/magma_z.h, normal z -> c, Sun Mar 29 20:48:36 2020
+       @generated from include/magma_z.h, normal z -> c, Thu Oct  8 23:05:56 2020
 */
 
 #ifndef MAGMA_C_H
@@ -73,6 +73,13 @@ magma_int_t magma_get_cbulge_gcperf();
 
 #ifdef MAGMA_REAL
 // only applicable to real [sd] precisions
+magma_int_t
+magma_ssidi(
+    float *A, magma_int_t lda, magma_int_t n, magma_int_t *ipiv,
+    float *det, magma_int_t *inert,
+    float *work, magma_int_t job,
+    magma_int_t *info);
+
 void
 magma_smove_eig(
     magma_range_t range, magma_int_t n, float *w,
@@ -1039,6 +1046,13 @@ magma_chetrf(
     magma_int_t *ipiv,
     magma_int_t *info);
 
+magma_int_t
+magma_chetrf_gpu(
+   magma_uplo_t uplo, magma_int_t n,
+   magmaFloatComplex *dA, magma_int_t ldda,
+   magma_int_t *ipiv, 
+   magma_int_t *info);
+
 // CUDA MAGMA only
 magma_int_t
 magma_chetrf_aasen(
@@ -1102,6 +1116,7 @@ magma_slaex1(
     magma_int_t *indxq, float rho, magma_int_t cutpnt,
     float *work, magma_int_t *iwork,
     magmaFloat_ptr dwork,
+    magma_queue_t queue,
     magma_range_t range, float vl, float vu, magma_int_t il, magma_int_t iu,
     magma_int_t *info);
 
@@ -1126,6 +1141,7 @@ magma_slaex3(
     float *dlamda, float *Q2, magma_int_t *indx,
     magma_int_t *ctot, float *w, float *s, magma_int_t *indxq,
     magmaFloat_ptr dwork,
+    magma_queue_t queue,
     magma_range_t range, float vl, float vu, magma_int_t il, magma_int_t iu,
     magma_int_t *info);
 
@@ -1159,11 +1175,10 @@ magma_clabrd_gpu(
 magma_int_t
 magma_clahef_gpu(
     magma_uplo_t uplo, magma_int_t n, magma_int_t nb, magma_int_t *kb,
-    magmaFloatComplex    *hA, magma_int_t lda,
     magmaFloatComplex_ptr dA, magma_int_t ldda,
     magma_int_t *ipiv,
     magmaFloatComplex_ptr dW, magma_int_t lddw,
-    magma_queue_t queues[], magma_event_t event[],
+    magma_queue_t queues[],
     magma_int_t *info);
 
 magma_int_t

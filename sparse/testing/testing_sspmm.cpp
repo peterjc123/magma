@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from sparse/testing/testing_zspmm.cpp, normal z -> s, Sun Mar 29 20:48:36 2020
+       @generated from sparse/testing/testing_zspmm.cpp, normal z -> s, Thu Oct  8 23:05:56 2020
        @author Hartwig Anzt
 */
 
@@ -34,6 +34,33 @@
 #include "magma_lapack.h"
 #include "testings.h"
 
+#if CUDA_VERSION >= 11000
+#define cusparseScsrmm(handle, op, rows, num_vecs, cols, nnz, alpha, descr, dval, drow, dcol,   \
+                       x, ldx, beta, y, ldy)                                                    \
+    {                                                                                           \
+        cusparseSpMatDescr_t descrA;                                                            \
+        cusparseDnMatDescr_t descrX, descrY;                                                    \
+        cusparseCreateCsr(&descrA, rows, cols, nnz,                                             \
+                          (void *)drow, (void *)dcol, (void *)dval,                             \
+                          CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I,                               \
+                          CUSPARSE_INDEX_BASE_ZERO, CUDA_R_32F);                                \
+        cusparseCreateDnMat(&descrX, cols, num_vecs, ldx, x, CUDA_R_32F, CUSPARSE_ORDER_COL);   \
+        cusparseCreateDnMat(&descrY, cols, num_vecs, ldy, y, CUDA_R_32F, CUSPARSE_ORDER_COL);   \
+                                                                                                \
+        size_t bufsize;                                                                         \
+        void *buf;                                                                              \
+        cusparseSpMM_bufferSize(handle, op, CUSPARSE_OPERATION_NON_TRANSPOSE,                   \
+                                (void *)alpha, descrA, descrX, beta, descrY, CUDA_R_32F,        \
+                                CUSPARSE_CSRMM_ALG1, &bufsize);                                 \
+        if (bufsize > 0)                                                                        \
+           magma_malloc(&buf, bufsize);                                                         \
+        cusparseSpMM(handle, op, CUSPARSE_OPERATION_NON_TRANSPOSE,                              \
+                     (void *)alpha, descrA, descrX, beta, descrY, CUDA_R_32F,                   \
+                     CUSPARSE_CSRMM_ALG1, buf);                                                 \
+        if (bufsize > 0)                                                                        \
+           magma_free(buf);                                                                     \
+    }
+#endif
 
 /* ////////////////////////////////////////////////////////////////////////////
    -- testing sparse matrix vector product
@@ -256,10 +283,10 @@ int main(  int argc, char** argv )
 
         for (j=0; j < 10; j++) {
             cusparseScsrmm(cusparseHandle,
-                    CUSPARSE_OPERATION_NON_TRANSPOSE,
-                    dA.num_rows,   n, dA.num_cols, dA.nnz,
-                    &alpha, descr, dA.dval, dA.drow, dA.dcol,
-                    dx.dval, dA.num_cols, &beta, dy.dval, dA.num_cols);
+                               CUSPARSE_OPERATION_NON_TRANSPOSE,
+                               dA.num_rows,   n, dA.num_cols, dA.nnz,
+                               &alpha, descr, dA.dval, dA.drow, dA.dcol,
+                               dx.dval, dA.num_cols, &beta, dy.dval, dA.num_cols);
         }
         end = magma_sync_wtime( queue );
         printf( " > CUSPARSE: %.2e seconds %.2e GFLOP/s    (CSR).\n",

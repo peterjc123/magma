@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Raffaele Solca
        @author Azzam Haidar
        @author Mark Gates
 
-       @generated from testing/testing_zhegvdx_2stage.cpp, normal z -> c, Sun Mar 29 20:48:33 2020
+       @generated from testing/testing_zhegvdx_2stage.cpp, normal z -> c, Thu Oct  8 23:05:44 2020
 
 */
 

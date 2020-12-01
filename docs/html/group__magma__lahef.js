@@ -1,7 +1,7 @@
 var group__magma__lahef =
 [
-    [ "magma_clahef_gpu", "group__magma__lahef.html#ga94f0cfeffa661f66c4459fc1c03d8241", null ],
-    [ "magma_dlasyf_gpu", "group__magma__lahef.html#ga7f87bc8a742dd2f63a06c29094b85baf", null ],
-    [ "magma_slasyf_gpu", "group__magma__lahef.html#ga1a74c52a32aabd151d50cc84748333d0", null ],
-    [ "magma_zlahef_gpu", "group__magma__lahef.html#ga4571a53fe4ad67a4008a3df93ff0027f", null ]
+    [ "magma_clahef_gpu", "group__magma__lahef.html#ga55c79fbe72ed2b36ffbb2c663b21440d", null ],
+    [ "magma_dlasyf_gpu", "group__magma__lahef.html#gafde072b75c2c8e30c112d76389647ab2", null ],
+    [ "magma_slasyf_gpu", "group__magma__lahef.html#gade0936fc1fa6123b5f5bfe2b5c5003bf", null ],
+    [ "magma_zlahef_gpu", "group__magma__lahef.html#ga774409e41adf6963a2de15ff6b36110d", null ]
 ];

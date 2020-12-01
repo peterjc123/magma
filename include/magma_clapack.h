@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from include/magma_zlapack.h, normal z -> c, Sun Mar 29 20:48:36 2020
+       @generated from include/magma_zlapack.h, normal z -> c, Thu Oct  8 23:05:56 2020
 */
 
 #ifndef MAGMA_CLAPACK_H
@@ -160,6 +160,7 @@ extern "C" {
 #define lapackf77_cbdt01   FORTRAN_NAME( cbdt01, CBDT01 )
 #define lapackf77_cget22   FORTRAN_NAME( cget22, CGET22 )
 #define lapackf77_chet21   FORTRAN_NAME( chet21, CHET21 )
+#define lapackf77_chet22   FORTRAN_NAME( chet22, CHET22 )
 #define lapackf77_chst01   FORTRAN_NAME( chst01, CHST01 )
 #define lapackf77_clarfy   FORTRAN_NAME( clarfy, CLARFY )
 #define lapackf77_clatms   FORTRAN_NAME( clatms, CLATMS )
@@ -1189,6 +1190,19 @@ void   lapackf77_cget22( const char *transa, const char *transe, const char *tra
 
 void   lapackf77_chet21( const magma_int_t *itype, const char *uplo,
                          const magma_int_t *n, const magma_int_t *kband,
+                         magmaFloatComplex *A, const magma_int_t *lda,
+                         float *d, float *e,
+                         magmaFloatComplex *U, const magma_int_t *ldu,
+                         magmaFloatComplex *V, const magma_int_t *ldv,
+                         magmaFloatComplex *tau,
+                         magmaFloatComplex *work,
+                         #ifdef MAGMA_COMPLEX
+                         float *rwork,
+                         #endif
+                         float *result );
+
+void   lapackf77_chet22( const magma_int_t *itype, const char *uplo,
+                         const magma_int_t *n, const magma_int_t *m, const magma_int_t *kband,
                          magmaFloatComplex *A, const magma_int_t *lda,
                          float *d, float *e,
                          magmaFloatComplex *U, const magma_int_t *ldu,

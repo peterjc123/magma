@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from magmablas/dznrm2.cu, normal z -> s, Sun Mar 29 20:48:31 2020
+       @generated from magmablas/dznrm2.cu, normal z -> s, Thu Oct  8 23:05:34 2020
 
 */
 #include "magma_internal.h"
@@ -220,11 +220,16 @@ magma_snrm2_row_check_adjust_kernel(
         float temp2 = xnorm[tx] / xnorm2[tx];
         temp2 = temp * (temp2 * temp2);
         
+        // todo: check this accuracy procedure; currently is not working for
+        //       constant matrix so it is disabled for now
+        /*
         if (temp2 <= tol) {
             lsticc[tx+1] = 1;
         } else {
             xnorm[tx] *= sqrt(temp);
         }
+        */
+        xnorm[tx] *= sqrt(temp);
     }
     if (tx == 0)
         lsticc[0] = 0;

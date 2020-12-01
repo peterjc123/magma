@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @precisions normal z -> s d c
        @author Azzam Haidar 
@@ -58,7 +58,7 @@ void magmablas_zherk_internal(
         magma_int_t in = ib;
         magma_zgemm( transA, transB, im, in, k,
                      alpha, dAi, ldda,
-                            dBi, ldda,
+                            dBi, lddb,
                      beta,  dCi, lddc, queue);
     }
 }

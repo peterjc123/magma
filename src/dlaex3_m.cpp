@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
        
        @author Raffaele Solca
        @precisions normal d -> s
@@ -209,7 +209,7 @@ magma_dlaex3_m(
         magma_setdevice(0);
         magma_dlaex3( k, n, n1, d, Q, ldq, rho,
                       dlamda, Q2, indx, ctot, w, s, indxq,
-                      *dwork, range, vl, vu, il, iu, info );
+                      *dwork, queues[0][0], range, vl, vu, il, iu, info );
         return *info;
     }
     double d_one  = 1.;

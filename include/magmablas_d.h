@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from include/magmablas_z.h, normal z -> d, Sun Mar 29 20:48:36 2020
+       @generated from include/magmablas_z.h, normal z -> d, Thu Oct  8 23:05:56 2020
 */
 
 #ifndef MAGMABLAS_D_H
@@ -273,6 +273,13 @@ magma_dsyrk_mgpu2(
   /*
    * LAPACK auxiliary functions (alphabetical order)
    */
+magma_int_t
+magmablas_ddiinertia(
+    magma_int_t n,
+    magmaDouble_const_ptr dA, magma_int_t ldda,
+    int *dneig,
+    magma_queue_t queue );
+
 void
 magmablas_dgeadd(
     magma_int_t m, magma_int_t n,
@@ -288,6 +295,17 @@ magmablas_dgeadd2(
     magmaDouble_const_ptr dA, magma_int_t ldda,
     double beta,
     magmaDouble_ptr       dB, magma_int_t lddb,
+    magma_queue_t queue );
+
+void
+magmablas_dgeam(
+    magma_trans_t transA, magma_trans_t transB,
+    magma_int_t m, magma_int_t n,
+    double alpha,
+    magmaDouble_const_ptr dA, magma_int_t ldda,
+    double beta,
+    magmaDouble_const_ptr dB, magma_int_t lddb,
+    magmaDouble_ptr dC, magma_int_t lddc,
     magma_queue_t queue );
 
 void
@@ -427,17 +445,17 @@ magmablas_dlaswpx(
 
 void
 magma_dlaswp_rowparallel_native(
-    magma_int_t n, 
+    magma_int_t n,
     double* input, magma_int_t ldi,
     double* output, magma_int_t ldo,
     magma_int_t k1, magma_int_t k2,
-    magma_int_t *pivinfo, 
+    magma_int_t *pivinfo,
     magma_queue_t queue);
 
 void
 magma_dlaswp_columnserial(
-    magma_int_t n, magmaDouble_ptr dA, magma_int_t lda, 
-    magma_int_t k1, magma_int_t k2, 
+    magma_int_t n, magmaDouble_ptr dA, magma_int_t lda,
+    magma_int_t k1, magma_int_t k2,
     magma_int_t *dipiv, magma_queue_t queue);
 
 void
@@ -1013,11 +1031,11 @@ magma_idamax(
     magma_queue_t queue );
 
 magma_int_t
-magma_idamax_native( 
-    magma_int_t length, 
-    magmaDouble_ptr x, magma_int_t incx, 
-    magma_int_t step,  magma_int_t lda, 
-    magma_int_t* ipiv, magma_int_t *info, 
+magma_idamax_native(
+    magma_int_t length,
+    magmaDouble_ptr x, magma_int_t incx,
+    magma_int_t step,  magma_int_t lda,
+    magma_int_t* ipiv, magma_int_t *info,
     magma_int_t gbstep, magma_queue_t queue);
 
 magma_int_t
@@ -1124,8 +1142,8 @@ magma_dscal(
     magmaDouble_ptr dx, magma_int_t incx,
     magma_queue_t queue );
 
-magma_int_t 
-magma_dscal_dger_native( 
+magma_int_t
+magma_dscal_dger_native(
     magma_int_t m, magma_int_t n, magma_int_t step,
     magmaDouble_ptr dA, magma_int_t lda,
     magma_int_t *info, magma_int_t gbstep,
@@ -1139,8 +1157,8 @@ magma_dswap(
     magma_queue_t queue );
 
 void
-magma_dswap_native( 
-    magma_int_t n, magmaDouble_ptr x, magma_int_t incx, 
+magma_dswap_native(
+    magma_int_t n, magmaDouble_ptr x, magma_int_t incx,
     magma_int_t step, magma_int_t* ipiv,
     magma_queue_t queue);
 
@@ -1247,6 +1265,14 @@ magma_dtrmv(
     magma_queue_t queue );
 
 void
+magmablas_dtrmv(
+    magma_uplo_t uplo, magma_trans_t trans, magma_diag_t diag,
+    magma_int_t n,
+    double *dA, magma_int_t ldda,
+    double *dx, magma_int_t incx,
+    magma_queue_t queue );
+
+void
 magma_dtrsv(
     magma_uplo_t uplo, magma_trans_t trans, magma_diag_t diag,
     magma_int_t n,
@@ -1322,30 +1348,30 @@ magma_dsyrk(
     magma_queue_t queue );
 
 void magmablas_dsyrk(
-    magma_uplo_t uplo, magma_trans_t trans, 
-    magma_int_t n, magma_int_t k, 
+    magma_uplo_t uplo, magma_trans_t trans,
+    magma_int_t n, magma_int_t k,
     double alpha,
-    magmaDouble_ptr dA, magma_int_t ldda, 
+    magmaDouble_ptr dA, magma_int_t ldda,
     double beta,
-    magmaDouble_ptr dC, magma_int_t lddc, 
+    magmaDouble_ptr dC, magma_int_t lddc,
     magma_queue_t queue);
 
 void magmablas_dsyrk_internal(
-    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_uplo_t uplo, magma_trans_t trans,
     magma_int_t n, magma_int_t k, magma_int_t nb,
     double alpha,
-    magmaDouble_ptr dA, magma_int_t ldda, 
-    magmaDouble_ptr dB, magma_int_t lddb, 
+    magmaDouble_ptr dA, magma_int_t ldda,
+    magmaDouble_ptr dB, magma_int_t lddb,
     double beta,
-    magmaDouble_ptr dC, magma_int_t lddc, 
+    magmaDouble_ptr dC, magma_int_t lddc,
     magma_int_t conjugate, magma_queue_t queue);
 
-void 
-magmablas_dsyrk_small_reduce( 
-    magma_uplo_t uplo, magma_trans_t trans, 
-    magma_int_t n, magma_int_t k, 
+void
+magmablas_dsyrk_small_reduce(
+    magma_uplo_t uplo, magma_trans_t trans,
+    magma_int_t n, magma_int_t k,
     double alpha, double* dA, magma_int_t ldda,
-    double beta,  double* dC, magma_int_t lddc, 
+    double beta,  double* dC, magma_int_t lddc,
     magma_int_t nthread_blocks, magma_queue_t queue );
 
 void
@@ -1402,12 +1428,12 @@ magma_dsyrk(
     magma_queue_t queue );
 
 void magmablas_dsyrk(
-    magma_uplo_t uplo, magma_trans_t trans, 
-    magma_int_t n, magma_int_t k, 
+    magma_uplo_t uplo, magma_trans_t trans,
+    magma_int_t n, magma_int_t k,
     double alpha,
-    magmaDouble_ptr dA, magma_int_t ldda, 
+    magmaDouble_ptr dA, magma_int_t ldda,
     double beta,
-    magmaDouble_ptr dC, magma_int_t lddc, 
+    magmaDouble_ptr dC, magma_int_t lddc,
     magma_queue_t queue);
 
 void
@@ -1420,6 +1446,15 @@ magma_dtrmm(
     magma_queue_t queue );
 
 void
+magmablas_dtrmm(
+        magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag,
+        magma_int_t m, magma_int_t n,
+        double alpha,
+        double *dA, magma_int_t ldda,
+        double *dB, magma_int_t lddb,
+        magma_queue_t queue );
+
+void
 magma_dtrsm(
     magma_side_t side, magma_uplo_t uplo, magma_trans_t trans, magma_diag_t diag,
     magma_int_t m, magma_int_t n,
@@ -1428,22 +1463,22 @@ magma_dtrsm(
     magmaDouble_ptr       dB, magma_int_t lddb,
     magma_queue_t queue );
 
-void 
-magma_dgetf2trsm_2d_native( 
-    magma_int_t m, magma_int_t n, 
-    magmaDouble_ptr dA, magma_int_t ldda, 
-    magmaDouble_ptr dB, magma_int_t lddb, 
+void
+magma_dgetf2trsm_2d_native(
+    magma_int_t m, magma_int_t n,
+    magmaDouble_ptr dA, magma_int_t ldda,
+    magmaDouble_ptr dB, magma_int_t lddb,
     magma_queue_t queue);
 
 magma_int_t
 magma_dpotf2_lpout(
-        magma_uplo_t uplo, magma_int_t n, 
+        magma_uplo_t uplo, magma_int_t n,
         double *dA, magma_int_t lda, magma_int_t gbstep,
         magma_int_t *dinfo, magma_queue_t queue);
 
 magma_int_t
 magma_dpotf2_lpin(
-        magma_uplo_t uplo, magma_int_t n, 
+        magma_uplo_t uplo, magma_int_t n,
         double *dA, magma_int_t lda, magma_int_t gbstep,
         magma_int_t *dinfo, magma_queue_t queue);
 

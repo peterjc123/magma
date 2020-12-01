@@ -1,17 +1,17 @@
 var group__magma__copymatrix =
 [
-    [ "magma_icopymatrix", "group__magma__copymatrix.html#gac86b779434e07e06ac04cca590dfee6d", null ],
-    [ "magma_icopymatrix_async", "group__magma__copymatrix.html#gaa48a101ca3188a4d446748ec037ff7d9", null ],
-    [ "magma_index_copymatrix", "group__magma__copymatrix.html#gaa741b9279fbd48fff1746af38eff011f", null ],
-    [ "magma_index_copymatrix_async", "group__magma__copymatrix.html#ga872f4c87b7737bf69af1a63e8b27426f", null ],
-    [ "magma_ccopymatrix", "group__magma__copymatrix.html#ga8f7660485cd2d0b2cf51fdd9e7ca2f9b", null ],
-    [ "magma_ccopymatrix_async", "group__magma__copymatrix.html#ga4a0cd4f70577b679a3f015c3bfabf8fe", null ],
-    [ "magma_dcopymatrix", "group__magma__copymatrix.html#gacbed7993f5440fc06e6410ed0528b10e", null ],
-    [ "magma_dcopymatrix_async", "group__magma__copymatrix.html#gaef4fd4cecdcb2110781dad3afddb42ca", null ],
-    [ "magma_scopymatrix", "group__magma__copymatrix.html#ga434a45873574a2d03e74cc95f5c3d75e", null ],
-    [ "magma_scopymatrix_async", "group__magma__copymatrix.html#gadd6004694a5871fc78234dee411f6cf2", null ],
-    [ "magma_zcopymatrix", "group__magma__copymatrix.html#ga2f0f324439f927c0655fc22e0a4b7edc", null ],
-    [ "magma_zcopymatrix_async", "group__magma__copymatrix.html#ga265468b69db715487ec9fe576d1b04ad", null ],
-    [ "magma_copymatrix", "group__magma__copymatrix.html#ga8723451ba0c7b930ce055d1915879f29", null ],
-    [ "magma_copymatrix_async", "group__magma__copymatrix.html#ga773b69751b4253426307df7d01927b0d", null ]
+    [ "magma_icopymatrix", "group__magma__copymatrix.html#ga6202e38c49eff566c0e3fbfa43879d45", null ],
+    [ "magma_icopymatrix_async", "group__magma__copymatrix.html#gacf1c863e22ef06bd28ffaaf349e964de", null ],
+    [ "magma_index_copymatrix", "group__magma__copymatrix.html#ga15afb74a433ca4838618b391c78f385d", null ],
+    [ "magma_index_copymatrix_async", "group__magma__copymatrix.html#gac8d872e062176ab333d27bb7c1a38e3e", null ],
+    [ "magma_ccopymatrix", "group__magma__copymatrix.html#ga10def6e9e4680bd386636e5472e47460", null ],
+    [ "magma_ccopymatrix_async", "group__magma__copymatrix.html#gaa6b5b2504c3b348ed2ad001129a27a32", null ],
+    [ "magma_dcopymatrix", "group__magma__copymatrix.html#ga44666f2d7359ec01eb2511dcac2e7db9", null ],
+    [ "magma_dcopymatrix_async", "group__magma__copymatrix.html#gacf94ee7f7951aabe0287bd2de4b3eed4", null ],
+    [ "magma_scopymatrix", "group__magma__copymatrix.html#ga7d2ddc5e63bf4ff4307cd97fb7286776", null ],
+    [ "magma_scopymatrix_async", "group__magma__copymatrix.html#gaa1927d07b0d75c020f2a9708d5d9050d", null ],
+    [ "magma_zcopymatrix", "group__magma__copymatrix.html#ga25f9c402d1bfa5a1c7445c600f14b377", null ],
+    [ "magma_zcopymatrix_async", "group__magma__copymatrix.html#ga0e8faeb48383e2476dc642321cc9a97e", null ],
+    [ "magma_copymatrix", "group__magma__copymatrix.html#gaaa61fdaa6a1e67dc6f3b1437bfd37810", null ],
+    [ "magma_copymatrix_async", "group__magma__copymatrix.html#gafa3bab8c5e06038364a7ef7eac4a9a68", null ]
 ];

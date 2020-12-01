@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Raffaele Solca
        @author Stan Tomov
        @author Mark Gates
 
-       @generated from src/zhetrd_mgpu.cpp, normal z -> d, Sun Mar 29 20:48:29 2020
+       @generated from src/zhetrd_mgpu.cpp, normal z -> d, Thu Oct  8 23:05:28 2020
 
 */
 #include "magma_internal.h"
@@ -220,6 +220,11 @@ magma_dsytrd_mgpu(
         work[0] = c_one;
         return *info;
     }
+
+    #ifdef MAGMA_DISABLE_MKL_THREADING_ISSUE_BLAS1
+    magma_int_t lapack_nthread = magma_get_lapack_numthreads();
+    magma_set_lapack_numthreads(lapack_nthread > 1 ? 2 : 1);
+    #endif
 
     magma_device_t orig_dev;
     magma_getdevice( &orig_dev );
@@ -485,6 +490,10 @@ CLEANUP:
     
     work[0] = magma_dmake_lwork( lwkopt );
     
+    #ifdef MAGMA_DISABLE_MKL_THREADING_ISSUE_BLAS1
+    magma_set_lapack_numthreads(lapack_nthread);
+    #endif
+
     return *info;
 } /* magma_dsytrd */
 

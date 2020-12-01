@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from magmablas/zlascl_2x2.cu, normal z -> d, Sun Mar 29 20:48:31 2020
+       @generated from magmablas/zlascl_2x2.cu, normal z -> d, Thu Oct  8 23:05:33 2020
 
        @author Ichitaro Yamazaki
 */

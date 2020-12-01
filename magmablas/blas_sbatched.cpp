@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from magmablas/blas_zbatched.cpp, normal z -> s, Sun Mar 29 20:48:32 2020
+       @generated from magmablas/blas_zbatched.cpp, normal z -> s, Thu Oct  8 23:05:38 2020
 
        @author Ahmad Abdelfattah
-       
+
        Implementation of batch BLAS on the host ( CPU ) using OpenMP
 */
 #include "magma_internal.h"
@@ -21,14 +21,39 @@
 
 /*******************************************************************************/
 extern "C" void
-blas_sgemm_batched( 
-        magma_trans_t transA, magma_trans_t transB, 
+blas_slacpy_batched(
+    magma_uplo_t uplo, magma_int_t m, magma_int_t n,
+    float const * const * hA_array, magma_int_t lda,
+    float               **hB_array, magma_int_t ldb,
+    magma_int_t batchCount )
+{
+    #if defined(_OPENMP)
+    magma_int_t nthreads = magma_get_lapack_numthreads();
+    magma_set_lapack_numthreads(1);
+    magma_set_omp_numthreads(nthreads);
+    #pragma omp parallel for schedule(dynamic)
+    #endif
+    for (int i=0; i < batchCount; i++) {
+        lapackf77_slacpy( lapack_uplo_const(uplo),
+                          &m, &n,
+                          hA_array[i], &lda,
+                          hB_array[i], &ldb );
+    }
+    #if defined(_OPENMP)
+    magma_set_lapack_numthreads(nthreads);
+    #endif
+}
+
+/*******************************************************************************/
+extern "C" void
+blas_sgemm_batched(
+        magma_trans_t transA, magma_trans_t transB,
         magma_int_t m, magma_int_t n, magma_int_t k,
         float alpha,
         float const * const * hA_array, magma_int_t lda,
         float const * const * hB_array, magma_int_t ldb,
         float beta,
-        float **hC_array, magma_int_t ldc, 
+        float **hC_array, magma_int_t ldc,
         magma_int_t batchCount )
 {
     #if defined(_OPENMP)
@@ -42,22 +67,22 @@ blas_sgemm_batched(
                        lapack_trans_const(transB),
                        &m, &n, &k,
                        &alpha, hA_array[i], &lda,
-                               hB_array[i], &ldb, 
+                               hB_array[i], &ldb,
                        &beta,  hC_array[i], &ldc );
     }
     #if defined(_OPENMP)
-    magma_set_lapack_numthreads(nthreads);            
+    magma_set_lapack_numthreads(nthreads);
     #endif
 }
 
 /*******************************************************************************/
 extern "C" void
-blas_strsm_batched( 
-        magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag, 
-        magma_int_t m, magma_int_t n, 
-        float alpha, 
+blas_strsm_batched(
+        magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag,
+        magma_int_t m, magma_int_t n,
+        float alpha,
         float **hA_array, magma_int_t lda,
-        float **hB_array, magma_int_t ldb, 
+        float **hB_array, magma_int_t ldb,
         magma_int_t batchCount )
 {
     #if defined(_OPENMP)
@@ -75,18 +100,18 @@ blas_strsm_batched(
             hB_array[s], &ldb );
     }
     #if defined(_OPENMP)
-    magma_set_lapack_numthreads(nthreads);            
+    magma_set_lapack_numthreads(nthreads);
     #endif
 }
 
 /*******************************************************************************/
 extern "C" void
-blas_strmm_batched( 
-        magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag, 
-        magma_int_t m, magma_int_t n, 
-        float alpha, 
+blas_strmm_batched(
+        magma_side_t side, magma_uplo_t uplo, magma_trans_t transA, magma_diag_t diag,
+        magma_int_t m, magma_int_t n,
+        float alpha,
         float **hA_array, magma_int_t lda,
-        float **hB_array, magma_int_t ldb, 
+        float **hB_array, magma_int_t ldb,
         magma_int_t batchCount )
 {
     #if defined(_OPENMP)
@@ -104,20 +129,20 @@ blas_strmm_batched(
             hB_array[s], &ldb );
     }
     #if defined(_OPENMP)
-    magma_set_lapack_numthreads(nthreads);            
+    magma_set_lapack_numthreads(nthreads);
     #endif
 }
 
 /*******************************************************************************/
 extern "C" void
 blas_ssymm_batched(
-        magma_side_t side, magma_uplo_t uplo, 
-        magma_int_t m, magma_int_t n, 
-        float alpha, 
+        magma_side_t side, magma_uplo_t uplo,
+        magma_int_t m, magma_int_t n,
+        float alpha,
         float **hA_array, magma_int_t lda,
-        float **hB_array, magma_int_t ldb, 
-        float beta, 
-        float **hC_array, magma_int_t ldc, 
+        float **hB_array, magma_int_t ldb,
+        float beta,
+        float **hC_array, magma_int_t ldc,
         magma_int_t batchCount )
 {
     #if defined(_OPENMP)
@@ -135,17 +160,17 @@ blas_ssymm_batched(
                        &beta,  hC_array[i], &ldc );
     }
     #if defined(_OPENMP)
-    magma_set_lapack_numthreads(nthreads);            
+    magma_set_lapack_numthreads(nthreads);
     #endif
 }
 
 /*******************************************************************************/
 extern "C" void
 blas_ssyrk_batched(
-    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_uplo_t uplo, magma_trans_t trans,
     magma_int_t n, magma_int_t k,
     float alpha, float const * const * hA_array, magma_int_t lda,
-    float beta,  float               **hC_array, magma_int_t ldc, 
+    float beta,  float               **hC_array, magma_int_t ldc,
     magma_int_t batchCount )
 {
     #if defined(_OPENMP)
@@ -162,18 +187,18 @@ blas_ssyrk_batched(
                        &beta,  hC_array[s], &ldc );
     }
     #if defined(_OPENMP)
-    magma_set_lapack_numthreads(nthreads);            
+    magma_set_lapack_numthreads(nthreads);
     #endif
 }
 
 /*******************************************************************************/
 extern "C" void
 blas_ssyr2k_batched(
-    magma_uplo_t uplo, magma_trans_t trans, 
+    magma_uplo_t uplo, magma_trans_t trans,
     magma_int_t n, magma_int_t k,
     float alpha, float const * const * hA_array, magma_int_t lda,
-                              float const * const * hB_array, magma_int_t ldb, 
-    float beta,              float               **hC_array, magma_int_t ldc, 
+                              float const * const * hB_array, magma_int_t ldb,
+    float beta,              float               **hC_array, magma_int_t ldc,
     magma_int_t batchCount )
 {
     #if defined(_OPENMP)
@@ -191,7 +216,7 @@ blas_ssyr2k_batched(
                         &beta,  hC_array[i], &ldc );
     }
     #if defined(_OPENMP)
-    magma_set_lapack_numthreads(nthreads);            
+    magma_set_lapack_numthreads(nthreads);
     #endif
 }
 

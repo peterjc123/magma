@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Mark Gates
        @precisions normal z -> s d c
@@ -57,6 +57,20 @@ void   lapackf77_zget22( const char *transa, const char *transe, const char *tra
 
 void   lapackf77_zhet21( const magma_int_t *itype, const char *uplo,
                          const magma_int_t *n, const magma_int_t *kband,
+                         magmaDoubleComplex *A, const magma_int_t *lda,
+                         double *d, double *e,
+                         magmaDoubleComplex *U, const magma_int_t *ldu,
+                         magmaDoubleComplex *V, const magma_int_t *ldv,
+                         magmaDoubleComplex *tau,
+                         magmaDoubleComplex *work,
+                         #ifdef COMPLEX
+                         double *rwork,
+                         #endif
+                         double *result )
+                         { printf( format, __func__ ); }
+
+void   lapackf77_zhet22( const magma_int_t *itype, const char *uplo,
+                         const magma_int_t *n,  const magma_int_t *m, const magma_int_t *kband,
                          magmaDoubleComplex *A, const magma_int_t *lda,
                          double *d, double *e,
                          magmaDoubleComplex *U, const magma_int_t *ldu,

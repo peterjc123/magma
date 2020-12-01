@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
        
        @author Raffaele Solca
-       @generated from src/dlaex3_m.cpp, normal d -> s, Sun Mar 29 20:48:29 2020
+       @generated from src/dlaex3_m.cpp, normal d -> s, Thu Oct  8 23:05:29 2020
 */
 
 #ifdef _OPENMP
@@ -209,7 +209,7 @@ magma_slaex3_m(
         magma_setdevice(0);
         magma_slaex3( k, n, n1, d, Q, ldq, rho,
                       dlamda, Q2, indx, ctot, w, s, indxq,
-                      *dwork, range, vl, vu, il, iu, info );
+                      *dwork, queues[0][0], range, vl, vu, il, iu, info );
         return *info;
     }
     float d_one  = 1.;

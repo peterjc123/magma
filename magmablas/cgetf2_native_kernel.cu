@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Azzam Haidar
        @author Ahmad Abdelfattah
 
-       @generated from magmablas/zgetf2_native_kernel.cu, normal z -> c, Sun Mar 29 20:48:31 2020
+       @generated from magmablas/zgetf2_native_kernel.cu, normal z -> c, Thu Oct  8 23:05:37 2020
 */
 
 #include "magma_internal.h"
@@ -23,11 +23,11 @@
 /**
     Purpose
     -------
-    LU factorization of m-by-n matrix ( m >= n ). 
-    Each thread block caches an entire column in register. 
-    Thread blocks communicate and synchronize through global memory. 
+    LU factorization of m-by-n matrix ( m >= n ).
+    Each thread block caches an entire column in register.
+    Thread blocks communicate and synchronize through global memory.
     Assumptions:
-        1. dA is of size MxN such that N <= M. 
+        1. dA is of size MxN such that N <= M.
         2. Thread block must be 1D, with TX multiple of 32 (warp size)
         3. TX must be >= n
         4. n must be less than the number of SMs on the GPU
@@ -51,28 +51,29 @@ cgetf2_native_init_kernel( int n, int npages, magma_int_t *ipiv, int* update_fla
 // the main kernel
 template<int TX, int NPAGES>
 __global__ void
-cgetf2_native_kernel( int m, int n, 
-                      magmaFloatComplex_ptr dA, int ldda, 
-                      volatile magma_int_t *ipiv, int gbstep, 
-                      volatile int* update_flag, 
+cgetf2_native_kernel( int m, int n,
+                      magmaFloatComplex_ptr dA, int ldda,
+                      volatile magma_int_t *ipiv, int gbstep,
+                      volatile int* update_flag,
                       volatile magma_int_t *info)
 {
+#ifdef HAVE_CUBLAS
     const int tx  = threadIdx.x;
     const int bx = blockIdx.x;
     magmaFloatComplex rA[NPAGES] = {MAGMA_C_ZERO};
-    magmaFloatComplex rx, rx_max; 
-    magmaFloatComplex_ptr da = dA; 
+    magmaFloatComplex rx, rx_max;
+    magmaFloatComplex_ptr da = dA;
     int rx_id, max_id, flag = 0;
     float  rx_abs = 0.0, rx_abs_max = 0.0;
-    const int m_ = m-(NPAGES-1)*TX; 
+    const int m_ = m-(NPAGES-1)*TX;
     if( bx >= n ) return;
-    
+
     __shared__ magmaFloatComplex sx[ TX ];
     __shared__ float sabs[ TX ];
     __shared__ int smax_id[ TX ];
-    __shared__ magmaFloatComplex sreg; 
-    
-    // read 
+    __shared__ magmaFloatComplex sreg;
+
+    // read
     dA += bx * ldda + tx;
     #pragma unroll
     for(int i = 0; i < NPAGES-1; i++){
@@ -81,7 +82,7 @@ cgetf2_native_kernel( int m, int n,
     if( tx <  m_){
         rA[NPAGES-1] = dA[ (NPAGES-1) * TX ];
     }
-    
+
     // main loop
     #pragma unroll
     for(int i = 0; i < n; i++){
@@ -89,13 +90,13 @@ cgetf2_native_kernel( int m, int n,
         if(bx == i){
             rx_max     = rx     = (tx < i) ? MAGMA_C_ZERO : rA[0];
             rx_abs_max = rx_abs = fabs(MAGMA_C_REAL(rx)) + fabs(MAGMA_C_IMAG(rx));
-            max_id = rx_id = tx; 
+            max_id = rx_id = tx;
             #pragma unroll
             for(int j = 1; j < NPAGES; j++){
                 rx = rA[j];
                 rx_abs = fabs(MAGMA_C_REAL(rx)) + fabs(MAGMA_C_IMAG(rx));
                 if ( rx_abs  > rx_abs_max ){
-                    rx_max = rx; 
+                    rx_max = rx;
                     rx_abs_max = rx_abs;
                     max_id = j * TX + tx;
                 }
@@ -104,7 +105,7 @@ cgetf2_native_kernel( int m, int n,
             sabs[ tx ] = rx_abs_max;
             smax_id[ tx ] = max_id;
             __syncthreads();
-            
+
             // let the first warp do the final reduction step
             if(tx < 32){
                 #pragma unroll
@@ -139,7 +140,7 @@ cgetf2_native_kernel( int m, int n,
             if(tx == 0){
                 sx[ 0 ] = rx_max;
                 sabs[ 0 ] = rx_abs_max;
-                smax_id[ 0 ] = max_id;                
+                smax_id[ 0 ] = max_id;
             }
             __syncthreads();
             rx_max = sx[ 0 ];
@@ -161,24 +162,24 @@ cgetf2_native_kernel( int m, int n,
             if(tx == 0){
                 max_id = 0;
                 while( max_id == 0 ){
-                    max_id = ipiv[i];    
+                    max_id = ipiv[i];
                 };
                 smax_id[ 0 ] = max_id;
             }
             __syncthreads();
-            max_id = smax_id[ 0 ]; 
+            max_id = smax_id[ 0 ];
             max_id -= 1; // revert fortran indexing
             __syncthreads();
             if( (*info) != 0 ) return;
         }
-        
+
         // swap
         // swap always happens between page 0 and page x
         // to avoid spilling rA to local memory, we use shared memory
         if( max_id != i){
             // all blocks swap in registers
-            // for bx < i, the column is already written in memory, 
-            // but we have a copy in reg., so continue to swap in reg., 
+            // for bx < i, the column is already written in memory,
+            // but we have a copy in reg., so continue to swap in reg.,
             // and do one final write to memory
             #pragma unroll
             for(int j = 0; j < NPAGES; j++){
@@ -199,10 +200,10 @@ cgetf2_native_kernel( int m, int n,
             }
             //__syncthreads();
         }
-        
+
         // the ith block does scal
         if(bx == i){
-            magmaFloatComplex reg = MAGMA_C_DIV(MAGMA_C_ONE, rx_max ); 
+            magmaFloatComplex reg = MAGMA_C_DIV(MAGMA_C_ONE, rx_max );
             // scal
             if( tx > i ){
                 rA[0] *= reg;
@@ -222,7 +223,7 @@ cgetf2_native_kernel( int m, int n,
             __threadfence(); __syncthreads(); // after cuda 9.0, both are needed, not sure why
             if(tx == 0) magmablas_iatomic_exchange( (int *)&update_flag[ i ], 1);
         }
-        
+
         // thread blocks with ID larger than i perform ger
         if(bx > i){
             if( tx == i ){
@@ -236,7 +237,7 @@ cgetf2_native_kernel( int m, int n,
                 };
             }
             __syncthreads();
-            
+
             magmaFloatComplex reg = sreg;
             if( NPAGES == 1){
                 if(tx > i && tx < m_){
@@ -263,28 +264,30 @@ cgetf2_native_kernel( int m, int n,
     if( bx < n-1 ){
         #pragma unroll
         for(int i = 0; i < NPAGES-1; i++){
-            dA[ i * TX ] = rA[i]; 
+            dA[ i * TX ] = rA[i];
         }
         if( tx <  m_){
             dA[ (NPAGES-1) * TX ] = rA[NPAGES-1];
         }
-    }    
+    }
+
+#endif    // HAVE_CUBLAS
 }
 
 // =============================================================================
-extern "C" magma_int_t 
-magma_cgetf2_native_fused( 
-    magma_int_t m, magma_int_t n, 
-    magmaFloatComplex_ptr dA, magma_int_t ldda, 
-    magma_int_t *ipiv, magma_int_t gbstep, 
-    magma_int_t *flags, 
+extern "C" magma_int_t
+magma_cgetf2_native_fused(
+    magma_int_t m, magma_int_t n,
+    magmaFloatComplex_ptr dA, magma_int_t ldda,
+    magma_int_t *ipiv, magma_int_t gbstep,
+    magma_int_t *flags,
     magma_int_t *info, magma_queue_t queue )
 {
     magma_int_t arginfo = 0;
     const magma_int_t ntx   = CGETF2_FUSED_NTH;
-    
+
     if( m < n || m > CGETF2_FUSED_MAX_M ){
-        arginfo = -1;   
+        arginfo = -1;
     }
     else if( n > magma_getdevice_multiprocessor_count() ){
         arginfo = -2;
@@ -297,9 +300,9 @@ magma_cgetf2_native_fused(
         magma_xerbla( __func__, -(arginfo) );
         return arginfo;
     }
-    
+
     magma_int_t arch = magma_getdevice_arch();
-    
+
     dim3 grid(n, 1, 1);
     dim3 threads(ntx, 1, 1);
     const magma_int_t npages = magma_ceildiv(m, ntx);
@@ -359,12 +362,12 @@ magma_cgetf2_native_fused(
         case 44: cgetf2_native_kernel< ntx, 44><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
         case 45: cgetf2_native_kernel< ntx, 45><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
         case 46: cgetf2_native_kernel< ntx, 46><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
+        #endif // defined(PRECISION_s) || defined(PRECISION_d)
+        #if defined(PRECISION_s)
         case 47: cgetf2_native_kernel< ntx, 47><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
         case 48: cgetf2_native_kernel< ntx, 48><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
         case 49: cgetf2_native_kernel< ntx, 49><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
         case 50: cgetf2_native_kernel< ntx, 50><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
-        #endif // defined(PRECISION_s) || defined(PRECISION_d)
-        #if defined(PRECISION_s)
         case 51: cgetf2_native_kernel< ntx, 51><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
         case 52: cgetf2_native_kernel< ntx, 52><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;
         case 53: cgetf2_native_kernel< ntx, 53><<<grid, threads, shmem, queue->cuda_stream() >>>( m, n, dA, ldda, ipiv, gbstep, update_flag, info); break;

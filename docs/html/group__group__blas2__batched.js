@@ -15,7 +15,7 @@ var group__group__blas2__batched =
     [ "swapdblk:   Swap diagonal blocks", "group__magma__swapdblk__batched.html", null ],
     [ "symmetrize: Symmetrize matrix", "group__magma__symmetrize__batched.html", "group__magma__symmetrize__batched" ],
     [ "transpose:  Transpose matrix", "group__magma__transpose__batched.html", "group__magma__transpose__batched" ],
-    [ "lacgv:      Conjugate vector", "group__magma__lacgv__batched.html", "group__magma__lacgv__batched" ],
+    [ "lacgv:      Conjugate vector", "group__magma__lacgv__batched.html", null ],
     [ "lacpy:      Copy matrix", "group__magma__lacpy__batched.html", "group__magma__lacpy__batched" ],
     [ "lascl:      Scale matrix by scalar", "group__magma__lascl__batched.html", null ],
     [ "lascl2:     Scale matrix by diagonal", "group__magma__lascl2__batched.html", null ],

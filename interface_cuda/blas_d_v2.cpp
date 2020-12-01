@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Mark Gates
-       @generated from interface_cuda/blas_z_v2.cpp, normal z -> d, Sun Mar 29 20:48:28 2020
+       @generated from interface_cuda/blas_z_v2.cpp, normal z -> d, Thu Oct  8 23:05:24 2020
 */
 #include "magma_internal.h"
 #include "error.h"
@@ -1394,9 +1394,9 @@ magma_dsymm(
     #ifdef HAVE_HIP
     // TODO: remove fallback when hipblas provides this routine
     magmablas_dsymm(
-        side, uplo, m, n, 
-        alpha, (magmaDouble_ptr)dA, ldda, 
-               (magmaDouble_ptr)dB, lddb, 
+        side, uplo, m, n,
+        alpha, (magmaDouble_ptr)dA, ldda,
+               (magmaDouble_ptr)dB, lddb,
         beta,  dC, lddc, queue );
     #else
     cublasDsymm(
@@ -1472,8 +1472,8 @@ magma_dsyrk(
     #ifdef HAVE_HIP
     // TODO: remove fallback when hipblas provides this routine
     magmablas_dsyrk(
-        uplo, trans, n, k, 
-        alpha, (magmaDouble_ptr)dA, ldda, 
+        uplo, trans, n, k,
+        alpha, (magmaDouble_ptr)dA, ldda,
         beta,  dC, lddc, queue );
     #else
     cublasDsyrk(
@@ -1557,9 +1557,9 @@ magma_dsyr2k(
     #ifdef HAVE_HIP
     // TODO: remove fallback when hipblas provides this routine
     magmablas_dsyr2k(
-        uplo, trans, n, k, 
-        alpha, (magmaDouble_ptr)dA, ldda, 
-               (magmaDouble_ptr)dB, lddb, 
+        uplo, trans, n, k,
+        alpha, (magmaDouble_ptr)dA, ldda,
+               (magmaDouble_ptr)dB, lddb,
         beta,  dC, lddc, queue );
     #else
     cublasDsyr2k(
@@ -1641,9 +1641,9 @@ magma_dsymm(
     #ifdef HAVE_HIP
     // TODO: remove fallback when hipblas provides this routine
     magmablas_dsymm(
-        side, uplo, m, n, 
-        alpha, (magmaDouble_ptr)dA, ldda, 
-               (magmaDouble_ptr)dB, lddb, 
+        side, uplo, m, n,
+        alpha, (magmaDouble_ptr)dA, ldda,
+               (magmaDouble_ptr)dB, lddb,
         beta,  dC, lddc, queue );
     #else
     cublasDsymm(
@@ -1717,8 +1717,8 @@ magma_dsyrk(
     #ifdef HAVE_HIP
     // TODO: remove fallback when hipblas provides this routine
     magmablas_dsyrk(
-        uplo, trans, n, k, 
-        alpha, (magmaDouble_ptr)dA, ldda, 
+        uplo, trans, n, k,
+        alpha, (magmaDouble_ptr)dA, ldda,
         beta,  dC, lddc, queue );
     #else
     cublasDsyrk(
@@ -1800,9 +1800,9 @@ magma_dsyr2k(
     #ifdef HAVE_HIP
     // TODO: remove fallback when hipblas provides this routine
     magmablas_dsyr2k(
-        uplo, trans, n, k, 
-        alpha, (magmaDouble_ptr)dA, ldda, 
-               (magmaDouble_ptr)dB, lddb, 
+        uplo, trans, n, k,
+        alpha, (magmaDouble_ptr)dA, ldda,
+               (magmaDouble_ptr)dB, lddb,
         beta,  dC, lddc, queue );
     #else
     cublasDsyr2k(
@@ -1874,6 +1874,13 @@ magma_dtrmm(
     magmaDouble_ptr       dB, magma_int_t lddb,
     magma_queue_t queue )
 {
+    #ifdef HAVE_HIP
+    // TODO: remove fallback when hipblas provides this routine
+    magmablas_dtrmm(
+        side, uplo, trans, diag, m, n,
+        alpha, (magmaDouble_ptr)dA, ldda,
+               (magmaDouble_ptr)dB, lddb, queue );
+    #else
     cublasDtrmm(
         queue->cublas_handle(),
         cublas_side_const( side ),
@@ -1884,6 +1891,7 @@ magma_dtrmm(
         &alpha, dA, int(ldda),
                 dB, int(lddb),
                 dB, int(lddb) );  /* C same as B; less efficient */
+    #endif
 }
 
 

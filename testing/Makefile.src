@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.5.3) --
+#   -- MAGMA (version 2.5.4) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date March 2020
+#      @date October 2020
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -39,6 +39,7 @@ testing_src += \
 	$(cdir)/testing_blas_z.cpp	\
 	$(cdir)/testing_cblas_z.cpp	\
 	$(cdir)/testing_zgeadd.cpp	\
+        $(cdir)/testing_zgeam.cpp       \
 	$(cdir)/testing_zlacpy.cpp	\
 	$(cdir)/testing_zlag2c.cpp	\
 	$(cdir)/testing_zlange.cpp	\

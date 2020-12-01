@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Hartwig Anzt
 
-       @generated from sparse/src/zparict.cpp, normal z -> d, Sun Mar 29 20:48:36 2020
+       @generated from sparse/src/zparict.cpp, normal z -> d, Thu Oct  8 23:05:55 2020
 */
 
 #include "magmasparse_internal.h"
@@ -16,6 +16,58 @@
 #endif
 
 #define PRECISION_d
+
+// todo: make it spacific  
+#if CUDA_VERSION >= 11000
+#define cusparseCreateSolveAnalysisInfo(info) {;}
+#else
+#define cusparseCreateSolveAnalysisInfo(info)                                                   \
+    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( info ))
+#endif
+
+// todo: info is passed; buf has to be passed 
+#if CUDA_VERSION >= 11000
+#define cusparseDcsrsv_analysis(handle, trans, m, nnz, descr, val, row, col, info)              \
+    {                                                                                           \
+        csrsv2Info_t linfo = 0;                                                                 \
+        int bufsize;                                                                            \
+        void *buf;                                                                              \
+        cusparseCreateCsrsv2Info(&linfo);                                                       \
+        cusparseDcsrsv2_bufferSize(handle, trans, m, nnz, descr, val, row, col,                 \
+                                   linfo, &bufsize);                                            \
+        if (bufsize > 0)                                                                        \
+           magma_malloc(&buf, bufsize);                                                         \
+        cusparseDcsrsv2_analysis(handle, trans, m, nnz, descr, val, row, col, linfo,            \
+                                 CUSPARSE_SOLVE_POLICY_USE_LEVEL, buf);                         \
+        if (bufsize > 0)                                                                        \
+           magma_free(buf);                                                                     \
+    }
+#endif
+
+// todo: check the info and linfo if we have to give it back; free memory?   
+#if CUDA_VERSION >= 11000
+#define cusparseDcsrsm_analysis(handle, op, rows, nnz, descrA, dval, drow, dcol, info )         \
+    {                                                                                           \
+        double alpha = MAGMA_D_ONE;                                                 \
+        double *B;                                                                     \
+        csrsm2Info_t linfo;                                                                     \
+        size_t bufsize;                                                                         \
+        void *buf;                                                                              \
+        cusparseCreateCsrsm2Info(&linfo);                                                       \
+        cusparseDcsrsm2_bufferSizeExt(handle, 0, op, CUSPARSE_OPERATION_NON_TRANSPOSE,          \
+                                      rows, 1, nnz, (const double *)&alpha,            \
+                                      descrA, dval, drow, dcol,                                 \
+                                      B, rows, linfo, CUSPARSE_SOLVE_POLICY_NO_LEVEL, &bufsize);\
+        if (bufsize > 0)                                                                        \
+           magma_malloc(&buf, bufsize);                                                         \
+        cusparseDcsrsm2_analysis(handle, 0, op, CUSPARSE_OPERATION_NON_TRANSPOSE,               \
+                                 rows, 1, nnz, (const double *)&alpha,                 \
+                                 descrA, dval, drow, dcol,                                      \
+                                 B, rows, linfo, CUSPARSE_SOLVE_POLICY_NO_LEVEL, buf);          \
+        if (bufsize > 0)                                                                        \
+           magma_free(buf);                                                                     \
+    }
+#endif
 
 
 /***************************************************************************//**
@@ -209,11 +261,12 @@ magma_dparict(
     CHECK_CUSPARSE( cusparseSetMatDiagType( descrL, CUSPARSE_DIAG_TYPE_NON_UNIT ));
     CHECK_CUSPARSE( cusparseSetMatIndexBase( descrL, CUSPARSE_INDEX_BASE_ZERO ));
     CHECK_CUSPARSE( cusparseSetMatFillMode( descrL, CUSPARSE_FILL_MODE_LOWER ));
-    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &precond->cuinfoL ));
-    CHECK_CUSPARSE( cusparseDcsrsv_analysis( cusparseHandle,
-        CUSPARSE_OPERATION_NON_TRANSPOSE, precond->M.num_rows,
-        precond->M.nnz, descrL,
-        precond->M.dval, precond->M.drow, precond->M.dcol, precond->cuinfoL ));
+    cusparseCreateSolveAnalysisInfo( &precond->cuinfoL );
+    cusparseDcsrsv_analysis( cusparseHandle,
+                             CUSPARSE_OPERATION_NON_TRANSPOSE, precond->M.num_rows,
+                             precond->M.nnz, descrL,
+                             precond->M.dval, precond->M.drow, precond->M.dcol, 
+                             precond->cuinfoL );
     
     // upper triangular factor
     CHECK_CUSPARSE( cusparseCreateMatDescr( &descrU ));
@@ -221,11 +274,12 @@ magma_dparict(
     CHECK_CUSPARSE( cusparseSetMatDiagType( descrU, CUSPARSE_DIAG_TYPE_NON_UNIT ));
     CHECK_CUSPARSE( cusparseSetMatIndexBase( descrU, CUSPARSE_INDEX_BASE_ZERO ));
     CHECK_CUSPARSE( cusparseSetMatFillMode( descrU, CUSPARSE_FILL_MODE_LOWER ));
-    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &precond->cuinfoU ));
-    CHECK_CUSPARSE( cusparseDcsrsm_analysis( cusparseHandle,
-        CUSPARSE_OPERATION_TRANSPOSE, precond->M.num_rows,
-        precond->M.nnz, descrU,
-        precond->M.dval, precond->M.drow, precond->M.dcol, precond->cuinfoU ));
+    cusparseCreateSolveAnalysisInfo( &precond->cuinfoU );
+    cusparseDcsrsm_analysis( cusparseHandle,
+                             CUSPARSE_OPERATION_TRANSPOSE, precond->M.num_rows,
+                             precond->M.nnz, descrU,
+                             precond->M.dval, precond->M.drow, precond->M.dcol, 
+                             precond->cuinfoU );
     
     
     if( precond->trisolver != 0 && precond->trisolver != Magma_CUSOLVE ){

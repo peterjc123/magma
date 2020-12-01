@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Mark Gates
 
@@ -32,16 +32,18 @@ using std::min;
 // constants
 
 const magma_int_t idist_rand  = 1;
-const magma_int_t idist_randu = 2;
+const magma_int_t idist_rands = 2;
 const magma_int_t idist_randn = 3;
 
 enum class MatrixType {
     rand      = 1,  // maps to larnv idist
-    randu     = 2,  // maps to larnv idist
+    rands     = 2,  // maps to larnv idist
     randn     = 3,  // maps to larnv idist
     zero,
+    ones,
     identity,
     jordan,
+    kronecker,
     diag,
     svd,
     poev,
@@ -52,16 +54,16 @@ enum class MatrixType {
 
 enum class Dist {
     rand      = 1,  // maps to larnv idist
-    randu     = 2,  // maps to larnv idist
+    rands     = 2,  // maps to larnv idist
     randn     = 3,  // maps to larnv idist
     arith,
     geo,
-    cluster,
-    cluster2,
+    cluster0,
+    cluster1,
     rarith,
     rgeo,
-    rcluster,
-    rcluster2,
+    rcluster0,
+    rcluster1,
     logrand,
     specified,
 };
@@ -140,28 +142,28 @@ void magma_generate_sigma(
             }
             break;
 
-        case Dist::cluster:
+        case Dist::cluster0:
             sigma[0] = 1;
             for (magma_int_t i = 1; i < minmn; ++i) {
                 sigma[i] = 1/cond;
             }
             break;
 
-        case Dist::rcluster:
+        case Dist::rcluster0:
             for (magma_int_t i = 0; i < minmn-1; ++i) {
                 sigma[i] = 1/cond;
             }
             sigma[minmn-1] = 1;
             break;
 
-        case Dist::cluster2:
+        case Dist::cluster1:
             for (magma_int_t i = 0; i < minmn-1; ++i) {
                 sigma[i] = 1;
             }
             sigma[minmn-1] = 1/cond;
             break;
 
-        case Dist::rcluster2:
+        case Dist::rcluster1:
             sigma[0] = 1/cond;
             for (magma_int_t i = 1; i < minmn; ++i) {
                 sigma[i] = 1;
@@ -183,7 +185,7 @@ void magma_generate_sigma(
         }
 
         case Dist::randn:
-        case Dist::randu:
+        case Dist::rands:
         case Dist::rand: {
             magma_int_t idist = (magma_int_t) dist;
             lapack::larnv( idist, opts.iseed, sigma.n, sigma(0) );
@@ -547,12 +549,14 @@ void magma_generate_geevx(
     Table 11 (Test matrices for the singular value decomposition)
 
     Matrix      Description
-    zero
-    identity
-    jordan      ones on diagonal and first subdiagonal
+    zero        all entries are 0
+    ones        all entries are 1
+    identity    diagonal entries are 1
+    jordan      diagonal and first subdiagonal entries are 1
+    kronecker   A(i,j) = 1 + (m/cond) * kronecker_delta(i,j)
 
     rand*       matrix entries random uniform on (0, 1)
-    randu*      matrix entries random uniform on (-1, 1)
+    rands*      matrix entries random uniform on (-1, 1)
     randn*      matrix entries random normal with mean 0, sigma 1
 
     diag#*      A = Sigma
@@ -566,20 +570,21 @@ void magma_generate_geevx(
 
     # optional distribution suffix
     _rand       sigma_i random uniform on (0, 1) [default]
-    _randu      sigma_i random uniform on (-1, 1)
+    _rands      sigma_i random uniform on (-1, 1)
     _randn      sigma_i random normal with mean 0, std 1
-                [1] Note for _randu and _randn, Sigma contains negative values.
+                [1] Note for _rands and _randn, Sigma contains negative values.
                 _rand* do not use cond, so the condition number is arbitrary.
+                For randn, Expected( log( cond ) ) = log( 4.65 n ) [Edelman, 1988].
 
     _logrand    log(sigma_i) uniform on (log(1/cond), log(1))
     _arith      sigma_i = 1 - (i - 1)/(n - 1)*(1 - 1/cond); sigma_{i+1} - sigma_i is constant
     _geo        sigma_i = (cond)^{ -(i-1)/(n-1) };          sigma_{i+1} / sigma_i is constant
-    _cluster    sigma = [ 1, 1/cond, ..., 1/cond ]; 1 unit value, n-1 small values
-    _cluster2   sigma = [ 1, ..., 1, 1/cond ];      n-1 unit values, 1 small value
+    _cluster0   sigma = [ 1, 1/cond, ..., 1/cond ]; 1 unit value, n-1 small values
+    _cluster1   sigma = [ 1, ..., 1, 1/cond ];      n-1 unit values, 1 small value
     _rarith     _arith,    reversed order
     _rgeo       _geo,      reversed order
-    _rcluster   _cluster,  reversed order
-    _rcluster2  _cluster2, reversed order
+    _rcluster0  _cluster0, reversed order
+    _rcluster1  _cluster1, reversed order
     _specified  user specified sigma on input
 
     * optional scaling & modifier suffix
@@ -640,18 +645,21 @@ void magma_generate_matrix(
 
     // ----- decode matrix type
     MatrixType type = MatrixType::identity;
-    if      (name == "zero")          { type = MatrixType::zero;      }
+    if      (name == "zero"
+          || name == "zeros")         { type = MatrixType::zero;      }
+    else if (name == "ones")          { type = MatrixType::ones;      }
     else if (name == "identity")      { type = MatrixType::identity;  }
     else if (name == "jordan")        { type = MatrixType::jordan;    }
+    else if (name == "kronecker")     { type = MatrixType::kronecker; }
     else if (begins( name, "randn" )) { type = MatrixType::randn;     }
-    else if (begins( name, "randu" )) { type = MatrixType::randu;     }
+    else if (begins( name, "rands" )) { type = MatrixType::rands;     }
     else if (begins( name, "rand"  )) { type = MatrixType::rand;      }
     else if (begins( name, "diag"  )) { type = MatrixType::diag;      }
     else if (begins( name, "svd"   )) { type = MatrixType::svd;       }
-    else if (begins( name, "poev"  ) ||
-             begins( name, "spd"   )) { type = MatrixType::poev;      }
-    else if (begins( name, "heev"  ) ||
-             begins( name, "syev"  )) { type = MatrixType::heev;      }
+    else if (begins( name, "poev"  )
+          || begins( name, "spd"   )) { type = MatrixType::poev;      }
+    else if (begins( name, "heev"  )
+          || begins( name, "syev"  )) { type = MatrixType::heev;      }
     else if (begins( name, "geevx" )) { type = MatrixType::geevx;     }
     else if (begins( name, "geev"  )) { type = MatrixType::geev;      }
     else {
@@ -659,24 +667,24 @@ void magma_generate_matrix(
         throw std::exception();
     }
 
-    if (A.m != A.n &&
-        (type == MatrixType::jordan ||
-         type == MatrixType::poev   ||
-         type == MatrixType::heev   ||
-         type == MatrixType::geev   ||
-         type == MatrixType::geevx))
+    if (A.m != A.n
+        && (type == MatrixType::jordan
+            || type == MatrixType::poev
+            || type == MatrixType::heev
+            || type == MatrixType::geev
+            || type == MatrixType::geevx))
     {
         fprintf( stderr, "Eigenvalue matrix requires m == n.\n" );
         throw std::exception();
     }
 
-    if (opts.cond != 0 &&
-        (type == MatrixType::zero      ||
-         type == MatrixType::identity  ||
-         type == MatrixType::jordan    ||
-         type == MatrixType::randn     ||
-         type == MatrixType::randu     ||
-         type == MatrixType::rand))
+    if (opts.cond != 0
+        && (type == MatrixType::zero
+            || type == MatrixType::identity
+            || type == MatrixType::jordan
+            || type == MatrixType::randn
+            || type == MatrixType::rands
+            || type == MatrixType::rand))
     {
         fprintf( stderr, "%sWarning: --matrix %s ignores --cond %.2e.%s\n",
                  ansi_red, name.c_str(), opts.cond, ansi_normal );
@@ -685,33 +693,34 @@ void magma_generate_matrix(
     // ----- decode distribution
     Dist dist = Dist::rand;
     if      (contains( name, "_randn"     )) { dist = Dist::randn;     }
-    else if (contains( name, "_randu"     )) { dist = Dist::randu;     }
-    else if (contains( name, "_rand"      )) { dist = Dist::rand;      } // after randn, randu
+    else if (contains( name, "_rands"     )) { dist = Dist::rands;     }
+    else if (contains( name, "_rand"      )) { dist = Dist::rand;      } // after randn, rands
     else if (contains( name, "_logrand"   )) { dist = Dist::logrand;   }
     else if (contains( name, "_arith"     )) { dist = Dist::arith;     }
     else if (contains( name, "_geo"       )) { dist = Dist::geo;       }
-    else if (contains( name, "_cluster2"  )) { dist = Dist::cluster2;  }
-    else if (contains( name, "_cluster"   )) { dist = Dist::cluster;   } // after cluster2
+    else if (contains( name, "_cluster1"  )) { dist = Dist::cluster1;  }
+    else if (contains( name, "_cluster0"  )) { dist = Dist::cluster0;  }
     else if (contains( name, "_rarith"    )) { dist = Dist::rarith;    }
     else if (contains( name, "_rgeo"      )) { dist = Dist::rgeo;      }
-    else if (contains( name, "_rcluster2" )) { dist = Dist::rcluster2; }
-    else if (contains( name, "_rcluster"  )) { dist = Dist::rcluster;  } // after rcluster2
+    else if (contains( name, "_rcluster1" )) { dist = Dist::rcluster1; }
+    else if (contains( name, "_rcluster0" )) { dist = Dist::rcluster0; }
     else if (contains( name, "_specified" )) { dist = Dist::specified; }
 
-    if (opts.cond != 0 &&
-        (dist == Dist::randn ||
-         dist == Dist::randu ||
-         dist == Dist::rand))
+    if (opts.cond != 0
+        && (dist == Dist::randn
+            || dist == Dist::rands
+            || dist == Dist::rand)
+        && type != MatrixType::kronecker)
     {
         fprintf( stderr, "%sWarning: --matrix '%s' ignores --cond %.2e; use a different distribution.%s\n",
                  ansi_red, name.c_str(), opts.cond, ansi_normal );
     }
 
-    if (type == MatrixType::poev &&
-        (dist == Dist::randu ||
-         dist == Dist::randn))
+    if (type == MatrixType::poev
+        && (dist == Dist::rands
+            || dist == Dist::randn))
     {
-        fprintf( stderr, "%sWarning: --matrix '%s' using randu or randn "
+        fprintf( stderr, "%sWarning: --matrix '%s' using rands or randn "
                  "will not generate SPD matrix; use rand instead.%s\n",
                  ansi_red, name.c_str(), ansi_normal );
     }
@@ -729,6 +738,10 @@ void magma_generate_matrix(
             lapack::laset( "general", sigma.n, 1, d_zero, d_zero, sigma(0), sigma.n );
             break;
 
+        case MatrixType::ones:
+            lapack::laset( "general", A.m, A.n, c_one, c_one, A(0,0), A.ld );
+            break;
+
         case MatrixType::identity:
             lapack::laset( "general", A.m, A.n, c_zero, c_one, A(0,0), A.ld );
             lapack::laset( "general", sigma.n, 1, d_one, d_one, sigma(0), sigma.n );
@@ -741,8 +754,14 @@ void magma_generate_matrix(
             break;
         }
 
+        case MatrixType::kronecker: {
+            FloatT diag = blas::traits<FloatT>::make( 1 + A.m / cond, 0 );
+            lapack::laset( "general", A.m, A.n, c_one, diag, A(0,0), A.ld );
+            break;
+        }
+
         case MatrixType::rand:
-        case MatrixType::randu:
+        case MatrixType::rands:
         case MatrixType::randn: {
             magma_int_t idist = (magma_int_t) type;
             magma_int_t sizeA = A.ld * A.n;

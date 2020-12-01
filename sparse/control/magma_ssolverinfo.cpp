@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from sparse/control/magma_zsolverinfo.cpp, normal z -> s, Sun Mar 29 20:48:34 2020
+       @generated from sparse/control/magma_zsolverinfo.cpp, normal z -> s, Thu Oct  8 23:05:51 2020
        @author Hartwig Anzt
 
 */
@@ -595,10 +595,11 @@ magma_ssolverinfo_init(
     precond_par->UDT.row = NULL;
     precond_par->UDT.blockinfo = NULL;
     
-    precond_par->cuinfoL = NULL;
-    precond_par->cuinfoU = NULL;
-    precond_par->cuinfoLT = NULL;
-    precond_par->cuinfoUT = NULL;
+    // todo: error: invalid conversion from ‘long int’ to ‘cusparseSolvePolicy_t’
+    //precond_par->cuinfoL = NULL;
+    //precond_par->cuinfoU = NULL;
+    //precond_par->cuinfoLT = NULL;
+    //precond_par->cuinfoUT = NULL;
     
     precond_par->L_dgraphindegree = NULL;
     precond_par->U_dgraphindegree = NULL;

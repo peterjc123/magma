@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from include/magma_zlapack.h, normal z -> d, Sun Mar 29 20:48:36 2020
+       @generated from include/magma_zlapack.h, normal z -> d, Thu Oct  8 23:05:56 2020
 */
 
 #ifndef MAGMA_DLAPACK_H
@@ -160,6 +160,7 @@ extern "C" {
 #define lapackf77_dbdt01   FORTRAN_NAME( dbdt01, DBDT01 )
 #define lapackf77_dget22   FORTRAN_NAME( dget22, DGET22 )
 #define lapackf77_dsyt21   FORTRAN_NAME( dsyt21, DSYT21 )
+#define lapackf77_dsyt22   FORTRAN_NAME( dsyt22, DSYT22 )
 #define lapackf77_dhst01   FORTRAN_NAME( dhst01, DHST01 )
 #define lapackf77_dlarfy   FORTRAN_NAME( dlarfy, DLARFY )
 #define lapackf77_dlatms   FORTRAN_NAME( dlatms, DLATMS )
@@ -1189,6 +1190,19 @@ void   lapackf77_dget22( const char *transa, const char *transe, const char *tra
 
 void   lapackf77_dsyt21( const magma_int_t *itype, const char *uplo,
                          const magma_int_t *n, const magma_int_t *kband,
+                         double *A, const magma_int_t *lda,
+                         double *d, double *e,
+                         double *U, const magma_int_t *ldu,
+                         double *V, const magma_int_t *ldv,
+                         double *tau,
+                         double *work,
+                         #ifdef MAGMA_COMPLEX
+                         double *rwork,
+                         #endif
+                         double *result );
+
+void   lapackf77_dsyt22( const magma_int_t *itype, const char *uplo,
+                         const magma_int_t *n, const magma_int_t *m, const magma_int_t *kband,
                          double *A, const magma_int_t *lda,
                          double *d, double *e,
                          double *U, const magma_int_t *ldu,

@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
        @author Adrien REMY
 
-       @generated from src/zhesv_nopiv_gpu.cpp, normal z -> s, Sun Mar 29 20:48:29 2020
+       @generated from src/zhesv_nopiv_gpu.cpp, normal z -> s, Thu Oct  8 23:05:26 2020
 
 */
 #include "magma_internal.h"
@@ -18,8 +18,7 @@
         A * X = B
     where A is an n-by-n symmetric matrix and X and B are n-by-nrhs matrices.
     The LU decomposition with no pivoting is
-    used to factor A as
-    The factorization has the form
+    used to factor A as:
         A = U^H * D * U,  if UPLO = MagmaUpper, or
         A = L  * D * L^H, if UPLO = MagmaLower,
     where U is an upper triangular matrix, L is lower triangular, and
@@ -46,8 +45,7 @@
     @param[in,out]
     dA      REAL array, dimension (ldda,n).
             On entry, the n-by-n matrix to be factored.
-            On exit, the factors L and U from the factorization
-            A = L*U; the unit diagonal elements of L are not stored.
+            On exit, the factors L/U and the diagonal D from the factorization.
 
     @param[in]
     ldda    INTEGER

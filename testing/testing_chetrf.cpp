@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from testing/testing_zhetrf.cpp, normal z -> c, Sun Mar 29 20:48:32 2020
+       @generated from testing/testing_zhetrf.cpp, normal z -> c, Thu Oct  8 23:05:43 2020
        @author Ichitaro Yamazaki
 */
 // includes, system
@@ -20,6 +20,8 @@
 #include "magma_lapack.h"
 #include "magma_operators.h"  // for MAGMA_C_DIV
 #include "testings.h"
+
+#include <cuda_runtime.h>     // cudaMemset
 
 /******************************************************************************/
 // Initialize matrix to random.
@@ -631,6 +633,8 @@ float get_LTLt_error(
     return residual / (matnorm * N);
 }
 
+#define COMPLEX
+
 /* ////////////////////////////////////////////////////////////////////////////
    -- Testing chetrf
 */
@@ -644,7 +648,7 @@ int main( int argc, char** argv)
     float          error, error_lapack = 0.0;
     magma_int_t     *ipiv;
     magma_int_t     cpu_panel = 1, N, n2, lda, lwork, info;
-    magma_int_t     cpu = 0, nopiv = 0, nopiv_gpu = 0, row = 0, aasen = 0;
+    magma_int_t     cpu = 0, gpu = 0, nopiv = 0, nopiv_gpu = 0, row = 0, aasen = 0;
     int status = 0;
     
     magma_opts opts;
@@ -663,7 +667,7 @@ int main( int argc, char** argv)
     //}
 
     printf( "%% --version 1 = Bunch-Kauffman (CPU)\n"
-            "%%           2 = Bunch-Kauffman (GPU) -- not yet available\n"
+            "%%           2 = Bunch-Kauffman (GPU)\n"
             "%%           3 = No-piv (CPU) -- uses random, diagonally dominant matrix by default\n"
             "%%           4 = No-piv (GPU) -- uses random, diagonally dominant matrix by default\n"
             "%%           6 = Aasen's\n"
@@ -675,10 +679,8 @@ int main( int argc, char** argv)
             printf( "CPU-interface to Bunch-Kauffman on GPU" );
             break;
         case 2:
-            //gpu = 1;
+            gpu = 1;
             printf( "GPU-interface to Bunch-Kauffman on GPU" );
-            printf( "\n%% not yet available.\n" );
-            return 0;
             break;
         case 3:
             nopiv = 1;
@@ -762,6 +764,21 @@ int main( int argc, char** argv)
                 gpu_time = magma_wtime();
                 magma_chetrf( opts.uplo, N, h_A, lda, ipiv, &info);
                 gpu_time = magma_wtime() - gpu_time;
+
+                // To do: extend to test inertia for real case; 
+                #ifdef REALNO
+                float det[2];
+                magma_int_t inert[3];
+                //for(int kk=0; kk<N; kk++)
+                //    h_A[kk+(N-1)*lda] = h_A[N-1+kk*lda] = 0.;
+                TESTING_CHECK( magma_cmalloc_cpu( &work, N ));
+                magma_ssidi(h_A, lda, N, ipiv, det, inert,
+                            work, 110, &info);
+                printf("det[0] = %e, det[1] = %e\n", det[0], det[1]);
+                printf("inertia: positive / negative / zero = %d / %d / %d\n",
+                       inert[0], inert[1], inert[2]);
+                magma_free_cpu(work);
+                #endif
             }
             else if (nopiv_gpu) {
                 // GPU-interface to non-piv LDLt
@@ -771,6 +788,51 @@ int main( int argc, char** argv)
                 magma_csetmatrix(N, N, h_A, lda, d_A, ldda, opts.queue );
                 gpu_time = magma_wtime();
                 magma_chetrf_nopiv_gpu( opts.uplo, N, d_A, ldda, &info);
+                gpu_time = magma_wtime() - gpu_time;
+
+                /*
+                for(int ll=0; ll<N; ll++){
+                    if (ll<200)
+                        h_A[ll+ll*lda] = 0.;
+                    else if (ll<500)
+                        h_A[ll+ll*lda] = 1.;
+                    else
+                        h_A[ll+ll*lda] = -1.;
+                }
+                magma_ssetmatrix(N, N, h_A, lda, d_A, ldda, opts.queue );
+                */
+
+                int *dinert, inert[3];
+                TESTING_CHECK( magma_malloc((void**)&dinert, 3*sizeof(int)) );
+
+                magmablas_cdiinertia(N, d_A, ldda, dinert, opts.queue );
+                magma_getvector( 3, sizeof(int), dinert, 1, inert, 1, opts.queue );
+                magma_free( dinert );
+                printf("inertia: positive / negative / zero = %d / %d / %d\n",
+                       inert[0], inert[1], inert[2]);
+
+                inert[0] = inert[1] = inert[2] = 0;
+                magma_cgetmatrix(N, N, d_A, ldda, h_A, lda, opts.queue );
+                for(int ll=0; ll<N; ll++){
+                    if (MAGMA_C_REAL(h_A[ll+ll*lda])>0.)
+                        inert[0]++;
+                    else if (MAGMA_C_REAL(h_A[ll+ll*lda])<0.)
+                        inert[1]++;
+                    else
+                        inert[2]++;
+                }
+                printf("inertia: positive / negative / zero = %d / %d / %d\n",
+                       inert[0], inert[1], inert[2]);
+                magma_free( d_A );
+            }
+            else if (gpu) {
+                // GPU-interface to Bunch-Kauffman LDLt
+                magma_int_t ldda = magma_roundup( N, opts.align );
+                magmaFloatComplex_ptr d_A;
+                TESTING_CHECK( magma_cmalloc( &d_A, N*ldda ));
+                magma_csetmatrix(N, N, h_A, lda, d_A, ldda, opts.queue );
+                gpu_time = magma_wtime();
+                magma_chetrf_gpu( opts.uplo, N, d_A, ldda, ipiv, &info);
                 gpu_time = magma_wtime() - gpu_time;
                 magma_cgetmatrix(N, N, d_A, ldda, h_A, lda, opts.queue );
                 magma_free( d_A );

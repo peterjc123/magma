@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Mark Gates
 */
@@ -206,9 +206,9 @@ magma_init()
                 else {
                     g_magma_devices[dev].memory          = prop.totalGlobalMem;
                     g_magma_devices[dev].cuda_arch       = prop.major*100 + prop.minor*10;
-                    g_magma_devices[dev].shmem_block     = prop.sharedMemPerBlock; 
-                    g_magma_devices[dev].shmem_multiproc = prop.sharedMemPerMultiprocessor; 
-                    g_magma_devices[dev].multiproc_count = prop.multiProcessorCount; 
+                    g_magma_devices[dev].shmem_block     = prop.sharedMemPerBlock;
+                    g_magma_devices[dev].shmem_multiproc = prop.sharedMemPerMultiprocessor;
+                    g_magma_devices[dev].multiproc_count = prop.multiProcessorCount;
                 }
             }
 
@@ -424,6 +424,11 @@ magma_print_environment()
     printf( "%% %s", ctime( &t ));
 }
 
+#if CUDA_VERSION >= 11000
+#define magma_memoryType() type
+#else
+#define magma_memoryType() memoryType
+#endif
 
 /***************************************************************************//**
     For debugging purposes, determines whether a pointer points to CPU or GPU memory.
@@ -458,11 +463,7 @@ magma_is_devptr( const void* A )
             err = cudaPointerGetAttributes( &attr, const_cast<void*>( A ));
             if ( ! err ) {
                 // definitely know type
-#if (CUDA_VERSION >= 11000)
-                return (attr.type == cudaMemoryTypeDevice);
-#else
-                return (attr.memoryType == cudaMemoryTypeDevice);
-#endif
+                return (attr.magma_memoryType() == cudaMemoryTypeDevice);
             }
             else if ( err == cudaErrorInvalidValue ) {
                 // clear error; see http://icl.cs.utk.edu/magma/forum/viewtopic.php?f=2&t=529
@@ -783,6 +784,10 @@ magma_queue_create_internal(
     queue->stream__   = NULL;
     queue->cublas__   = NULL;
     queue->cusparse__ = NULL;
+    queue->ptrArray__ = NULL;
+    queue->dAarray__  = NULL;
+    queue->dBarray__  = NULL;
+    queue->dCarray__  = NULL;
     queue->maxbatch__ = MAX_BATCHCOUNT;
 
     magma_setdevice( device );
@@ -805,13 +810,6 @@ magma_queue_create_internal(
     queue->own__ |= own_cusparse;
     stat2 = cusparseSetStream( queue->cusparse__, queue->stream__ );
     check_xerror( stat2, func, file, line );
-
-    magma_malloc((void**)&(queue->dAarray__), queue->maxbatch__ * sizeof(void*));
-    assert( queue->dAarray__ != NULL);
-    magma_malloc((void**)&(queue->dBarray__), queue->maxbatch__ * sizeof(void*));
-    assert( queue->dBarray__ != NULL);
-    magma_malloc((void**)&(queue->dCarray__), queue->maxbatch__ * sizeof(void*));
-    assert( queue->dCarray__ != NULL);
 
     MAGMA_UNUSED( err );
     MAGMA_UNUSED( stat );
@@ -868,6 +866,10 @@ magma_queue_create_from_cuda_internal(
     queue->stream__   = NULL;
     queue->cublas__   = NULL;
     queue->cusparse__ = NULL;
+    queue->ptrArray__ = NULL;
+    queue->dAarray__  = NULL;
+    queue->dBarray__  = NULL;
+    queue->dCarray__  = NULL;
     queue->maxbatch__ = MAX_BATCHCOUNT;
 
     magma_setdevice( device );
@@ -896,13 +898,6 @@ magma_queue_create_from_cuda_internal(
     queue->cusparse__ = cusparse_handle;
     stat2 = cusparseSetStream( queue->cusparse__, queue->stream__ );
     check_xerror( stat2, func, file, line );
-
-    magma_malloc((void**)&queue->dAarray__, queue->maxbatch__ * sizeof(void*));
-    assert( queue->dAarray__ != NULL);
-    magma_malloc((void**)&queue->dBarray__, queue->maxbatch__ * sizeof(void*));
-    assert( queue->dBarray__ != NULL);
-    magma_malloc((void**)&queue->dCarray__, queue->maxbatch__ * sizeof(void*));
-    assert( queue->dCarray__ != NULL);
 
     MAGMA_UNUSED( stat );
     MAGMA_UNUSED( stat2 );
@@ -945,15 +940,18 @@ magma_queue_destroy_internal(
             check_xerror( err, func, file, line );
             MAGMA_UNUSED( err );
         }
-        magma_free( queue->dAarray__ );
-        magma_free( queue->dBarray__ );
-        magma_free( queue->dCarray__ );
+
+        if( queue->ptrArray__ != NULL ) magma_free( queue->ptrArray__ );
 
         queue->own__      = own_none;
         queue->device__   = -1;
         queue->stream__   = NULL;
         queue->cublas__   = NULL;
         queue->cusparse__ = NULL;
+        queue->ptrArray__ = NULL;
+        queue->dAarray__  = NULL;
+        queue->dBarray__  = NULL;
+        queue->dCarray__  = NULL;
         magma_free_cpu( queue );
     }
 }

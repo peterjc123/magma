@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Mark Gates
-       @generated from testing/lin/magma_z_no_fortran.cpp, normal z -> c, Sun Mar 29 20:48:32 2020
+       @generated from testing/lin/magma_z_no_fortran.cpp, normal z -> c, Thu Oct  8 23:05:38 2020
        
        This is simply a copy of part of magma_clapack.h,
        with the { printf(...); } function body added to each function.
@@ -57,6 +57,20 @@ void   lapackf77_cget22( const char *transa, const char *transe, const char *tra
 
 void   lapackf77_chet21( const magma_int_t *itype, const char *uplo,
                          const magma_int_t *n, const magma_int_t *kband,
+                         magmaFloatComplex *A, const magma_int_t *lda,
+                         float *d, float *e,
+                         magmaFloatComplex *U, const magma_int_t *ldu,
+                         magmaFloatComplex *V, const magma_int_t *ldv,
+                         magmaFloatComplex *tau,
+                         magmaFloatComplex *work,
+                         #ifdef COMPLEX
+                         float *rwork,
+                         #endif
+                         float *result )
+                         { printf( format, __func__ ); }
+
+void   lapackf77_chet22( const magma_int_t *itype, const char *uplo,
+                         const magma_int_t *n,  const magma_int_t *m, const magma_int_t *kband,
                          magmaFloatComplex *A, const magma_int_t *lda,
                          float *d, float *e,
                          magmaFloatComplex *U, const magma_int_t *ldu,

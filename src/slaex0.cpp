@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
        
        @author Raffaele Solca
        
-       @generated from src/dlaex0.cpp, normal d -> s, Sun Mar 29 20:48:29 2020
+       @generated from src/dlaex0.cpp, normal d -> s, Thu Oct  8 23:05:27 2020
 */
 #include "magma_internal.h"
 #include "magma_timer.h"
@@ -132,6 +132,11 @@ magma_slaex0(
     if (n == 0)
         return *info;
 
+    magma_queue_t queue;
+    magma_device_t cdev;
+    magma_getdevice( &cdev );
+    magma_queue_create( cdev, &queue );
+
     smlsiz = magma_get_smlsize_divideconquer();
 
     // Determine the size and placement of the submatrices, and save in
@@ -220,7 +225,7 @@ magma_slaex0(
 
             magma_slaex1(matsiz, &d[submat], Q(submat, submat), ldq,
                          &iwork[indxq+submat], e[submat+msd2-1], msd2,
-                         work, &iwork[subpbs], dwork,
+                         work, &iwork[subpbs], dwork, queue,
                          range2, vl, vu, il, iu, info);
 
             if (*info != 0) {
@@ -245,6 +250,8 @@ magma_slaex0(
     }
     blasf77_scopy(&n, work, &ione, d, &ione);
     lapackf77_slacpy( "A", &n, &n, &work[n], &n, Q, &ldq );
+
+    magma_queue_destroy( queue );
 
     return *info;
 } /* magma_slaex0 */

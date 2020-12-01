@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
        @author Adrien REMY
 
        @precisions normal z -> c
@@ -18,8 +18,7 @@
         A * X = B
     where A is an n-by-n symmetric matrix and X and B are n-by-nrhs matrices.
     The LU decomposition with no pivoting is
-    used to factor A as
-    The factorization has the form
+    used to factor A as:
         A = U^T * D * U,  if UPLO = MagmaUpper, or
         A = L  * D * L^T, if UPLO = MagmaLower,
     where U is an upper triangular matrix, L is lower triangular, and
@@ -46,8 +45,7 @@
     @param[in,out]
     dA      COMPLEX_16 array, dimension (ldda,n).
             On entry, the n-by-n matrix to be factored.
-            On exit, the factors L and U from the factorization
-            A = L*U; the unit diagonal elements of L are not stored.
+            On exit, the factors L/U and the diagonal D from the factorization.
 
     @param[in]
     ldda    INTEGER

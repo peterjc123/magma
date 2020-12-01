@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @precisions normal z -> s d c
 */
@@ -73,6 +73,13 @@ magma_int_t magma_get_zbulge_gcperf();
 
 #ifdef MAGMA_REAL
 // only applicable to real [sd] precisions
+magma_int_t
+magma_dsidi(
+    double *A, magma_int_t lda, magma_int_t n, magma_int_t *ipiv,
+    double *det, magma_int_t *inert,
+    double *work, magma_int_t job,
+    magma_int_t *info);
+
 void
 magma_dmove_eig(
     magma_range_t range, magma_int_t n, double *w,
@@ -1039,6 +1046,13 @@ magma_zhetrf(
     magma_int_t *ipiv,
     magma_int_t *info);
 
+magma_int_t
+magma_zhetrf_gpu(
+   magma_uplo_t uplo, magma_int_t n,
+   magmaDoubleComplex *dA, magma_int_t ldda,
+   magma_int_t *ipiv, 
+   magma_int_t *info);
+
 // CUDA MAGMA only
 magma_int_t
 magma_zhetrf_aasen(
@@ -1102,6 +1116,7 @@ magma_dlaex1(
     magma_int_t *indxq, double rho, magma_int_t cutpnt,
     double *work, magma_int_t *iwork,
     magmaDouble_ptr dwork,
+    magma_queue_t queue,
     magma_range_t range, double vl, double vu, magma_int_t il, magma_int_t iu,
     magma_int_t *info);
 
@@ -1126,6 +1141,7 @@ magma_dlaex3(
     double *dlamda, double *Q2, magma_int_t *indx,
     magma_int_t *ctot, double *w, double *s, magma_int_t *indxq,
     magmaDouble_ptr dwork,
+    magma_queue_t queue,
     magma_range_t range, double vl, double vu, magma_int_t il, magma_int_t iu,
     magma_int_t *info);
 
@@ -1159,11 +1175,10 @@ magma_zlabrd_gpu(
 magma_int_t
 magma_zlahef_gpu(
     magma_uplo_t uplo, magma_int_t n, magma_int_t nb, magma_int_t *kb,
-    magmaDoubleComplex    *hA, magma_int_t lda,
     magmaDoubleComplex_ptr dA, magma_int_t ldda,
     magma_int_t *ipiv,
     magmaDoubleComplex_ptr dW, magma_int_t lddw,
-    magma_queue_t queues[], magma_event_t event[],
+    magma_queue_t queues[],
     magma_int_t *info);
 
 magma_int_t

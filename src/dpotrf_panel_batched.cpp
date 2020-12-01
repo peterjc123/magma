@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
        
        @author Azzam Haidar
        @author Tingxing Dong
        @author Ahmad Abdelfattah
 
-       @generated from src/zpotrf_panel_batched.cpp, normal z -> d, Sun Mar 29 20:48:30 2020
+       @generated from src/zpotrf_panel_batched.cpp, normal z -> d, Thu Oct  8 23:05:31 2020
 */
 #include "magma_internal.h"
 #include "batched_kernel_param.h"

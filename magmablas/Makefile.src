@@ -1,9 +1,9 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.5.3) --
+#   -- MAGMA (version 2.5.4) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date March 2020
+#      @date October 2020
 #//////////////////////////////////////////////////////////////////////////////
 
 # push previous directory
@@ -26,8 +26,10 @@ hdr += \
 libmagma_src += \
 	$(cdir)/zaxpycp.cu		\
 	$(cdir)/zcaxpycp.cu		\
+        $(cdir)/zdiinertia.cu           \
 	$(cdir)/zgeadd.cu		\
 	$(cdir)/zgeadd2.cu		\
+        $(cdir)/zgeam.cu                \
 	$(cdir)/zgemm_fermi.cu		\
 	$(cdir)/zgemm_reduce.cu		\
 	$(cdir)/zgemv_conj.cu		\
@@ -82,6 +84,8 @@ libmagma_src += \
 	$(cdir)/ztranspose_conj.cu		\
 	$(cdir)/ztranspose_conj_inplace.cu	\
 	$(cdir)/ztranspose_inplace.cu	\
+	$(cdir)/ztrmm.cu		\
+	$(cdir)/ztrmv.cu		\
 	$(cdir)/ztrsm.cu		\
 	$(cdir)/ztrsv.cu		\
 	$(cdir)/ztrtri_diag.cu		\
@@ -142,7 +146,6 @@ libmagma_src += \
 	$(cdir)/zherk_batched_core.cu		\
 	$(cdir)/zlaswp_batched.cu		\
 	$(cdir)/zpotf2_kernels.cu		\
-	$(cdir)/zpotf2_kernels_old.cu		\
 	$(cdir)/set_pointer.cu			\
 	$(cdir)/zset_pointer.cu			\
 	$(cdir)/zsyr2k_batched.cpp		\
@@ -352,6 +355,11 @@ $(cdir)/zherk_vbatched_core.$(o_ext): $(cdir)/herk_template_kernel_vbatched.cuh 
 $(cdir)/cherk_vbatched_core.$(o_ext): $(cdir)/herk_template_kernel_vbatched.cuh $(cdir)/gemm_template_device.cuh $(cdir)/gemm_template_device_defs.cuh
 $(cdir)/dsyrk_vbatched_core.$(o_ext): $(cdir)/herk_template_kernel_vbatched.cuh $(cdir)/gemm_template_device.cuh $(cdir)/gemm_template_device_defs.cuh
 $(cdir)/ssyrk_vbatched_core.$(o_ext): $(cdir)/herk_template_kernel_vbatched.cuh $(cdir)/gemm_template_device.cuh $(cdir)/gemm_template_device_defs.cuh
+
+$(cdir)/ztrmv.$(o_ext): $(cdir)/trmv_template_kernel.cuh $(cdir)/trmv_template_device.cuh $(cdir)/gemm_template_device_defs.cuh control/batched_kernel_param.h
+$(cdir)/ctrmv.$(o_ext): $(cdir)/trmv_template_kernel.cuh $(cdir)/trmv_template_device.cuh $(cdir)/gemm_template_device_defs.cuh control/batched_kernel_param.h
+$(cdir)/dtrmv.$(o_ext): $(cdir)/trmv_template_kernel.cuh $(cdir)/trmv_template_device.cuh $(cdir)/gemm_template_device_defs.cuh control/batched_kernel_param.h
+$(cdir)/strmv.$(o_ext): $(cdir)/trmv_template_kernel.cuh $(cdir)/trmv_template_device.cuh $(cdir)/gemm_template_device_defs.cuh control/batched_kernel_param.h
 
 $(cdir)/zgemm_fermi.$(o_ext): $(cdir)/zgemm_fermi_kernels.h $(cdir)/gemm_stencil.cuh $(cdir)/gemm_kernel.cuh $(cdir)/gemm_stencil_defs.h
 $(cdir)/cgemm_fermi.$(o_ext): $(cdir)/cgemm_fermi_kernels.h $(cdir)/gemm_stencil.cuh $(cdir)/gemm_kernel.cuh $(cdir)/gemm_stencil_defs.h

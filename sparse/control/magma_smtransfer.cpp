@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from sparse/control/magma_zmtransfer.cpp, normal z -> s, Sun Mar 29 20:48:35 2020
+       @generated from sparse/control/magma_zmtransfer.cpp, normal z -> s, Thu Oct  8 23:05:53 2020
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"
@@ -57,7 +57,10 @@ magma_smtransfer(
     // make sure the target structure is empty
     magma_smfree( B, queue );
     B->ownership = MagmaTrue;
-    
+
+    // Initialize bufsize to -1; buf is not allocated; cuSparse handle is not created
+    //B->bufsize = -1;
+
     B->val = NULL;
     B->diag = NULL;
     B->row = NULL;

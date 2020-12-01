@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from sparse/blas/magma_zmatrixtools_gpu.cu, normal z -> s, Sun Mar 29 20:48:34 2020
+       @generated from sparse/blas/magma_zmatrixtools_gpu.cu, normal z -> s, Thu Oct  8 23:05:49 2020
 
 */
 #include "magmasparse_internal.h"

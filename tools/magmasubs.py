@@ -168,6 +168,8 @@ lapack = [
     ('sbdsdc',         'dbdsdc',         'sbdsdc',         'dbdsdc'          ),
     ('sbdsqr',         'dbdsqr',         'cbdsqr',         'zbdsqr'          ),
     ('sbdt01',         'dbdt01',         'cbdt01',         'zbdt01'          ),
+    ('sdiinertia',     'ddiinertia',     'cdiinertia',     'zdiinertia'      ),
+    ('ssidi',          'dsidi',          'ssidi',          'dsidi'           ),
     ('sgbbrd',         'dgbbrd',         'cgbbrd',         'zgbbrd'          ),
     ('sgbsv',          'dgbsv',          'cgbsv',          'zgbsv'           ),
     ('sgebak',         'dgebak',         'cgebak',         'zgebak'          ),
@@ -295,6 +297,7 @@ lapack = [
     ('ssygv',          'dsygv',          'chegv',          'zhegv'           ),
     ('ssysv',          'dsysv',          'csysv',          'zsysv'           ),
     ('ssyt21',         'dsyt21',         'chet21',         'zhet21'          ),
+    ('ssyt22',         'dsyt22',         'chet22',         'zhet22'          ),
     ('ssytd2',         'dsytd2',         'chetd2',         'zhetd2'          ),
     ('ssytf2',         'dsytf2',         'chetf2',         'zhetf2'          ),
     ('ssytf2',         'dsytf2',         'csytf2',         'zsytf2'          ),
@@ -489,6 +492,7 @@ subs = {
     ('real',                 'double precision',     'real',                 'double precision'    ),  # before double
     ('float',                'double',               'float _Complex',       'double _Complex'     ),
     ('float',                'double',               'cuFloatComplex',       'cuDoubleComplex'     ),
+    ('CUDA_R_32F',           'CUDA_R_64F',           'CUDA_C_32F',           'CUDA_C_64F'          ),
     ('float',                'double',               'MKL_Complex8',         'MKL_Complex16'       ),
     ('magmaFloat_const_ptr', 'magmaDouble_const_ptr','magmaFloatComplex_const_ptr', 'magmaDoubleComplex_const_ptr'),  # before magmaDoubleComplex
     ('magmaFloat_const_ptr', 'magmaDouble_const_ptr','magmaFloat_const_ptr',        'magmaDouble_const_ptr'       ),  # before magmaDoubleComplex
@@ -518,6 +522,7 @@ subs = {
     ('scheck',         'dcheck',         'ccheck',         'zcheck'          ),
     ('SCODELETS',      'DCODELETS',      'CCODELETS',      'ZCODELETS'       ),
     ('sgeadd',         'dgeadd',         'cgeadd',         'zgeadd'          ),
+    ('sgeam',          'dgeam',          'cgeam',          'zgeam'           ),
     ('sgecfi',         'dgecfi',         'cgecfi',         'zgecfi'          ),
     ('SGERBT',         'DGERBT',         'CGERBT',         'ZGERBT'          ),
     ('sgerbt',         'dgerbt',         'cgerbt',         'zgerbt'          ),

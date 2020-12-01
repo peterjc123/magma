@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from testing/testing_ztrsm_batched.cpp, normal z -> c, Sun Mar 29 20:48:33 2020
+       @generated from testing/testing_ztrsm_batched.cpp, normal z -> c, Thu Oct  8 23:05:45 2020
        @author Chongxiao Cao
        @author Tingxing Dong
        @author Azzam Haidar
@@ -51,14 +51,14 @@ int main( int argc, char** argv)
     magma_int_t *ipiv;
 
     magmaFloatComplex c_zero = MAGMA_C_ZERO;
-    
+
     magmaFloatComplex *h_A, *h_B, *h_Bcublas, *h_Bmagma, *h_Blapack, *h_X;
     magmaFloatComplex *d_A, *d_B;
     magmaFloatComplex **h_A_array = NULL;
     magmaFloatComplex **h_B_array = NULL;
     magmaFloatComplex **d_A_array = NULL;
     magmaFloatComplex **d_B_array = NULL;
-    
+
     magmaFloatComplex **dW1_displ  = NULL;
     magmaFloatComplex **dW2_displ  = NULL;
     magmaFloatComplex **dW3_displ  = NULL;
@@ -75,7 +75,7 @@ int main( int argc, char** argv)
     magma_opts opts( MagmaOptsBatched );
     opts.parse_opts( argc, argv );
     batchCount = opts.batchcount;
-    
+
     float tol = opts.tolerance * lapackf77_slamch("E");
     printf("%% side = %s, uplo = %s, transA = %s, diag = %s \n",
            lapack_side_const(opts.side), lapack_uplo_const(opts.uplo),
@@ -95,9 +95,9 @@ int main( int argc, char** argv)
                 lda = N;
                 Ak  = N;
             }
-            
+
             ldb = M;
-            
+
             ldda = magma_roundup( lda, opts.align );  // multiple of 32 by default
             lddb = magma_roundup( ldb, opts.align );  // multiple of 32 by default
 
@@ -112,33 +112,35 @@ int main( int argc, char** argv)
             TESTING_CHECK( magma_cmalloc_cpu( &h_Bcublas, sizeB   ));
             TESTING_CHECK( magma_cmalloc_cpu( &h_Bmagma,  sizeB   ));
             TESTING_CHECK( magma_imalloc_cpu( &ipiv,      Ak      ));
-            
+
             TESTING_CHECK( magma_cmalloc( &d_A,       ldda*Ak*batchCount ));
             TESTING_CHECK( magma_cmalloc( &d_B,       lddb*N*batchCount  ));
-            
+
             TESTING_CHECK( magma_malloc_cpu( (void**) &h_A_array,   batchCount * sizeof(magmaFloatComplex*) ));
             TESTING_CHECK( magma_malloc_cpu( (void**) &h_B_array,   batchCount * sizeof(magmaFloatComplex*) ));
 
             TESTING_CHECK( magma_malloc( (void**) &d_A_array,   batchCount * sizeof(magmaFloatComplex*) ));
             TESTING_CHECK( magma_malloc( (void**) &d_B_array,   batchCount * sizeof(magmaFloatComplex*) ));
-            
-            TESTING_CHECK( magma_malloc( (void**) &dW1_displ,   batchCount * sizeof(magmaFloatComplex*) ));
-            TESTING_CHECK( magma_malloc( (void**) &dW2_displ,   batchCount * sizeof(magmaFloatComplex*) ));
-            TESTING_CHECK( magma_malloc( (void**) &dW3_displ,   batchCount * sizeof(magmaFloatComplex*) ));
-            TESTING_CHECK( magma_malloc( (void**) &dW4_displ,   batchCount * sizeof(magmaFloatComplex*) ));
-            TESTING_CHECK( magma_malloc( (void**) &dinvA_array, batchCount * sizeof(magmaFloatComplex*) ));
-            TESTING_CHECK( magma_malloc( (void**) &dwork_array, batchCount * sizeof(magmaFloatComplex*) ));
 
             magmaFloatComplex* dinvA=NULL;
             magmaFloatComplex* dwork=NULL; // invA and work are workspace in ctrsm
- 
             magma_int_t dinvA_batchSize = magma_roundup( Ak, TRI_NB )*TRI_NB;
             magma_int_t dwork_batchSize = lddb*N;
-            TESTING_CHECK( magma_cmalloc( &dinvA, dinvA_batchSize * batchCount ));
-            TESTING_CHECK( magma_cmalloc( &dwork, dwork_batchSize * batchCount ));
-    
-            magma_cset_pointer( dwork_array, dwork, lddb, 0, 0, dwork_batchSize, batchCount, opts.queue );
-            magma_cset_pointer( dinvA_array, dinvA, magma_roundup( Ak, TRI_NB ), 0, 0, dinvA_batchSize, batchCount, opts.queue );
+            if(opts.version == 1) {
+                // these allocations are needed only for the inversion-based trsm
+                TESTING_CHECK( magma_malloc( (void**) &dW1_displ,   batchCount * sizeof(magmaFloatComplex*) ));
+                TESTING_CHECK( magma_malloc( (void**) &dW2_displ,   batchCount * sizeof(magmaFloatComplex*) ));
+                TESTING_CHECK( magma_malloc( (void**) &dW3_displ,   batchCount * sizeof(magmaFloatComplex*) ));
+                TESTING_CHECK( magma_malloc( (void**) &dW4_displ,   batchCount * sizeof(magmaFloatComplex*) ));
+
+                TESTING_CHECK( magma_malloc( (void**) &dinvA_array, batchCount * sizeof(magmaFloatComplex*) ));
+                TESTING_CHECK( magma_malloc( (void**) &dwork_array, batchCount * sizeof(magmaFloatComplex*) ));
+                TESTING_CHECK( magma_cmalloc( &dinvA, dinvA_batchSize * batchCount ));
+                TESTING_CHECK( magma_cmalloc( &dwork, dwork_batchSize * batchCount ));
+
+                magma_cset_pointer( dwork_array, dwork, lddb, 0, 0, dwork_batchSize, batchCount, opts.queue );
+                magma_cset_pointer( dinvA_array, dinvA, magma_roundup( Ak, TRI_NB ), 0, 0, dinvA_batchSize, batchCount, opts.queue );
+            }
 
             memset( h_Bmagma, 0, batchCount*ldb*N*sizeof(magmaFloatComplex) );
             magmablas_claset( MagmaFull, lddb, N*batchCount, c_zero, c_zero, dwork, lddb, opts.queue );
@@ -160,7 +162,7 @@ int main( int argc, char** argv)
 
             lapackf77_clarnv( &ione, ISEED, &sizeB, h_B );
             memcpy( h_Blapack, h_B, sizeB*sizeof(magmaFloatComplex) );
-            
+
             /* =====================================================================
                Performs operation using MAGMABLAS
                =================================================================== */
@@ -169,7 +171,6 @@ int main( int argc, char** argv)
 
             magma_cset_pointer( d_A_array, d_A, ldda, 0, 0, ldda*Ak, batchCount, opts.queue );
             magma_cset_pointer( d_B_array, d_B, lddb, 0, 0, lddb*N, batchCount, opts.queue );
-            magma_cset_pointer( dwork_array, dwork, lddb, 0, 0, lddb*N, batchCount, opts.queue );
 
             magma_time = magma_sync_wtime( opts.queue );
             if (opts.version == 1) {
@@ -198,30 +199,25 @@ int main( int argc, char** argv)
                 magma_perf = gflops / magma_time;
                 magma_cgetmatrix( M, N*batchCount, d_B, lddb, h_Bmagma, ldb, opts.queue );
             }
-       
+
             /* =====================================================================
                Performs operation using CUBLAS
                =================================================================== */
             magma_csetmatrix( M, N*batchCount, h_B, ldb, d_B, lddb, opts.queue );
             magma_cset_pointer( d_B_array, d_B, lddb, 0, 0, lddb*N, batchCount, opts.queue );
 
-            // CUBLAS version <= 6.0 has magmaFloatComplex **            dA_array, no cast needed.
-            // CUBLAS version    6.5 has magmaFloatComplex const**       dA_array, requiring cast.
-            // Correctly, it should be   magmaFloatComplex const* const* dA_array, to avoid requiring cast.
-            #if CUDA_VERSION >= 6050
-                cublas_time = magma_sync_wtime( opts.queue );
-                cublasCtrsmBatched(
-                    opts.handle, cublas_side_const(opts.side), cublas_uplo_const(opts.uplo),
-                    cublas_trans_const(opts.transA), cublas_diag_const(opts.diag),
-                    int(M), int(N), &alpha,
-                    (const magmaFloatComplex**) d_A_array, int(ldda),
-                    d_B_array, int(lddb), int(batchCount) );
-                cublas_time = magma_sync_wtime( opts.queue ) - cublas_time;
-                cublas_perf = gflops / cublas_time;
-            #endif
+            cublas_time = magma_sync_wtime( opts.queue );
+            cublasCtrsmBatched(
+                opts.handle, cublas_side_const(opts.side), cublas_uplo_const(opts.uplo),
+                cublas_trans_const(opts.transA), cublas_diag_const(opts.diag),
+                int(M), int(N), (const cuFloatComplex*)&alpha,
+                (cuFloatComplex* const*) d_A_array, int(ldda),
+                (      cuFloatComplex**) d_B_array, int(lddb), int(batchCount) );
+            cublas_time = magma_sync_wtime( opts.queue ) - cublas_time;
+            cublas_perf = gflops / cublas_time;
 
             magma_cgetmatrix( M, N*batchCount, d_B, lddb, h_Bcublas, ldb, opts.queue );
-            
+
             /* =====================================================================
                Performs operation using CPU BLAS
                =================================================================== */
@@ -232,15 +228,15 @@ int main( int argc, char** argv)
                     h_B_array[s] = h_Blapack + s * ldb * N;
                 }
                 cpu_time = magma_wtime();
-                blas_ctrsm_batched( 
-                    opts.side, opts.uplo, opts.transA, opts.diag, 
-                    M, N, 
-                    alpha, h_A_array, lda, 
+                blas_ctrsm_batched(
+                    opts.side, opts.uplo, opts.transA, opts.diag,
+                    M, N,
+                    alpha, h_A_array, lda,
                            h_B_array, ldb, batchCount );
                 cpu_time = magma_wtime() - cpu_time;
                 cpu_perf = gflops / cpu_time;
             }
-            
+
             /* =====================================================================
                Check the result
                =================================================================== */
@@ -275,7 +271,6 @@ int main( int argc, char** argv)
 
             memcpy( h_X, h_Bcublas, sizeB*sizeof(magmaFloatComplex) );
             // check cublas
-            #if CUDA_VERSION >= 6050
             for (int s=0; s < batchCount; s++) {
                 normA = lapackf77_clantr( "M",
                                           lapack_uplo_const(opts.uplo),
@@ -294,7 +289,6 @@ int main( int argc, char** argv)
                 error = normR/(normX*normA);
                 cublas_error = magma_max_nan( error, cublas_error );
             }
-            #endif
             bool okay = (magma_error < tol && cublas_error < tol);
             status += ! okay;
 
@@ -314,7 +308,7 @@ int main( int argc, char** argv)
                         &M, &N, &inv_alpha,
                         h_A + s*lda*Ak, &lda,
                         h_X + s*ldb*N,  &ldb );
-    
+
                     blasf77_caxpy( &NN, &c_neg_one, h_B + s*ldb*N, &ione, h_X + s*ldb*N, &ione );
                     normR = lapackf77_clange( "M", &M, &N, h_X + s*ldb*N,       &ldb, work );
                     normX = lapackf77_clange( "M", &M, &N, h_Blapack + s*ldb*N, &ldb, work );
@@ -338,7 +332,7 @@ int main( int argc, char** argv)
                         magma_error, cublas_error,
                         (okay ? "ok" : "failed"));
             }
-            
+
             magma_free_cpu( h_A );
             magma_free_cpu( h_B );
             magma_free_cpu( h_X );
@@ -348,22 +342,24 @@ int main( int argc, char** argv)
             magma_free_cpu( ipiv );
             magma_free_cpu( h_A_array );
             magma_free_cpu( h_B_array );
-            
+
             magma_free( d_A );
             magma_free( d_B );
             magma_free( d_A_array );
             magma_free( d_B_array );
 
-            magma_free( dW1_displ );
-            magma_free( dW2_displ );
-            magma_free( dW3_displ );
-            magma_free( dW4_displ );
+            if(opts.version == 1) {
+                magma_free( dW1_displ );
+                magma_free( dW2_displ );
+                magma_free( dW3_displ );
+                magma_free( dW4_displ );
 
-            magma_free( dinvA );
-            magma_free( dwork );
-            magma_free( dwork_array );
-            magma_free( dinvA_array );
-            
+                magma_free( dinvA );
+                magma_free( dwork );
+                magma_free( dwork_array );
+                magma_free( dinvA_array );
+            }
+
             fflush( stdout );
         }
         if ( opts.niter > 1 ) {

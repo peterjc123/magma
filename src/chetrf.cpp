@@ -1,11 +1,13 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from src/zhetrf.cpp, normal z -> c, Sun Mar 29 20:48:29 2020
+       @author Ichi Yamazaki
+
+       @generated from src/zhetrf.cpp, normal z -> c, Thu Oct  8 23:05:26 2020
 */
 #include "magma_internal.h"
 #include "trace.h"
@@ -152,11 +154,10 @@ magma_chetrf(
     magma_getdevice( &cdev );
 
     magma_queue_t queues[2];
-    magma_event_t event[2];
+    magma_event_t event;
     magma_queue_create( cdev, &queues[0] );
     magma_queue_create( cdev, &queues[1] );
-    magma_event_create( &event[0] );
-    magma_event_create( &event[1] );
+    magma_event_create( &event );
     trace_init( 1, 1, 2, queues );
 
     /* copy matrix to GPU */
@@ -191,8 +192,15 @@ magma_chetrf(
                 /* Factorize columns k-kb+1:k of A and use blocked code to
                    update columns 1:k-kb */
 
-                magma_clahef_gpu( MagmaUpper, nk, kb, &kb, A( 0, 0 ), lda, dA( 0, 0 ), ldda,
-                                  &ipiv[0], dW, ldda, queues, event, &iinfo );
+                magma_clahef_gpu( MagmaUpper, nk, kb, &kb, dA( 0, 0 ), ldda,
+                                  &ipiv[0], dW, ldda, queues, &iinfo );
+
+                // copying the panel back to CPU
+                magma_event_record( event, queues[0] );
+                magma_queue_wait_event( queues[1], event );
+                trace_gpu_start( 0, 1, "get", "get" );
+                magma_cgetmatrix_async( nk, kb, dA(0,nk-kb), ldda, A(0,nk-kb), lda, queues[1] );  
+                trace_gpu_end( 0, 1 );
             } else {
                 /* Use unblocked code to factorize columns 1:k of A */
 
@@ -219,8 +227,15 @@ magma_chetrf(
             if ( k < n-nb ) {
                 /* Factorize columns k:k+kb-1 of A and use blocked code to
                    update columns k+kb:n */
-                magma_clahef_gpu( MagmaLower, nk, nb, &kb, A( k, k ), lda, dA( k, k ), ldda,
-                                  &ipiv[k], dW, ldda, queues, event, &iinfo );
+                magma_clahef_gpu( MagmaLower, nk, nb, &kb, dA( k, k ), ldda,
+                                  &ipiv[k], dW, ldda, queues, &iinfo );
+
+                // copying the panel back to CPU
+                magma_event_record( event, queues[0] );
+                magma_queue_wait_event( queues[1], event );
+                trace_gpu_start( 0, 1, "get", "get" );
+                magma_cgetmatrix_async( nk, kb, dA(k,k), ldda, A(k,k), lda, queues[1] );
+                trace_gpu_end( 0, 1 ); 
             }
             else {
                 /* Use unblocked code to factorize columns k:n of A */
@@ -244,8 +259,7 @@ magma_chetrf(
     trace_finalize( "chetrf.svg", "trace.css" );
     magma_queue_sync( queues[0] );
     magma_queue_sync( queues[1] );
-    magma_event_destroy( event[0] );
-    magma_event_destroy( event[1] );
+    magma_event_destroy( event );
     magma_queue_destroy( queues[0] );
     magma_queue_destroy( queues[1] );
     magma_free( dA );

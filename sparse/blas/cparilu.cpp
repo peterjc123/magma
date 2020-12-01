@@ -1,19 +1,43 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Hartwig Anzt
 
-       @generated from sparse/blas/zparilu.cpp, normal z -> c, Sun Mar 29 20:48:34 2020
+       @generated from sparse/blas/zparilu.cpp, normal z -> c, Thu Oct  8 23:05:48 2020
 */
 #include "magmasparse_internal.h"
 
 #define PRECISION_c
 
+#if CUDA_VERSION >= 11000
+#define cusparseCreateSolveAnalysisInfo(info) cusparseCreateCsrsm2Info(info)
+#else
+#define cusparseCreateSolveAnalysisInfo(info)                                                   \
+    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( info ))
+#endif
 
+// todo: info is passed; buf has to be passed; linfo is local so who has to use it (!= info)?
+#if CUDA_VERSION >= 11000
+#define cusparseCcsrsv_analysis(handle, trans, m, nnz, descr, val, row, col, info)              \
+    {                                                                                           \
+        csrsv2Info_t linfo = 0;                                                                 \
+        int bufsize;                                                                            \
+        void *buf;                                                                              \
+        cusparseCreateCsrsv2Info(&linfo);                                                       \
+        cusparseCcsrsv2_bufferSize(handle, trans, m, nnz, descr, val, row, col,                 \
+                                   linfo, &bufsize);                                            \
+        if (bufsize > 0)                                                                        \
+           magma_malloc(&buf, bufsize);                                                         \
+        cusparseCcsrsv2_analysis(handle, trans, m, nnz, descr, val, row, col, linfo,            \
+                                 CUSPARSE_SOLVE_POLICY_USE_LEVEL, buf);                         \
+        if (bufsize > 0)                                                                        \
+           magma_free(buf);                                                                     \
+    }
+#endif
 
 // This file is deprecated and will be removed in future.
 // The ParILU/ParIC functionality is provided by 
@@ -178,21 +202,21 @@ magma_cparilusetup(
     CHECK_CUSPARSE( cusparseSetMatDiagType( descrL, CUSPARSE_DIAG_TYPE_NON_UNIT ));
     CHECK_CUSPARSE( cusparseSetMatIndexBase( descrL, CUSPARSE_INDEX_BASE_ZERO ));
     CHECK_CUSPARSE( cusparseSetMatFillMode( descrL, CUSPARSE_FILL_MODE_LOWER ));
-    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &precond->cuinfoL ));
-    CHECK_CUSPARSE( cusparseCcsrsv_analysis( cusparseHandle,
-        CUSPARSE_OPERATION_NON_TRANSPOSE, precond->L.num_rows,
-        precond->L.nnz, descrL,
-        precond->L.val, precond->L.row, precond->L.col, precond->cuinfoL ));
+    cusparseCreateSolveAnalysisInfo( &precond->cuinfoL );
+    cusparseCcsrsv_analysis( cusparseHandle,
+                             CUSPARSE_OPERATION_NON_TRANSPOSE, precond->L.num_rows,
+                             precond->L.nnz, descrL,
+                             precond->L.val, precond->L.row, precond->L.col, precond->cuinfoL);
     CHECK_CUSPARSE( cusparseCreateMatDescr( &descrU ));
     CHECK_CUSPARSE( cusparseSetMatType( descrU, CUSPARSE_MATRIX_TYPE_TRIANGULAR ));
     CHECK_CUSPARSE( cusparseSetMatDiagType( descrU, CUSPARSE_DIAG_TYPE_NON_UNIT ));
     CHECK_CUSPARSE( cusparseSetMatIndexBase( descrU, CUSPARSE_INDEX_BASE_ZERO ));
     CHECK_CUSPARSE( cusparseSetMatFillMode( descrU, CUSPARSE_FILL_MODE_UPPER ));
-    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &precond->cuinfoU ));
-    CHECK_CUSPARSE( cusparseCcsrsv_analysis( cusparseHandle,
-        CUSPARSE_OPERATION_NON_TRANSPOSE, precond->U.num_rows,
-        precond->U.nnz, descrU,
-        precond->U.val, precond->U.row, precond->U.col, precond->cuinfoU ));
+    cusparseCreateSolveAnalysisInfo( &precond->cuinfoU );
+    cusparseCcsrsv_analysis( cusparseHandle,
+                             CUSPARSE_OPERATION_NON_TRANSPOSE, precond->U.num_rows,
+                             precond->U.nnz, descrU,
+                             precond->U.val, precond->U.row, precond->U.col, precond->cuinfoU);
     
     
 cleanup:
@@ -452,21 +476,21 @@ magma_cparicsetup(
     CHECK_CUSPARSE( cusparseSetMatDiagType( descrL, CUSPARSE_DIAG_TYPE_NON_UNIT ));
     CHECK_CUSPARSE( cusparseSetMatIndexBase( descrL, CUSPARSE_INDEX_BASE_ZERO ));
     CHECK_CUSPARSE( cusparseSetMatFillMode( descrL, CUSPARSE_FILL_MODE_LOWER ));
-    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &precond->cuinfoL ));
-    CHECK_CUSPARSE( cusparseCcsrsv_analysis( cusparseHandle,
-        CUSPARSE_OPERATION_NON_TRANSPOSE, precond->M.num_rows,
-        precond->M.nnz, descrL,
-        precond->M.val, precond->M.row, precond->M.col, precond->cuinfoL ));
+    cusparseCreateSolveAnalysisInfo( &precond->cuinfoL );
+    cusparseCcsrsv_analysis( cusparseHandle,
+                             CUSPARSE_OPERATION_NON_TRANSPOSE, precond->M.num_rows,
+                             precond->M.nnz, descrL,
+                             precond->M.val, precond->M.row, precond->M.col, precond->cuinfoL);
     CHECK_CUSPARSE( cusparseCreateMatDescr( &descrU ));
     CHECK_CUSPARSE( cusparseSetMatType( descrU, CUSPARSE_MATRIX_TYPE_TRIANGULAR ));
     CHECK_CUSPARSE( cusparseSetMatDiagType( descrU, CUSPARSE_DIAG_TYPE_NON_UNIT ));
     CHECK_CUSPARSE( cusparseSetMatIndexBase( descrU, CUSPARSE_INDEX_BASE_ZERO ));
     CHECK_CUSPARSE( cusparseSetMatFillMode( descrU, CUSPARSE_FILL_MODE_LOWER ));
-    CHECK_CUSPARSE( cusparseCreateSolveAnalysisInfo( &precond->cuinfoU ));
-    CHECK_CUSPARSE( cusparseCcsrsv_analysis( cusparseHandle,
-        CUSPARSE_OPERATION_TRANSPOSE, precond->M.num_rows,
-        precond->M.nnz, descrU,
-        precond->M.val, precond->M.row, precond->M.col, precond->cuinfoU ));
+    cusparseCreateSolveAnalysisInfo( &precond->cuinfoU );
+    cusparseCcsrsv_analysis( cusparseHandle,
+                             CUSPARSE_OPERATION_TRANSPOSE, precond->M.num_rows,
+                             precond->M.nnz, descrU,
+                             precond->M.val, precond->M.row, precond->M.col, precond->cuinfoU);
 
     
     cleanup:

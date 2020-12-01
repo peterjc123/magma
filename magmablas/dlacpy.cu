@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Mark Gates
        @author Azzam Haidar
-       
-       @generated from magmablas/zlacpy.cu, normal z -> d, Sun Mar 29 20:48:30 2020
+
+       @generated from magmablas/zlacpy.cu, normal z -> d, Thu Oct  8 23:05:34 2020
 
 */
 #include "magma_internal.h"
@@ -223,7 +223,7 @@ void dlacpy_full_kernel_vbatched(
     const int my_n = (int)n[batchid];
     if(blockIdx.x >= magma_ceildiv(my_m, BLK_X)) return;
     if(blockIdx.y >= magma_ceildiv(my_n, BLK_Y)) return;
-    
+
     dlacpy_full_device(my_m, my_n, dAarray[batchid], (int)ldda[batchid], dBarray[batchid], (int)lddb[batchid]);
 }
 
@@ -238,7 +238,7 @@ void dlacpy_lower_kernel_vbatched(
     const int my_n = (int)n[batchid];
     if(blockIdx.x >= magma_ceildiv(my_m, BLK_X)) return;
     if(blockIdx.y >= magma_ceildiv(my_n, BLK_Y)) return;
-    
+
     dlacpy_lower_device(my_m, my_n, dAarray[batchid], (int)ldda[batchid], dBarray[batchid], (int)lddb[batchid]);
 }
 
@@ -253,7 +253,7 @@ void dlacpy_upper_kernel_vbatched(
     const int my_n = (int)n[batchid];
     if(blockIdx.x >= magma_ceildiv(my_m, BLK_X)) return;
     if(blockIdx.y >= magma_ceildiv(my_n, BLK_Y)) return;
-    
+
     dlacpy_upper_device(my_m, my_n, dAarray[batchid], (int)ldda[batchid], dBarray[batchid], (int)lddb[batchid]);
 }
 
@@ -263,7 +263,7 @@ void dlacpy_upper_kernel_vbatched(
     -------
     DLACPY copies all or part of a two-dimensional matrix dA to another
     matrix dB.
-    
+
     Arguments
     ---------
     @param[in]
@@ -272,34 +272,34 @@ void dlacpy_upper_kernel_vbatched(
       -     = MagmaUpper:      Upper triangular part
       -     = MagmaLower:      Lower triangular part
       -     = MagmaFull:       All of the matrix dA
-    
+
     @param[in]
     m       INTEGER
             The number of rows of the matrix dA.  M >= 0.
-    
+
     @param[in]
     n       INTEGER
             The number of columns of the matrix dA.  N >= 0.
-    
+
     @param[in]
     dA      DOUBLE PRECISION array, dimension (LDDA,N)
             The M-by-N matrix dA.
             If UPLO = MagmaUpper, only the upper triangle or trapezoid is accessed;
             if UPLO = MagmaLower, only the lower triangle or trapezoid is accessed.
-    
+
     @param[in]
     ldda    INTEGER
             The leading dimension of the array dA.  LDDA >= max(1,M).
-    
+
     @param[out]
     dB      DOUBLE PRECISION array, dimension (LDDB,N)
             The M-by-N matrix dB.
             On exit, dB = dA in the locations specified by UPLO.
-    
+
     @param[in]
     lddb    INTEGER
             The leading dimension of the array dB.  LDDB >= max(1,M).
-    
+
     @param[in]
     queue   magma_queue_t
             Queue to execute in.
@@ -315,7 +315,7 @@ magmablas_dlacpy(
 {
     #define dA(i_, j_) (dA + (i_) + (j_)*ldda)
     #define dB(i_, j_) (dB + (i_) + (j_)*lddb)
-    
+
     magma_int_t info = 0;
     if ( uplo != MagmaLower && uplo != MagmaUpper && uplo != MagmaFull )
         info = -1;
@@ -327,23 +327,23 @@ magmablas_dlacpy(
         info = -5;
     else if ( lddb < max(1,m))
         info = -7;
-    
+
     if ( info != 0 ) {
         magma_xerbla( __func__, -(info) );
         return;  //info;
     }
-    
+
     if ( m == 0 || n == 0 ) {
         return;
     }
-    
+
     assert( BLK_X == BLK_Y );
     const magma_int_t super_NB = max_blocks*BLK_X;
     dim3 super_grid( magma_ceildiv( m, super_NB ), magma_ceildiv( n, super_NB ) );
-    
+
     dim3 threads( BLK_X, 1 );
     dim3 grid;
-    
+
     magma_int_t mm, nn;
     if ( uplo == MagmaLower ) {
         for( unsigned int i=0; i < super_grid.x; ++i ) {
@@ -401,49 +401,49 @@ magmablas_dlacpy(
     -------
     DLACPY_BATCHED copies all or part of each two-dimensional matrix
     dAarray[i] to matrix dBarray[i], for 0 <= i < batchcount.
-    
+
     Arguments
     ---------
-    
+
     @param[in]
     uplo    magma_uplo_t
             Specifies the part of each matrix dA to be copied to dB.
       -     = MagmaUpper:      Upper triangular part
       -     = MagmaLower:      Lower triangular part
             Otherwise:  All of each matrix dA
-    
+
     @param[in]
     m       INTEGER
             The number of rows of each matrix dA.  M >= 0.
-    
+
     @param[in]
     n       INTEGER
             The number of columns of each matrix dA.  N >= 0.
-    
+
     @param[in]
     dAarray DOUBLE PRECISION* array, dimension (batchCount)
             Array of pointers to the matrices dA, where each dA is of dimension (LDDA,N).
             The M-by-N matrix dA.
             If UPLO = MagmaUpper, only the upper triangle or trapezoid is accessed;
             if UPLO = MagmaLower, only the lower triangle or trapezoid is accessed.
-    
+
     @param[in]
     ldda    INTEGER
             The leading dimension of each array dA.  LDDA >= max(1,M).
-    
+
     @param[out]
     dBarray DOUBLE PRECISION* array, dimension (batchCount)
             Array of pointers to the matrices dB, where each dB is of dimension (LDDB,N).
             The M-by-N matrix dB.
             On exit, dB = dA in the locations specified by UPLO.
-    
+
     @param[in]
     lddb    INTEGER
             The leading dimension of each array dB.  LDDB >= max(1,M).
-    
+
     @param[in]
     batchCount  Number of matrices in dAarray and dBarray.
-    
+
     @param[in]
     queue   magma_queue_t
             Queue to execute in.
@@ -470,33 +470,35 @@ magmablas_dlacpy_batched(
         info = -7;
     else if ( batchCount < 0 )
         info = -8;
-    
+
     if ( info != 0 ) {
         magma_xerbla( __func__, -(info) );
         return;
     }
-    
+
     if ( m == 0 || n == 0 || batchCount == 0 ) {
         return;
     }
-    
+
     dim3 threads( BLK_X, 1, 1 );
-    dim3 grid( magma_ceildiv( m, BLK_X ), magma_ceildiv( n, BLK_Y ), batchCount );
-    
-    if ( uplo == MagmaLower ) {
-        dlacpy_lower_kernel_batched
-            <<< grid, threads, 0, queue->cuda_stream() >>>
-            ( m, n, dAarray, ldda, dBarray, lddb );
-    }
-    else if ( uplo == MagmaUpper ) {
-        dlacpy_upper_kernel_batched
-            <<< grid, threads, 0, queue->cuda_stream() >>>
-            ( m, n, dAarray, ldda, dBarray, lddb );
-    }
-    else {
-        dlacpy_full_kernel_batched
-            <<< grid, threads, 0, queue->cuda_stream() >>>
-            ( m, n, dAarray, ldda, dBarray, lddb );
+    magma_int_t max_batchCount = queue->get_maxBatch();
+
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 grid( magma_ceildiv( m, BLK_X ), magma_ceildiv( n, BLK_Y ), ibatch );
+
+        if ( uplo == MagmaLower ) {
+            dlacpy_lower_kernel_batched<<< grid, threads, 0, queue->cuda_stream() >>>
+            ( m, n, dAarray+i, ldda, dBarray+i, lddb );
+        }
+        else if ( uplo == MagmaUpper ) {
+            dlacpy_upper_kernel_batched<<< grid, threads, 0, queue->cuda_stream() >>>
+            ( m, n, dAarray+i, ldda, dBarray+i, lddb );
+        }
+        else {
+            dlacpy_full_kernel_batched<<< grid, threads, 0, queue->cuda_stream() >>>
+            ( m, n, dAarray+i, ldda, dBarray+i, lddb );
+        }
     }
 }
 
@@ -506,57 +508,57 @@ magmablas_dlacpy_batched(
     DLACPY_VBATCHED copies all or part of each two-dimensional matrix
     dAarray[i] to matrix dBarray[i], for 0 <= i < batchcount.
     Matrices are assumed to generally have different sizes/leading dimensions
-    
+
     Arguments
     ---------
-    
+
     @param[in]
     uplo    magma_uplo_t
             Specifies the part of each matrix dA to be copied to dB.
       -     = MagmaUpper:      Upper triangular part
       -     = MagmaLower:      Lower triangular part
             Otherwise:  All of each matrix dA
-    
+
     @param[in]
     max_m   INTEGER.
             maximum value of m.
-    
+
     @param[in]
     max_n   INTEGER.
             maximum value of n.
-    
+
     @param[in]
     m       INTEGER array, dimension (batchCount).
             Each is the number of rows of each matrix dA.  M >= 0.
-    
+
     @param[in]
     n       INTEGER array, dimension (batchCount).
             The number of columns of each matrix dA.  N >= 0.
-    
+
     @param[in]
     dAarray Array of pointers , dimension (batchCount)
             Each is a DOUBLE PRECISION array dA, where the ith matrix dA is of dimension (ldda[i],n[i]).
             The M-by-N matrix dA.
             If UPLO = MagmaUpper, only the upper triangle or trapezoid is accessed;
             if UPLO = MagmaLower, only the lower triangle or trapezoid is accessed.
-    
+
     @param[in]
     ldda    INTEGER array, dimension (batchCount).
             Each is the leading dimension of each array dA. For the ith matrix dA ldda[i] >= max(1,m[i]).
-    
+
     @param[out]
-    dBarray Array of pointers, dimension(batchCount). 
+    dBarray Array of pointers, dimension(batchCount).
             Each is a DOUBLE PRECISION array dB, where the ith matrix dB is of dimension (lddb[i],n[i]).
             The M-by-N matrix dB.
             On exit, dB = dA in the locations specified by UPLO.
-    
+
     @param[in]
     lddb    INTEGER array, dimension (batchCount).
             Each is the leading dimension of each array dB. For the ith matrix dB lddb[i] >= max(1,m[i]).
-    
+
     @param[in]
     batchCount  Number of matrices in dAarray and dBarray.
-    
+
     @param[in]
     queue   magma_queue_t
             Queue to execute in.
@@ -565,8 +567,8 @@ magmablas_dlacpy_batched(
 *******************************************************************************/
 extern "C" void
 magmablas_dlacpy_vbatched(
-    magma_uplo_t uplo, 
-    magma_int_t max_m, magma_int_t max_n, 
+    magma_uplo_t uplo,
+    magma_int_t max_m, magma_int_t max_n,
     magma_int_t* m, magma_int_t* n,
     double const * const * dAarray, magma_int_t* ldda,
     double**               dBarray, magma_int_t* lddb,
@@ -585,26 +587,35 @@ magmablas_dlacpy_vbatched(
     //    info = -7;
     else if ( batchCount < 0 )
         info = -8;
-    
+
     if ( info != 0 ) {
         magma_xerbla( __func__, -(info) );
         return;
     }
-    
+
     if ( max_m == 0 || max_n == 0 || batchCount == 0 ) {
         return;
     }
-    
+
     dim3 threads( BLK_X, 1, 1 );
-    dim3 grid( magma_ceildiv( max_m, BLK_X ), magma_ceildiv( max_n, BLK_Y ), batchCount );
-    
-    if ( uplo == MagmaLower ) {
-        dlacpy_lower_kernel_vbatched<<< grid, threads, 0, queue->cuda_stream() >>> ( m, n, dAarray, ldda, dBarray, lddb );
-    }
-    else if ( uplo == MagmaUpper ) {
-        dlacpy_upper_kernel_vbatched<<< grid, threads, 0, queue->cuda_stream() >>> ( m, n, dAarray, ldda, dBarray, lddb );
-    }
-    else {
-        dlacpy_full_kernel_vbatched <<< grid, threads, 0, queue->cuda_stream() >>> ( m, n, dAarray, ldda, dBarray, lddb );
+
+    magma_int_t max_batchCount = queue->get_maxBatch();
+
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 grid( magma_ceildiv( max_m, BLK_X ), magma_ceildiv( max_n, BLK_Y ), ibatch );
+
+        if ( uplo == MagmaLower ) {
+            dlacpy_lower_kernel_vbatched<<< grid, threads, 0, queue->cuda_stream() >>>
+            ( m+i, n+i, dAarray+i, ldda+i, dBarray+i, lddb+i );
+        }
+        else if ( uplo == MagmaUpper ) {
+            dlacpy_upper_kernel_vbatched<<< grid, threads, 0, queue->cuda_stream() >>>
+            ( m+i, n+i, dAarray+i, ldda+i, dBarray+i, lddb+i );
+        }
+        else {
+            dlacpy_full_kernel_vbatched <<< grid, threads, 0, queue->cuda_stream() >>>
+            ( m+i, n+i, dAarray+i, ldda+i, dBarray+i, lddb+i );
+        }
     }
 }

@@ -1,16 +1,37 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from sparse/control/magma_zmtranspose.cpp, normal z -> d, Sun Mar 29 20:48:35 2020
+       @generated from sparse/control/magma_zmtranspose.cpp, normal z -> d, Thu Oct  8 23:05:51 2020
        @author Hartwig Anzt
        @author Mark Gates
 
 */
 #include "magmasparse_internal.h"
+
+#include <cuda.h>  // for CUDA_VERSION
+
+// todo: check if we need buf later
+#if CUDA_VERSION >= 11000
+#define cusparseDcsr2csc(handle, m, n, nnz, valA, rowA, colA, valB, rowB, colB,                \
+                         action, base)                                                         \
+    {                                                                                          \
+        size_t bufsize;                                                                        \
+        void *buf;                                                                             \
+        cusparseCsr2cscEx2_bufferSize(handle, m, n, nnz, valA, rowA, colA,                     \
+                                      valB, rowB, colB, CUDA_R_64F, action, base,              \
+                                      CUSPARSE_CSR2CSC_ALG1, &bufsize);                        \
+        if (bufsize > 0)                                                                       \
+           magma_malloc(&buf, bufsize);                                                        \
+        cusparseCsr2cscEx2(handle, m, n, nnz, valA, rowA, colA, valB, rowB, colB,              \
+                           CUDA_R_64F, action, base, CUSPARSE_CSR2CSC_ALG1, buf);              \
+        if (bufsize > 0)                                                                       \
+           magma_free(buf);                                                                    \
+    }
+#endif
 
 /**
     Purpose
@@ -297,11 +318,10 @@ magma_d_cucsrtranspose(
         CHECK_CUSPARSE( cusparseSetMatType( descrB, CUSPARSE_MATRIX_TYPE_GENERAL ));
         CHECK_CUSPARSE( cusparseSetMatIndexBase( descrA, CUSPARSE_INDEX_BASE_ZERO ));
         CHECK_CUSPARSE( cusparseSetMatIndexBase( descrB, CUSPARSE_INDEX_BASE_ZERO ));
-        CHECK_CUSPARSE(
         cusparseDcsr2csc( handle, A.num_rows, A.num_cols, A.nnz,
                           A.dval, A.drow, A.dcol, B->dval, B->dcol, B->drow,
                           CUSPARSE_ACTION_NUMERIC,
-                          CUSPARSE_INDEX_BASE_ZERO) );
+                          CUSPARSE_INDEX_BASE_ZERO);
     } else if ( A.storage_type == Magma_CSR && A.memory_location == Magma_CPU ){
         CHECK( magma_dmtransfer( A, &dA, A.memory_location, Magma_DEV, queue ));
         CHECK( magma_d_cucsrtranspose( dA, &dB, queue ));
@@ -406,11 +426,10 @@ magma_dmtransposeconjugate(
         CHECK_CUSPARSE( cusparseSetMatType( descrB, CUSPARSE_MATRIX_TYPE_GENERAL ));
         CHECK_CUSPARSE( cusparseSetMatIndexBase( descrA, CUSPARSE_INDEX_BASE_ZERO ));
         CHECK_CUSPARSE( cusparseSetMatIndexBase( descrB, CUSPARSE_INDEX_BASE_ZERO ));
-        CHECK_CUSPARSE(
         cusparseDcsr2csc( handle, A.num_rows, A.num_cols, A.nnz,
                           A.dval, A.drow, A.dcol, B->dval, B->dcol, B->drow,
                           CUSPARSE_ACTION_NUMERIC,
-                          CUSPARSE_INDEX_BASE_ZERO) );
+                          CUSPARSE_INDEX_BASE_ZERO);
         CHECK( magma_dmconjugate( B, queue ));
     } else if ( A.memory_location == Magma_CPU ){
         CHECK( magma_dmtransfer( A, &dA, A.memory_location, Magma_DEV, queue ));

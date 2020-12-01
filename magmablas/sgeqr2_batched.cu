@@ -1,14 +1,14 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Azzam Haidar
        @author Tingxing Dong
 
-       @generated from magmablas/zgeqr2_batched.cu, normal z -> s, Sun Mar 29 20:48:31 2020
+       @generated from magmablas/zgeqr2_batched.cu, normal z -> s, Thu Oct  8 23:05:36 2020
 */
 
 #include "magma_internal.h"
@@ -35,7 +35,7 @@ void slarfx_device(
     const int tx = threadIdx.x;
 
     float lsum;
-    
+
     for (int k=0; k < n; k++)
     {
         /* perform  w := v' * C  */
@@ -82,12 +82,12 @@ void sgeqr2_device( magma_int_t m, magma_int_t n,
 {
     //lapack slarfg, compute the norm, scale and generate the householder vector
     slarfg_device(m, dv, &(dv[1]), 1, dtau, swork, sscale, scale);
-    
+
     __syncthreads();
-    
+
     //update the trailing matix with the householder
     slarfx_device(m, n, dv, dtau, dA, lda, sum);
-    
+
     __syncthreads();
 }
 
@@ -113,7 +113,7 @@ void sgeqr2_sm_kernel_batched( int m, int n, float** dA_array, magma_int_t lda,
 
     __shared__ float swork[ BLOCK_SIZE ];
     __shared__ float sscale;
-    
+
     //load data from global to shared memory
     for (int s=0; s < n; s++)
     {
@@ -125,7 +125,7 @@ void sgeqr2_sm_kernel_batched( int m, int n, float** dA_array, magma_int_t lda,
 
 
     __syncthreads();
- 
+
     for (int s=0; s < min(m,n); s++)
     {
         sgeqr2_device( m-s, n-(s+1),
@@ -175,9 +175,9 @@ void sgeqr2_column_sm_kernel_batched( int m, int n, float** dA_array, magma_int_
         {
             sdata[j] = dA[s + j + s * lda];
         }
-        
+
         __syncthreads();
-        
+
         //sdata is written
         sgeqr2_device(m-s, n-(s+1),
                                 &(dA[s+(s+1)*lda]), lda,
@@ -187,14 +187,14 @@ void sgeqr2_column_sm_kernel_batched( int m, int n, float** dA_array, magma_int_
                                 swork,
                                 &scale,
                                 &sscale);
-        
+
         for (int j = tx; j < m-s; j += BLOCK_SIZE)
         {
             dA[s + j + s * lda] = sdata[j];
         }
-        
+
         __syncthreads();
-    }  
+    }
 }
 
 
@@ -300,8 +300,8 @@ void sgeqr2_kernel_batched( int m, int n, float** dA_array, magma_int_t lda,
     @ingroup magma_geqr2_batched
 *******************************************************************************/
 extern "C" magma_int_t
-magma_sgeqr2_batched(magma_int_t m, magma_int_t n, 
-                     float **dA_array, magma_int_t ldda, 
+magma_sgeqr2_batched(magma_int_t m, magma_int_t n,
+                     float **dA_array, magma_int_t ldda,
                      float **dtau_array,
                      magma_int_t *info_array, magma_int_t batchCount, magma_queue_t queue)
 {
@@ -323,28 +323,34 @@ magma_sgeqr2_batched(magma_int_t m, magma_int_t n,
 
     k = min(m,n);
 
-    dim3 blocks(1, 1, batchCount);
+    magma_int_t max_batchCount = queue->get_maxBatch();
     dim3 threads(BLOCK_SIZE);
 
-    if (sizeof(float)*(m*k) <= 42000 /*sizeof(float) * 128 * k*/) // there are some static shared memory besides of dynamic ones
-    {
-        //load panel in shared memory and factorize it and copy back to gloabl memory
-        //intend for small panel to avoid overfill of shared memory.
-        //this kernel is composed of device routine and thus clean
-        sgeqr2_sm_kernel_batched<<< blocks, threads, sizeof(float)*(m*k), queue->cuda_stream() >>>
-                                      (m, k, dA_array, ldda, dtau_array);
-    }
-    else
-    {
-        //load one column vector in shared memory and householder it and used it to update trailing matrix which is global memory
-        // one vector is normally smaller than  48K shared memory
-        if (sizeof(float)*(m) < 42000)
-            sgeqr2_column_sm_kernel_batched<<< blocks, threads, sizeof(float)*(m), queue->cuda_stream() >>>
-                                      (m, k, dA_array, ldda, dtau_array);
-        else
-            //not use dynamic shared memory at all
-            sgeqr2_kernel_batched<<< blocks, threads, 0, queue->cuda_stream() >>>
-                                      (m, k, dA_array, ldda, dtau_array);
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 grid(1, 1, ibatch);
+
+        if (sizeof(float)*(m*k) <= 42000 /*sizeof(float) * 128 * k*/) {
+            // there are some static shared memory besides of dynamic ones
+            //load panel in shared memory and factorize it and copy back to gloabl memory
+            //intend for small panel to avoid overfill of shared memory.
+            //this kernel is composed of device routine and thus clean
+            sgeqr2_sm_kernel_batched<<< grid, threads, sizeof(float)*(m*k), queue->cuda_stream() >>>
+            (m, k, dA_array+i, ldda, dtau_array+i);
+        }
+        else {
+            //load one column vector in shared memory and householder it and used it to update trailing matrix which is global memory
+            // one vector is normally smaller than  48K shared memory
+            if (sizeof(float)*(m) < 42000) {
+                sgeqr2_column_sm_kernel_batched<<< grid, threads, sizeof(float)*(m), queue->cuda_stream() >>>
+                (m, k, dA_array+i, ldda, dtau_array+i);
+            }
+            else {
+                //not use dynamic shared memory at all
+                sgeqr2_kernel_batched<<< grid, threads, 0, queue->cuda_stream() >>>
+                (m, k, dA_array+i, ldda, dtau_array+i);
+            }
+        }
     }
 
     return arginfo;

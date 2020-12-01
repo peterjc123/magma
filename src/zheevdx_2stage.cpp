@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Azzam Haidar
        @author Stan Tomov
@@ -201,6 +201,7 @@ magma_zheevdx_2stage(
     
     const char* uplo_  = lapack_uplo_const( uplo  );
     const char* jobz_  = lapack_vec_const( jobz  );
+    const char* range_ = lapack_range_const( range );
     magmaDoubleComplex c_one  = MAGMA_Z_ONE;
     magma_int_t ione = 1;
     magma_int_t izero = 0;
@@ -245,9 +246,6 @@ magma_zheevdx_2stage(
 
     sizTAU1                      = n;
     ldz                          = n;
-
-    //magma_int_t sizZ;
-    //sizZ                         = wantz == 0 ? 0 : n*ldz;
 
     #ifdef COMPLEX
     lquery = (lwork == -1 || lrwork == -1 || liwork == -1);
@@ -351,18 +349,34 @@ magma_zheevdx_2stage(
     if ( ( ntiles < 2 ) || ( n <= 128 ) ) {
         #ifdef ENABLE_DEBUG
         printf("--------------------------------------------------------------\n");
-        printf("  warning matrix too small N=%lld NB=%lld, calling lapack on CPU\n", (long long) n, (long long) nb );
+        printf("  warning matrix too small N=%lld NB=%lld, calling lapack on CPU\n", 
+               (long long) n, (long long) nb );
         printf("--------------------------------------------------------------\n");
         #endif
-        lapackf77_zheevd(jobz_, uplo_, &n,
-                        A, &lda, W,
-                        work, &lwork,
-                        #ifdef COMPLEX
-                        rwork, &lrwork,
-                        #endif
-                        iwork, &liwork,
-                        info);
-        *m = n;
+        double abstol = 2 * lapackf77_dlamch("Safe minimum");
+        magma_int_t ldy = lda;
+        double* lapack_rwork;
+        magma_int_t* lapack_iwork;
+        magma_int_t* ifail;
+        magmaDoubleComplex* Y;
+        magma_dmalloc_cpu(&lapack_rwork, 7*n);
+        magma_imalloc_cpu(&lapack_iwork, 5*n);
+        magma_imalloc_cpu(&ifail, n);
+        magma_zmalloc_cpu(&Y, n*ldy);
+        lapackf77_zheevx(jobz_, range_, uplo_,
+                         &n, A, &lda, &vl, &vu, &il, &iu, &abstol, m,
+                         W, Y, &ldy, work, &lwork,
+                         #ifdef COMPLEX
+                         lapack_rwork,
+                         #endif
+                         lapack_iwork, ifail, info);
+        if( wantz ) {
+            lapackf77_zlacpy(MagmaFullStr, &n, m, Y, &ldy, A, &lda);
+        }
+        magma_free_cpu(lapack_rwork);
+        magma_free_cpu(lapack_iwork);
+        magma_free_cpu(ifail);
+        magma_free_cpu(Y);
         return *info;
     }
 
@@ -392,22 +406,6 @@ magma_zheevdx_2stage(
         lapackf77_zlascl(uplo_, &izero, &izero, &d_one, &sigma, &n, &n, A,
                          &lda, info);
     }
-
-
-/*
-    #ifdef COMPLEX
-    magma_int_t indTAU1 = 0;
-    #else
-    magma_int_t indTAU1 = n;
-    #endif
-    magma_int_t indTAU2 = indTAU1 + sizTAU1;
-    magma_int_t indV2   = indTAU2 + sizTAU2;
-    magma_int_t indT2   = indV2   + sizV2;
-    magma_int_t indWORK = indT2   + sizT2;
-    magma_int_t indA2   = indWORK;
-    magma_int_t indZ    = indWORK;
-    magma_int_t indWEDC = indZ   + sizZ;
-*/
 
     #ifdef COMPLEX
     double *E                 = rwork;
@@ -554,11 +552,13 @@ magma_zheevdx_2stage(
         magma_queue_destroy( queue );
 
         timer_stop( time );
-        timer_printf( "  N= %10lld  nb= %5lld time zunmqr + copy = %6.2f\n", (long long) n, (long long) nb, time );
+        timer_printf( "  N= %10lld  nb= %5lld time zunmqr + copy = %6.2f\n", 
+                      (long long) n, (long long) nb, time );
         magma_free(dZ);
         magma_free(dA);
         timer_stop( time_total );
-        timer_printf( "  N= %10lld  nb= %5lld time eigenvectors backtransf. = %6.2f\n", (long long) n, (long long) nb, time_total );
+        timer_printf( "  N= %10lld  nb= %5lld time eigenvectors backtransf. = %6.2f\n", 
+                      (long long) n, (long long) nb, time_total );
     }
 
     magma_free(dT1);

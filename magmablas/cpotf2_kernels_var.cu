@@ -1,14 +1,14 @@
 /*
-   -- MAGMA (version 2.5.3) --
+   -- MAGMA (version 2.5.4) --
    Univ. of Tennessee, Knoxville
    Univ. of California, Berkeley
    Univ. of Colorado, Denver
-   @date March 2020
+   @date October 2020
 
    @author Azzam Haidar
    @author Ahmad Abdelfattah
 
-   @generated from magmablas/zpotf2_kernels_var.cu, normal z -> c, Sun Mar 29 20:48:32 2020
+   @generated from magmablas/zpotf2_kernels_var.cu, normal z -> c, Thu Oct  8 23:05:38 2020
  */
 #define PRECISION_c
 
@@ -28,8 +28,8 @@
 #define MAX_NTCOL 1
 #include "cpotf2_devicesfunc.cuh"
 /////////////////////////////////////////////////////////////////////////////////////////////////
-__global__ void cpotf2_smlpout_kernel_vbatched_v2(int maxm, magma_int_t *m, 
-        magmaFloatComplex **dA_array, magma_int_t *lda, 
+__global__ void cpotf2_smlpout_kernel_vbatched_v2(int maxm, magma_int_t *m,
+        magmaFloatComplex **dA_array, magma_int_t *lda,
         int localstep, int gbstep, magma_int_t *info_array)
 {
     const int batchid   = blockIdx.z;
@@ -42,34 +42,34 @@ __global__ void cpotf2_smlpout_kernel_vbatched_v2(int maxm, magma_int_t *m,
     const int myib      = min(POTF2_NB, myrows);
 
     #ifndef VBATCH_DISABLE_THREAD_RETURN
-    const int tx = threadIdx.x; 
+    const int tx = threadIdx.x;
     if(tx >=  myrows) return;
     #else
-    if(myrows <= 0) return;   
+    if(myrows <= 0) return;
     #endif
-    
+
     if(myib == POTF2_NB)
         cpotf2_smlpout_fixwidth_device( myrows, dA_array[batchid]+mylocstep, dA_array[batchid]+mylocstep+mylocstep*mylda, mylda, mylocstep, gbstep, &(info_array[batchid]));
     else
         cpotf2_smlpout_anywidth_device( myrows, myib, dA_array[batchid]+mylocstep, dA_array[batchid]+mylocstep+mylocstep*mylda, mylda, mylocstep, gbstep, &(info_array[batchid]));
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////
-__global__ void cpotf2_smlpout_kernel_vbatched(magma_int_t *m, 
-        magmaFloatComplex **dA_array, magma_int_t *lda, 
+__global__ void cpotf2_smlpout_kernel_vbatched(magma_int_t *m,
+        magmaFloatComplex **dA_array, magma_int_t *lda,
         int localstep, int gbstep, magma_int_t *info_array)
 {
     const int batchid = blockIdx.z;
     const int myrows  = (int)m[batchid] - localstep;
     const int myib    = min(POTF2_NB, myrows);
     const int mylda   = lda[batchid];
-    
+
     #ifndef VBATCH_DISABLE_THREAD_RETURN
-    const int tx = threadIdx.x; 
-    if(tx >=  myrows) return; 
+    const int tx = threadIdx.x;
+    if(tx >=  myrows) return;
     #else
-    if(myrows <= 0) return; 
+    if(myrows <= 0) return;
     #endif
-    
+
     if(myib == POTF2_NB)
         cpotf2_smlpout_fixwidth_device( myrows, dA_array[batchid]+localstep, dA_array[batchid]+localstep+localstep*mylda, mylda, localstep, gbstep, &(info_array[batchid]));
     else
@@ -78,7 +78,7 @@ __global__ void cpotf2_smlpout_kernel_vbatched(magma_int_t *m,
 /////////////////////////////////////////////////////////////////////////////////////////////////
 extern "C" magma_int_t
 magma_cpotrf_lpout_vbatched(
-        magma_uplo_t uplo, magma_int_t *n, magma_int_t max_n,  
+        magma_uplo_t uplo, magma_int_t *n, magma_int_t max_n,
         magmaFloatComplex **dA_array, magma_int_t *lda, magma_int_t gbstep,
         magma_int_t *info_array, magma_int_t batchCount, magma_queue_t queue)
 {
@@ -90,22 +90,28 @@ magma_cpotrf_lpout_vbatched(
         return arginfo;
     }
 
-    dim3 dimGrid(1, 1, batchCount);
-    for(magma_int_t j = 0; j < max_n; j+= POTF2_NB) {
-        magma_int_t rows_max = max_n-j;
-        magma_int_t nbth = rows_max; 
-        dim3 threads(nbth, 1);
-        magma_int_t shared_mem_size = sizeof(magmaFloatComplex)*(nbth+POTF2_NB)*POTF2_NB;
-        if(shared_mem_size > 47000) 
-        {
-            arginfo = -33;
-            magma_xerbla( __func__, -(arginfo) );
-            return arginfo;
+    magma_int_t max_batchCount = queue->get_maxBatch();
+
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 dimGrid(1, 1, ibatch);
+
+        for(magma_int_t j = 0; j < max_n; j+= POTF2_NB) {
+            magma_int_t rows_max = max_n-j;
+            magma_int_t nbth = rows_max;
+            dim3 threads(nbth, 1);
+            magma_int_t shared_mem_size = sizeof(magmaFloatComplex)*(nbth+POTF2_NB)*POTF2_NB;
+            if(shared_mem_size > 47000)
+            {
+                arginfo = -33;
+                magma_xerbla( __func__, -(arginfo) );
+                return arginfo;
+            }
+            //cpotf2_smlpout_kernel_vbatched<<<dimGrid, threads, shared_mem_size, queue >>>(n, dA_array, lda, j, gbstep, info_array);
+            cpotf2_smlpout_kernel_vbatched_v2
+            <<<dimGrid, threads, shared_mem_size, queue->cuda_stream() >>>
+            (max_n, n+i, dA_array+i, lda+i, j, gbstep, info_array+i);
         }
-        //cpotf2_smlpout_kernel_vbatched<<<dimGrid, threads, shared_mem_size, queue >>>(n, dA_array, lda, j, gbstep, info_array);
-        cpotf2_smlpout_kernel_vbatched_v2
-        <<<dimGrid, threads, shared_mem_size, queue->cuda_stream() >>>
-        (max_n, n, dA_array, lda, j, gbstep, info_array);
     }
     return arginfo;
 }

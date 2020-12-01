@@ -1,12 +1,12 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Stan Tomov
-       @generated from src/zgegqr_gpu.cpp, normal z -> s, Sun Mar 29 20:48:28 2020
+       @generated from src/zgegqr_gpu.cpp, normal z -> s, Thu Oct  8 23:05:24 2020
 
 */
 #include "magma_internal.h"
@@ -82,9 +82,11 @@
       -     = 0:  successful exit
       -     < 0:  if INFO = -i, the i-th argument had an illegal value
                   or another error occured, such as memory allocation failed.
-      -     > 0:  for ikind = 4, the normal equations were not
+      -     > 0:  for ikind = 1 and 4, the normal equations were not
                   positive definite, so the factorization could not be
                   completed, and the solution has not been computed.
+                  For ikind = 3, the space is not linearly independent.
+                  For all these cases the rank (< n) of the space is returned.
 
     @ingroup magma_gegqr
 *******************************************************************************/
@@ -102,7 +104,7 @@ magma_sgegqr_gpu(
     magma_int_t ione = 1;
     float c_zero = MAGMA_S_ZERO;
     float c_one  = MAGMA_S_ONE;
-    float cn = 200., mins, maxs;
+    float cn;
 
     /* check arguments */
     *info = 0;
@@ -155,6 +157,7 @@ magma_sgegqr_gpu(
         }
         #endif
         
+        float eps = lapackf77_slamch("Epsilon");
         do {
             i++;
             
@@ -169,12 +172,13 @@ magma_sgegqr_gpu(
                               #endif
                               info );
             
-            mins = 100.f, maxs = 0.f;
             for (k=0; k < n; k++) {
                 S[k] = magma_ssqrt( S[k] );
                 
-                if (S[k] < mins)  mins = S[k];
-                if (S[k] > maxs)  maxs = S[k];
+                if (S[k] < eps) {
+                    *info = k;
+                    return *info;
+                }
             }
             
             for (k=0; k < n; k++) {
@@ -192,11 +196,9 @@ magma_sgegqr_gpu(
             magma_ssetmatrix( n, n, VT, n, dwork, n, queue );
             magma_strsm( MagmaRight, MagmaUpper, MagmaNoTrans, MagmaNonUnit,
                          m, n, c_one, dwork, n, dA, ldda, queue );
-            if (mins > 0.00001f)
-                cn = maxs/mins;
-            
-            //fprintf( stderr, "Iteration %lld, cond num = %f\n", (long long) i, cn );
-        } while (cn > 10.f);
+
+            cn = S[0]/S[n-1];
+        } while (cn > 10.f && i<5);
         
         magma_free_cpu( hwork );
         #ifdef COMPLEX
@@ -224,6 +226,7 @@ magma_sgegqr_gpu(
     }
     else if (ikind == 3) {
         // ================== MGS               ================================
+        float eps = lapackf77_slamch("Epsilon");
         for (j = 0; j < n; j++) {
             for (i = 0; i < j; i++) {
                 *work(i, j) = magma_sdot( m, dA(0,i), 1, dA(0,j), 1, queue );
@@ -235,6 +238,10 @@ magma_sgegqr_gpu(
             //*work(j,j) = MAGMA_S_MAKE( magma_snrm2( m, dA(0,j), 1), 0., queue );
             *work(j,j) = magma_sdot( m, dA(0,j), 1, dA(0,j), 1, queue );
             *work(j,j) = MAGMA_S_MAKE( sqrt(MAGMA_S_REAL( *work(j,j) )), 0. );
+            if (MAGMA_S_ABS(*work(j,j)) < eps) {
+                *info = j;
+                break;
+            }
             magma_sscal( m, 1./ *work(j,j), dA(0,j), 1, queue );
         }
         // ================== end of ikind == 3 ================================

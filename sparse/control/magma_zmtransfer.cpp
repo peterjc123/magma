@@ -1,9 +1,9 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @precisions normal z -> s d c
        @author Hartwig Anzt
@@ -57,7 +57,10 @@ magma_zmtransfer(
     // make sure the target structure is empty
     magma_zmfree( B, queue );
     B->ownership = MagmaTrue;
-    
+
+    // Initialize bufsize to -1; buf is not allocated; cuSparse handle is not created
+    //B->bufsize = -1;
+
     B->val = NULL;
     B->diag = NULL;
     B->row = NULL;

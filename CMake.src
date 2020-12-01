@@ -135,9 +135,11 @@ src/zlaqps.cpp
 src/zgeqrf_m.cpp
 src/zungqr_m.cpp
 src/zunmqr_m.cpp
+src/zhetrf_gpu.cpp
 src/zchesv_gpu.cpp
 src/zhesv.cpp
 src/zhetrf.cpp
+src/dsidi.cpp
 src/zhetrf_aasen.cpp
 src/zhetrf_nopiv.cpp
 src/zhetrf_nopiv_cpu.cpp
@@ -277,8 +279,10 @@ src/zgetrf_panel_native.cpp
 src/zpotrf_panel_native.cpp
 magmablas/zaxpycp.cu
 magmablas/zcaxpycp.cu
+magmablas/zdiinertia.cu
 magmablas/zgeadd.cu
 magmablas/zgeadd2.cu
+magmablas/zgeam.cu
 magmablas/zgemm_fermi.cu
 magmablas/zgemm_reduce.cu
 magmablas/zgemv_conj.cu
@@ -333,6 +337,8 @@ magmablas/ztranspose.cu
 magmablas/ztranspose_conj.cu
 magmablas/ztranspose_conj_inplace.cu
 magmablas/ztranspose_inplace.cu
+magmablas/ztrmm.cu
+magmablas/ztrmv.cu
 magmablas/ztrsm.cu
 magmablas/ztrsv.cu
 magmablas/ztrtri_diag.cu
@@ -381,7 +387,6 @@ magmablas/cherk_batched_core.cu
 magmablas/zherk_batched_core.cu
 magmablas/zlaswp_batched.cu
 magmablas/zpotf2_kernels.cu
-magmablas/zpotf2_kernels_old.cu
 magmablas/set_pointer.cu
 magmablas/zset_pointer.cu
 magmablas/zsyr2k_batched.cpp
@@ -676,6 +681,9 @@ src/cungqr_m.cpp
 src/sormqr_m.cpp
 src/dormqr_m.cpp
 src/cunmqr_m.cpp
+src/ssytrf_gpu.cpp
+src/dsytrf_gpu.cpp
+src/chetrf_gpu.cpp
 src/dssysv_gpu.cpp
 src/ssysv.cpp
 src/dsysv.cpp
@@ -986,12 +994,18 @@ magmablas/saxpycp.cu
 magmablas/daxpycp.cu
 magmablas/caxpycp.cu
 magmablas/dsaxpycp.cu
+magmablas/sdiinertia.cu
+magmablas/ddiinertia.cu
+magmablas/cdiinertia.cu
 magmablas/sgeadd.cu
 magmablas/dgeadd.cu
 magmablas/cgeadd.cu
 magmablas/sgeadd2.cu
 magmablas/dgeadd2.cu
 magmablas/cgeadd2.cu
+magmablas/sgeam.cu
+magmablas/dgeam.cu
+magmablas/cgeam.cu
 magmablas/sgemm_fermi.cu
 magmablas/dgemm_fermi.cu
 magmablas/cgemm_fermi.cu
@@ -1134,6 +1148,12 @@ magmablas/ctranspose_conj_inplace.cu
 magmablas/stranspose_inplace.cu
 magmablas/dtranspose_inplace.cu
 magmablas/ctranspose_inplace.cu
+magmablas/strmm.cu
+magmablas/dtrmm.cu
+magmablas/ctrmm.cu
+magmablas/strmv.cu
+magmablas/dtrmv.cu
+magmablas/ctrmv.cu
 magmablas/ctrsm.cu
 magmablas/dtrsm.cu
 magmablas/strsm.cu
@@ -1243,9 +1263,6 @@ magmablas/claswp_batched.cu
 magmablas/spotf2_kernels.cu
 magmablas/dpotf2_kernels.cu
 magmablas/cpotf2_kernels.cu
-magmablas/spotf2_kernels_old.cu
-magmablas/dpotf2_kernels_old.cu
-magmablas/cpotf2_kernels_old.cu
 magmablas/sset_pointer.cu
 magmablas/dset_pointer.cu
 magmablas/cset_pointer.cu
@@ -1383,6 +1400,7 @@ testing/lin/magma_z_no_fortran.cpp
 testing/lin/zbdt01.f
 testing/lin/zget22.f
 testing/lin/zhet21.f
+testing/lin/zhet22.f
 testing/lin/zhst01.f
 testing/lin/zunt01.f
 testing/lin/zqpt01.f
@@ -1392,6 +1410,7 @@ testing/lin/zstt21.f
 testing/lin/cbdt01.f
 testing/lin/cget22.f
 testing/lin/chet21.f
+testing/lin/chet22.f
 testing/lin/chst01.f
 testing/lin/cunt01.f
 testing/lin/cqpt01.f
@@ -1401,6 +1420,7 @@ testing/lin/cstt21.f
 testing/lin/dbdt01.f
 testing/lin/dget22.f
 testing/lin/dsyt21.f
+testing/lin/dsyt22.f
 testing/lin/dhst01.f
 testing/lin/dort01.f
 testing/lin/dqpt01.f
@@ -1410,6 +1430,7 @@ testing/lin/dstt21.f
 testing/lin/sbdt01.f
 testing/lin/sget22.f
 testing/lin/ssyt21.f
+testing/lin/ssyt22.f
 testing/lin/shst01.f
 testing/lin/sort01.f
 testing/lin/sqpt01.f
@@ -1440,6 +1461,7 @@ testing/testing_zher2k_mgpu.cpp
 testing/testing_blas_z.cpp
 testing/testing_cblas_z.cpp
 testing/testing_zgeadd.cpp
+testing/testing_zgeam.cpp
 testing/testing_zlacpy.cpp
 testing/testing_zlag2c.cpp
 testing/testing_zlange.cpp
@@ -1617,6 +1639,9 @@ testing/testing_cblas_s.cpp
 testing/testing_cgeadd.cpp
 testing/testing_dgeadd.cpp
 testing/testing_sgeadd.cpp
+testing/testing_cgeam.cpp
+testing/testing_dgeam.cpp
+testing/testing_sgeam.cpp
 testing/testing_slacpy.cpp
 testing/testing_dlacpy.cpp
 testing/testing_clacpy.cpp

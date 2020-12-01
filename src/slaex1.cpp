@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
        
        @author Raffaele Solca
        
-       @generated from src/dlaex1.cpp, normal d -> s, Sun Mar 29 20:48:29 2020
+       @generated from src/dlaex1.cpp, normal d -> s, Thu Oct  8 23:05:27 2020
 */
 #include "magma_internal.h"
 
@@ -135,6 +135,7 @@ magma_slaex1(
     magma_int_t *indxq, float rho, magma_int_t cutpnt,
     float *work, magma_int_t *iwork,
     magmaFloat_ptr dwork,
+    magma_queue_t queue,
     magma_range_t range, float vl, float vu,
     magma_int_t il, magma_int_t iu,
     magma_int_t *info)
@@ -198,7 +199,7 @@ magma_slaex1(
         magma_slaex3(k, n, cutpnt, d, Q, ldq, rho,
                      &work[idlmda], &work[iq2], &iwork[indxc],
                      &iwork[coltyp], &work[iw], &work[is],
-                     indxq, dwork, range, vl, vu, il, iu, info );
+                     indxq, dwork, queue, range, vl, vu, il, iu, info );
         if ( *info != 0 )
             return *info;
     }

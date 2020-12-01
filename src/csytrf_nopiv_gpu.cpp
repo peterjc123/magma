@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Ichitaro Yamazaki
        @author Stan Tomov
        @author Adrien Remy
 
-       @generated from src/zsytrf_nopiv_gpu.cpp, normal z -> c, Sun Mar 29 20:48:29 2020
+       @generated from src/zsytrf_nopiv_gpu.cpp, normal z -> c, Thu Oct  8 23:05:27 2020
 */
 #include "magma_internal.h"
 #include "trace.h"

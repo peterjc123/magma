@@ -1,18 +1,19 @@
 #//////////////////////////////////////////////////////////////////////////////
-#   -- MAGMA (version 2.5.3) --
+#   -- MAGMA (version 2.5.4) --
 #      Univ. of Tennessee, Knoxville
 #      Univ. of California, Berkeley
 #      Univ. of Colorado, Denver
-#      @date March 2020
+#      @date October 2020
 #//////////////////////////////////////////////////////////////////////////////
 
-# GPU_TARGET contains one or more of Fermi, Kepler, Maxwell, Pascal, Volta
+# GPU_TARGET contains one or more of Fermi, Kepler, Maxwell, Pascal, Volta, Turing, or Ampere
 # to specify for which GPUs you want to compile MAGMA:
-#     Fermi   - NVIDIA compute capability 2.x cards
-#     Kepler  - NVIDIA compute capability 3.x cards
-#     Maxwell - NVIDIA compute capability 5.x cards
-#     Pascal  - NVIDIA compute capability 6.x cards
-#     Volta   - NVIDIA compute capability 7.x cards
+#     Fermi          - NVIDIA compute capability 2.x cards
+#     Kepler         - NVIDIA compute capability 3.x cards
+#     Maxwell        - NVIDIA compute capability 5.x cards
+#     Pascal         - NVIDIA compute capability 6.x cards
+#     Volta/Turing   - NVIDIA compute capability 7.x cards
+#     Ampere         - NVIDIA compute capability 8.x cards
 # The default is "Kepler Maxwell Pascal".
 # Note that NVIDIA no longer supports 1.x cards, as of CUDA 6.5.
 # See http://developer.nvidia.com/cuda-gpus

@@ -8,7 +8,7 @@ This file is processed with Doxygen. See docs/html/index.html for formatted vers
 Univ. of Tennessee, Knoxville \n
 Univ. of California, Berkeley \n
 Univ. of Colorado, Denver
-@date March 2020
+@date October 2020
 
 The goal of the MAGMA project is to create a new generation of linear algebra
 libraries that achieves the fastest possible time to an accurate solution on
@@ -367,6 +367,10 @@ There are several classes of routines in MAGMA:
 
 A brief summary of routines is given here.
 Full descriptions of individual routines are given in the Modules section.
+
+To start, in C or C++, include the magma_v2.h header.
+
+    #include <magma_v2.h>
 
 Driver & computational routines have a `magma_` prefix. These are
 generally hybrid CPU/GPU algorithms. A suffix indicates in what memory the

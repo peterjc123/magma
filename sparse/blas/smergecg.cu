@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from sparse/blas/zmergecg.cu, normal z -> s, Sun Mar 29 20:48:34 2020
+       @generated from sparse/blas/zmergecg.cu, normal z -> s, Thu Oct  8 23:05:50 2020
        @author Hartwig Anzt
 
 */
@@ -15,6 +15,33 @@
 
 #define PRECISION_s
 
+#if CUDA_VERSION >= 11000
+// todo: destroy descriptor and see if the original code descriptors have to be changed
+#define cusparseScsrmv(handle, op, rows, cols, nnz, alpha, descr, dval, drow, dcol, x, beta, y) \
+    {                                                                                           \
+        cusparseSpMatDescr_t descrA;                                                            \
+        cusparseDnVecDescr_t descrX, descrY;                                                    \
+        cusparseCreateCsr(&descrA, rows, cols, nnz,                                             \
+                          (void *)drow, (void *)dcol, (void *)dval,                             \
+                          CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I,                               \
+                          CUSPARSE_INDEX_BASE_ZERO, CUDA_R_32F);                                \
+        cusparseCreateDnVec(&descrX, cols, x, CUDA_R_32F);                                      \
+        cusparseCreateDnVec(&descrY, rows, y, CUDA_R_32F);                                      \
+                                                                                                \
+        size_t bufsize;                                                                         \
+        void *buf;                                                                              \
+        cusparseSpMV_bufferSize(handle, op,                                                     \
+                                (void *)alpha, descrA, descrX, (void *)beta,                    \
+                                descrY, CUDA_R_32F, CUSPARSE_CSRMV_ALG1, &bufsize);             \
+        if (bufsize > 0)                                                                        \
+           magma_malloc(&buf, bufsize);                                                         \
+        cusparseSpMV( handle, op,                                                               \
+                      (void *)alpha, descrA, descrX, (void *)beta,                              \
+                      descrY, CUDA_R_32F, CUSPARSE_CSRMV_ALG1, buf);                            \
+        if (bufsize > 0)                                                                        \
+           magma_free(buf);                                                                     \
+    }
+#endif
 
 // These routines merge multiple kernels from smergecg into one
 // for a description see 
@@ -1069,8 +1096,8 @@ magma_scgmerge_spmv1(
         cusparseSetMatType( descr, CUSPARSE_MATRIX_TYPE_GENERAL );
         cusparseSetMatIndexBase( descr, CUSPARSE_INDEX_BASE_ZERO );
         cusparseScsrmv( cusparseHandle,CUSPARSE_OPERATION_NON_TRANSPOSE,
-        A.num_rows, A.num_cols, A.nnz, &c_one, descr,
-        A.dval, A.drow, A.dcol, dd, &c_zero, dz );
+                        A.num_rows, A.num_cols, A.nnz, &c_one, descr,
+                        A.dval, A.drow, A.dcol, dd, &c_zero, dz );
         cusparseDestroyMatDescr( descr );
         cusparseDestroy( cusparseHandle );
         cusparseHandle = 0;

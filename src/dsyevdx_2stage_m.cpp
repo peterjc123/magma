@@ -1,15 +1,15 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
        @author Azzam Haidar
        @author Stan Tomov
        @author Raffaele Solca
 
-       @generated from src/zheevdx_2stage_m.cpp, normal z -> d, Sun Mar 29 20:48:29 2020
+       @generated from src/zheevdx_2stage_m.cpp, normal z -> d, Thu Oct  8 23:05:30 2020
 
 */
 #include "magma_internal.h"
@@ -206,6 +206,7 @@ magma_dsyevdx_2stage_m(
     
     const char* uplo_  = lapack_uplo_const( uplo  );
     const char* jobz_  = lapack_vec_const( jobz  );
+    const char* range_  = lapack_range_const( range );
     double c_one  = MAGMA_D_ONE;
     magma_int_t ione = 1;
     magma_int_t izero = 0;
@@ -361,15 +362,30 @@ magma_dsyevdx_2stage_m(
         printf("  warning matrix too small N=%lld NB=%lld, calling lapack on CPU\n", (long long) n, (long long) nb );
         printf("--------------------------------------------------------------\n");
         #endif
-        lapackf77_dsyevd(jobz_, uplo_, &n,
-                        A, &lda, W,
-                        work, &lwork,
-                        #ifdef COMPLEX
-                        rwork, &lrwork,
-                        #endif
-                        iwork, &liwork,
-                        info);
-        *m = n;
+        double abstol = 2 * lapackf77_dlamch("Safe minimum");
+        magma_int_t ldy = lda;
+        double* lapack_rwork;
+        magma_int_t* lapack_iwork;
+        magma_int_t* ifail;
+        double* Y;
+        magma_dmalloc_cpu(&lapack_rwork, 7*n);
+        magma_imalloc_cpu(&lapack_iwork, 5*n);
+        magma_imalloc_cpu(&ifail, n);
+        magma_dmalloc_cpu(&Y, n*ldy);
+        lapackf77_dsyevx(jobz_, range_, uplo_,
+                         &n, A, &lda, &vl, &vu, &il, &iu, &abstol, m,
+                         W, Y, &ldy, work, &lwork,
+                         #ifdef COMPLEX
+                         lapack_rwork,
+                         #endif
+                         lapack_iwork, ifail, info);
+        if( wantz ) {
+            lapackf77_dlacpy(MagmaFullStr, &n, m, Y, &ldy, A, &lda);
+        }
+        magma_free_cpu(lapack_rwork);
+        magma_free_cpu(lapack_iwork);
+        magma_free_cpu(ifail);
+        magma_free_cpu(Y);
         return *info;
     }
 

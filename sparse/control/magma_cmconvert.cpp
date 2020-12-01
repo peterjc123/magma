@@ -1,16 +1,36 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from sparse/control/magma_zmconvert.cpp, normal z -> c, Sun Mar 29 20:48:34 2020
+       @generated from sparse/control/magma_zmconvert.cpp, normal z -> c, Thu Oct  8 23:05:54 2020
        @author Hartwig Anzt
 */
 #include "magmasparse_internal.h"
 
 #include <cuda.h>  // for CUDA_VERSION
+
+// todo: check if we need buf later
+#if CUDA_VERSION >= 11000
+#define cusparseCcsr2csc(handle, m, n, nnz, valA, rowA, colA, valB, rowB, colB,                \
+                         action, base)                                                         \
+    {                                                                                          \
+        size_t bufsize;                                                                        \
+        void *buf;                                                                             \
+        cusparseCsr2cscEx2_bufferSize(handle, m, n, nnz, valA, rowA, colA,                     \
+                                      valB, rowB, colB, CUDA_C_32F, action, base,              \
+                                      CUSPARSE_CSR2CSC_ALG1, &bufsize);                        \
+        if (bufsize > 0)                                                                       \
+           magma_malloc(&buf, bufsize);                                                        \
+        cusparseCsr2cscEx2(handle, m, n, nnz, valA, rowA, colA, valB, rowB, colB,              \
+                           CUDA_C_32F, action, base, CUSPARSE_CSR2CSC_ALG1, buf);              \
+        if (bufsize > 0)                                                                       \
+           magma_free(buf);                                                                    \
+    }
+#endif
+
 
 /**
     Purpose

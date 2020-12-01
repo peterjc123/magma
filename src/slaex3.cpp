@@ -1,13 +1,13 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
        
        @author Raffaele Solca
        
-       @generated from src/dlaex3.cpp, normal d -> s, Sun Mar 29 20:48:29 2020
+       @generated from src/dlaex3.cpp, normal d -> s, Thu Oct  8 23:05:28 2020
 */
 
 #ifdef _OPENMP
@@ -223,6 +223,7 @@ magma_slaex3(
     float *dlamda, float *Q2, magma_int_t *indx,
     magma_int_t *ctot, float *w, float *s, magma_int_t *indxq,
     magmaFloat_ptr dwork,
+    magma_queue_t queue,
     magma_range_t range, float vl, float vu, magma_int_t il, magma_int_t iu,
     magma_int_t *info )
 {
@@ -309,11 +310,6 @@ magma_slaex3(
     iq2 = n1 * n12;
     lq2 = iq2 + n2 * n23;
     
-    magma_queue_t queue;
-    magma_device_t cdev;
-    magma_getdevice( &cdev );
-    magma_queue_create( cdev, &queue );
-
     magma_ssetvector_async( lq2, Q2, 1, dQ2(0,0), 1, queue );
 
 #ifdef _OPENMP
@@ -568,8 +564,6 @@ magma_slaex3(
     }
     //timer_stop( time );
     //timer_printf( "gemms = %6.2f\n", time );
-
-    magma_queue_destroy( queue );
 
     return *info;
 } /* magma_slaex3 */

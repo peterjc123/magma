@@ -1,5 +1,10 @@
 var NAVTREEINDEX7 =
 {
+"group__magma__trmv.html#ga365d8137af1c431c233921bafd5c6dd9":[9,3,4,2,9,2],
+"group__magma__trmv.html#ga49d1eadc53161a8401431ea6f0094db7":[9,3,4,2,9,3],
+"group__magma__trmv.html#ga8f618e21c16cf7c71147d02f40c3ed94":[9,3,4,2,9,0],
+"group__magma__trmv.html#gaba93d45fc195800cabef7c15aa00304e":[9,3,4,2,9,1],
+"group__magma__trmv__batched.html":[9,4,2,1,9],
 "group__magma__trsm.html":[9,3,4,3,8],
 "group__magma__trsm.html#ga1c0dd2c9cde6e80f5694ec12d33c1db6":[9,3,4,3,8,17],
 "group__magma__trsm.html#ga2691a885cfc84c84479997df96559e4d":[9,3,4,3,8,3],
@@ -244,10 +249,5 @@ var NAVTREEINDEX7 =
 "group__magma__unghr.html#gab299c0844d352d94c5f1070cf358db63":[9,3,2,0,2,6],
 "group__magma__unghr.html#gacb04d6062459e58fc39d9add80c498d4":[9,3,2,0,2,3],
 "group__magma__unghr.html#gae685691899fd83231e10c4570bedcbcc":[9,3,2,0,2,4],
-"group__magma__unglq.html":[9,3,1,3,2],
-"group__magma__unglq.html#ga09dc5a9a998e87d2b165cd1b46cef75b":[9,3,1,3,2,0],
-"group__magma__unglq.html#ga282c24919cb98270c7db193daf802c8d":[9,3,1,3,2,2],
-"group__magma__unglq.html#ga7e2fecc6cf64eda76cd75ec199b992b2":[9,3,1,3,2,1],
-"group__magma__unglq.html#gafc0f2b7abcf687d0e5838d6cde9865ae":[9,3,1,3,2,3],
-"group__magma__unglq__batched.html":[9,4,1,3,2]
+"group__magma__unglq.html":[9,3,1,3,2]
 };

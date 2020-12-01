@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from magmablas/zlarft_kernels.cu, normal z -> d, Sun Mar 29 20:48:30 2020
+       @generated from magmablas/zlarft_kernels.cu, normal z -> d, Thu Oct  8 23:05:35 2020
        @author Azzam Haidar
 */
 
@@ -30,13 +30,13 @@ void dlarft_gemvcolwise_device(
     /* if blockIdx.x < step step performs the z = V(tx:n,tx)' * V(tx:n,1:tx-1) used for computing T:*/
 
     if ( !MAGMA_D_EQUAL(*tau, MAGMA_D_ZERO) ) {
-        if (thblk < step) {    
+        if (thblk < step) {
             const int tx = threadIdx.x;
             double *dc = c + blockIdx.x * ldc;
-           
+
             __shared__ double sum[ BLOCK_SIZE ];
             double tmp;
-           
+
             /* perform  {T_i}^H := V(:,i)' * V(:,1:i-1)  */
             if (tx == 0)
                 tmp = dc[0]; //since V[0] should be one
@@ -50,7 +50,7 @@ void dlarft_gemvcolwise_device(
             #if defined (use_gemm_larft)
             *(T+thblk) = MAGMA_D_CONJ(sum[0]);
             #else
-            tmp = - MAGMA_D_CONJ(*tau) * sum[0]; 
+            tmp = - MAGMA_D_CONJ(*tau) * sum[0];
             *(T+thblk) = MAGMA_D_CONJ(tmp); // T = - tau(tx) * V(tx:n,1:tx-1)' * V(tx:n,tx) = tmp'
             //*(T+thblk) = - MAGMA_D_CONJ(sum[0]) * (*tau); // T = - tau(tx) * V(tx:n,1:tx-1)' * V(tx:n,tx) = tmp'
             #endif
@@ -63,7 +63,7 @@ void dlarft_gemvcolwise_device(
             #endif
         }
     }// in case tau is zero put the corresponding column of T to zero
-    else 
+    else
     {
         *(T+thblk) = MAGMA_D_ZERO;
     }
@@ -90,10 +90,10 @@ void dlarft_gemvcolwise_kernel_batched( int m, double **v_array, int ldv, double
 
 
 /******************************************************************************/
-extern "C" 
+extern "C"
 void magmablas_dlarft_gemvcolwise(
     magma_int_t m,  magma_int_t step,
-    double *v, magma_int_t ldv, 
+    double *v, magma_int_t ldv,
     double *T,  magma_int_t ldt,
     double *tau,
     magma_queue_t queue )
@@ -107,54 +107,61 @@ void magmablas_dlarft_gemvcolwise(
 
 
 /******************************************************************************/
-extern "C" 
+extern "C"
 void magmablas_dlarft_gemvcolwise_batched(
     magma_int_t m,  magma_int_t step,
-    double **v_array, magma_int_t ldv, 
+    double **v_array, magma_int_t ldv,
     double **T_array,  magma_int_t ldt,
     double **tau_array, magma_int_t batchCount, magma_queue_t queue )
 {
-    dim3 grid( step+1, 1, batchCount );
     dim3 threads( BLOCK_SIZE );
-    dlarft_gemvcolwise_kernel_batched
+    magma_int_t max_batchCount = queue->get_maxBatch();
+
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 grid( step+1, 1, ibatch );
+
+        dlarft_gemvcolwise_kernel_batched
         <<< grid, threads, 0, queue->cuda_stream() >>>
-        ( m, v_array, ldv, tau_array, T_array, ldt, step);
+        ( m, v_array+i, ldv, tau_array+i, T_array+i, ldt, step);
+
+    }
 }
 
 
 /******************************************************************************/
-// dgemv(y=alpha*A*x) interface: T/W=tau*v*x, 
+// dgemv(y=alpha*A*x) interface: T/W=tau*v*x,
 static __device__ void
 dlarft_gemvrowwise_device(
     int m, int i,
-    double *tau, 
-    double *v_ptr, int ldv, 
+    double *tau,
+    double *v_ptr, int ldv,
     double *x_ptr, int incx,
     double *T_ptr, int ldt,
     double *W, double* sdata)
 {
-    int tx = threadIdx.x; 
-    int ty = threadIdx.y; 
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
 
 
     if (tx == 0 && ty == 0)
     {
         T_ptr[0] = *tau;
-    } 
+    }
 
     if (i <= 0) return;
-    
+
     double res = MAGMA_D_ZERO;
 
     v_ptr += ldv * ty;
-    
+
     if (tx < dgemv_bs)
     {
         for (int s=tx; s < m; s += dgemv_bs)
         {
             res += MAGMA_D_CONJ (v_ptr[s]) * x_ptr[s*incx];
         }
-    
+
         sdata[ty * dgemv_bs + tx] = res;
     }
     __syncthreads();
@@ -165,13 +172,13 @@ dlarft_gemvrowwise_device(
     if (tx == 0)
     {
         W[ty] = -sdata[ty * dgemv_bs + 0];
-    } 
+    }
     #else
     if (tx == 0)
     {
         W[ty] = -sdata[ty * dgemv_bs + 0] * (*tau);
     }
-    #endif 
+    #endif
 }
 
 
@@ -180,16 +187,16 @@ dlarft_gemvrowwise_device(
 // T(i,i) = tau(i)
 __global__ void
 dlarft_gemvrowwise_kernel(
-    int m, int i, 
-    double *tau, 
-    double *v, int ldv, 
+    int m, int i,
+    double *tau,
+    double *v, int ldv,
     double *T, int ldt)
 {
     double *W =  T +i*ldt;
 
     double *sdata = (double*)shared_data;
 
-    dlarft_gemvrowwise_device(m, i, tau+i, v+i, ldv,  v+i+i*ldv, 1,  
+    dlarft_gemvrowwise_device(m, i, tau+i, v+i, ldv,  v+i+i*ldv, 1,
                            T+i+i*ldt, ldt, W, sdata);
 }
 
@@ -198,8 +205,8 @@ dlarft_gemvrowwise_kernel(
 __global__ void
 dlarft_gemvrowwise_kernel_batched(
     int m, int i,
-    double **tau_array, 
-    double **v_array, int ldv, 
+    double **tau_array,
+    double **v_array, int ldv,
     double **T_array, int ldt)
 {
     int batchid = blockIdx.z;
@@ -208,7 +215,7 @@ dlarft_gemvrowwise_kernel_batched(
 
     double *sdata = (double*)shared_data;
 
-    dlarft_gemvrowwise_device(m, i, tau_array[batchid]+i, v_array[batchid]+i, ldv,  v_array[batchid]+i+i*ldv, 1,  
+    dlarft_gemvrowwise_device(m, i, tau_array[batchid]+i, v_array[batchid]+i, ldv,  v_array[batchid]+i+i*ldv, 1,
                            T_array[batchid] +i+i*ldt, ldt, W, sdata);
 }
 
@@ -216,9 +223,9 @@ dlarft_gemvrowwise_kernel_batched(
 /******************************************************************************/
 extern "C"
 void magmablas_dlarft_gemvrowwise(
-    magma_int_t m, magma_int_t i, 
-    double *tau, 
-    double *v, magma_int_t ldv, 
+    magma_int_t m, magma_int_t i,
+    double *tau,
+    double *v, magma_int_t ldv,
     double *T, magma_int_t ldt,
     double *W,
     magma_queue_t queue )
@@ -235,21 +242,26 @@ void magmablas_dlarft_gemvrowwise(
 /******************************************************************************/
 extern "C"
 void magmablas_dlarft_gemvrowwise_batched(
-    magma_int_t m, magma_int_t i, 
-    double **tau_array, 
-    double **v_array, magma_int_t ldv, 
+    magma_int_t m, magma_int_t i,
+    double **tau_array,
+    double **v_array, magma_int_t ldv,
     double **T_array, magma_int_t ldt,
     magma_int_t batchCount, magma_queue_t queue)
 {
-    dim3 grid(1, 1, batchCount);
+    magma_int_t max_batchCount = queue->get_maxBatch();
     dim3 threads(dgemv_bs, max(i,1), 1);
     size_t shmem = sizeof(double)*dgemv_bs*(i+1);
-    /*  dgemvrowwise used a bigger shared memory and has more data reuse and performs better
-    */
-    dlarft_gemvrowwise_kernel_batched
+
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 grid(1, 1, ibatch);
+
+        /*  dgemvrowwise used a bigger shared memory and has more data reuse and performs better */
+        dlarft_gemvrowwise_kernel_batched
         <<< grid, threads, shmem, queue->cuda_stream() >>>
-        (m, i,  tau_array, v_array, ldv, T_array, ldt);
-}   
+        (m, i,  tau_array+i, v_array+i, ldv, T_array+i, ldt);
+    }
+}
 
 
 /******************************************************************************/
@@ -258,14 +270,14 @@ void magmablas_dlarft_gemvrowwise_batched(
 */
 static __device__ void
 dlarft_gemv_loop_inside_device(
-    int n, int k, 
-    double *tau, 
-    double *v, int ldv, 
+    int n, int k,
+    double *tau,
+    double *v, int ldv,
     double *T, int ldt)
 {
-    int tx = threadIdx.x; 
-    int ty = threadIdx.y; 
-    
+    int tx = threadIdx.x;
+    int ty = threadIdx.y;
+
     int incx = 1;
     double *sdata = (double*)shared_data;
 
@@ -275,20 +287,20 @@ dlarft_gemv_loop_inside_device(
     if (tx == 0 && ty == 0)
     {
         T[0] = tau[0];
-    } 
- 
+    }
+
     for (int i=1; i < k; i++)
     {
-        int m = n-i; 
+        int m = n-i;
 
         double *v_ptr = v;
 
         v_ptr += i;
 
         double *x_ptr = v_ptr + i * ldv;
-        
+
         res = MAGMA_D_ZERO;
-        
+
         if (tx < dgemv_bs && ty < i)
         {
             v_ptr += ldv * ty;
@@ -297,19 +309,19 @@ dlarft_gemv_loop_inside_device(
             {
                 res += MAGMA_D_CONJ (v_ptr[s]) * x_ptr[s*incx];
             }
-    
+
             sdata[ty * dgemv_bs + tx] = res;
         }
         __syncthreads();
 
         magma_sum_reduce<dgemv_bs>(tx, &(sdata[ty*dgemv_bs+0]));
-        
+
         __syncthreads();
         #if defined (use_gemm_larft)
         if (tx < i && ty == 0)
         {
             T[i* ldt + tx] = sdata[tx * dgemv_bs + 0];
-        } 
+        }
         // not needed since it is overwritten in trmv
         /*
         if (tx == i && ty == 0)
@@ -320,15 +332,15 @@ dlarft_gemv_loop_inside_device(
         #else
         if (tx < i && ty == 0)
         {
-            T[i* ldt + tx] = -sdata[tx * dgemv_bs + 0] * (tau[i]);  
-        } 
-        
+            T[i* ldt + tx] = -sdata[tx * dgemv_bs + 0] * (tau[i]);
+        }
+
         if (tx == i && ty == 0)
         {
             T[i * ldt + i] = tau[i];
         }
         #endif
-        
+
         v_ptr -= i;
     } // end of loop k
 }
@@ -337,9 +349,9 @@ dlarft_gemv_loop_inside_device(
 /******************************************************************************/
 __global__ void
 dlarft_gemv_loop_inside_kernel(
-    int n, int k, 
-    double *tau, 
-    double *v, int ldv, 
+    int n, int k,
+    double *tau,
+    double *v, int ldv,
     double *T, int ldt)
 {
     dlarft_gemv_loop_inside_device(n, k, tau, v, ldv, T, ldt);
@@ -349,9 +361,9 @@ dlarft_gemv_loop_inside_kernel(
 /******************************************************************************/
 __global__ void
 dlarft_gemv_loop_inside_kernel_batched(
-    int n, int k, 
-    double **tau_array, 
-    double **v_array, int ldv, 
+    int n, int k,
+    double **tau_array,
+    double **v_array, int ldv,
     double **T_array, int ldt)
 {
     int batchid = blockIdx.z;
@@ -362,9 +374,9 @@ dlarft_gemv_loop_inside_kernel_batched(
 /******************************************************************************/
 extern "C"
 void magmablas_dlarft_gemv_loop_inside(
-    magma_int_t n, magma_int_t k, 
-    double *tau, 
-    double *v, magma_int_t ldv, 
+    magma_int_t n, magma_int_t k,
+    double *tau,
+    double *v, magma_int_t ldv,
     double *T, magma_int_t ldt,
     magma_queue_t queue )
 {
@@ -373,44 +385,51 @@ void magmablas_dlarft_gemv_loop_inside(
     size_t shmem = sizeof(double) * (dgemv_bs*(k+1));
     dlarft_gemv_loop_inside_kernel
         <<< grid, threads, shmem, queue->cuda_stream() >>>
-        (n, k, tau, v, ldv, T, ldt); 
+        (n, k, tau, v, ldv, T, ldt);
 }
 
 
 /******************************************************************************/
 extern "C"
 void magmablas_dlarft_gemv_loop_inside_batched(
-    magma_int_t n, magma_int_t k, 
-    double **tau_array, 
-    double **v_array, magma_int_t ldv, 
+    magma_int_t n, magma_int_t k,
+    double **tau_array,
+    double **v_array, magma_int_t ldv,
     double **T_array, magma_int_t ldt, magma_int_t batchCount, magma_queue_t queue)
 {
-    dim3 grid(1, 1, batchCount);
     dim3 threads(dgemv_bs, max(k,1), 1);
+    magma_int_t max_batchCount = queue->get_maxBatch();
     size_t shmem = sizeof(double) * (dgemv_bs*(k+1));
-    dlarft_gemv_loop_inside_kernel_batched
+
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 grid(1, 1, ibatch);
+
+        dlarft_gemv_loop_inside_kernel_batched
         <<< grid, threads, shmem, queue->cuda_stream() >>>
-        (n, k, tau_array, v_array, ldv, T_array, ldt); 
+        (n, k, tau_array+i, v_array+i, ldv, T_array+i, ldt);
+
+    }
 }
 
 
 /******************************************************************************/
-static  __device__ void 
+static  __device__ void
 dlarft_dtrmv_sm32x32_device(
     int n, int k, double *tau,
     double *Tin, int ldtin,  double *Tout, int ldtout )
 {
-    int tx = threadIdx.x; 
+    int tx = threadIdx.x;
     double *sdata = (double*)shared_data;
     double res;
 
     // this routine apply a sequence of trmv to update k column of the triangular
-    // T starting at n-k to n where T is of size n by n and where the first n-k 
+    // T starting at n-k to n where T is of size n by n and where the first n-k
     // columns of T are supposed updated previously.
-    // So the routine load all of T nxn to the shared memory 
+    // So the routine load all of T nxn to the shared memory
     // and apply the sequence of trmv.
     // to update a certain column i, threads go in horizontal fashion where
-    // every thread read one row and do it gemv(dot) to generate 
+    // every thread read one row and do it gemv(dot) to generate
     // one element of the column of T then move to the next column
 
     // read T into shared
@@ -418,7 +437,7 @@ dlarft_dtrmv_sm32x32_device(
     {
         sdata[tx + s*n] = Tin[tx + s * ldtin];
     }
-    
+
 #if defined(use_gemm_larft)
     for (int s=n-k; s < n; s++)
     {
@@ -437,23 +456,23 @@ dlarft_dtrmv_sm32x32_device(
     // perform trmv
     for (int i=n-k; i < n; i++)
     {
-        __syncthreads();  
+        __syncthreads();
         res = MAGMA_D_ZERO;
         if (tx < i)
         {
             for (int j=tx; j < i; j++)
             {
-                res += sdata[tx + j * n] * sdata[j+ i * n];      
+                res += sdata[tx + j * n] * sdata[j+ i * n];
             }
-        }       
-        __syncthreads();  
+        }
+        __syncthreads();
         if (tx < i)
         {
             sdata[tx + i * n] = res;
         }
-    } 
+    }
 
-    __syncthreads();  
+    __syncthreads();
     // write back the updated block of k column of T
     for (int s=n-k; s < n; s++)
     {
@@ -463,7 +482,7 @@ dlarft_dtrmv_sm32x32_device(
 
 
 /******************************************************************************/
-__global__ void 
+__global__ void
 dlarft_dtrmv_sm32x32_kernel(
     int n, int k, double *tau,
     double *Tin, int ldtin,  double *Tout, int ldtout )
@@ -473,7 +492,7 @@ dlarft_dtrmv_sm32x32_kernel(
 
 
 /******************************************************************************/
-__global__ void 
+__global__ void
 dlarft_dtrmv_sm32x32_kernel_batched(
     int n, int k, double **tau_array,
     double **Tin_array, int ldtin,  double **Tout_array, int ldtout )
@@ -486,9 +505,9 @@ dlarft_dtrmv_sm32x32_kernel_batched(
 /******************************************************************************/
 extern "C"
 void magmablas_dlarft_dtrmv_sm32x32(
-    magma_int_t m, magma_int_t n, 
-    double *tau, 
-    double *Tin, magma_int_t ldtin, 
+    magma_int_t m, magma_int_t n,
+    double *tau,
+    double *Tin, magma_int_t ldtin,
     double *Tout, magma_int_t ldtout,
     magma_queue_t queue )
 {
@@ -504,33 +523,40 @@ void magmablas_dlarft_dtrmv_sm32x32(
 /******************************************************************************/
 extern "C"
 void magmablas_dlarft_dtrmv_sm32x32_batched(
-    magma_int_t m, magma_int_t n, 
-    double **tau_array, 
-    double **Tin_array, magma_int_t ldtin, 
+    magma_int_t m, magma_int_t n,
+    double **tau_array,
+    double **Tin_array, magma_int_t ldtin,
     double **Tout_array, magma_int_t ldtout,
     magma_int_t batchCount, magma_queue_t queue)
 {
-    dim3 grid(1, 1, batchCount);
+
+    magma_int_t max_batchCount = queue->get_maxBatch();
     dim3 threads(max(m,1), 1, 1);
     size_t shmem = sizeof(double)*(m*m);
-    dlarft_dtrmv_sm32x32_kernel_batched
+
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 grid(1, 1, ibatch);
+
+        dlarft_dtrmv_sm32x32_kernel_batched
         <<< grid, threads, shmem, queue->cuda_stream() >>>
-        (m, n,  tau_array, Tin_array, ldtin, Tout_array, ldtout);
+        (m, n,  tau_array+i, Tin_array+i, ldtin, Tout_array+i, ldtout);
+    }
 }
 
 
 /******************************************************************************/
-static __device__ void 
+static __device__ void
 dlarft_recdtrmv_sm32x32_device(
     int m, int n, double *tau,
     double *Trec, int ldtrec, double *Ttri, int ldttri)
 {
-    int tx = threadIdx.x; 
+    int tx = threadIdx.x;
     double *sdata = (double*)shared_data;
     double res;
 
     // to update a certain column i, threads go in horizontal fashion where
-    // every thread read one row and do it gemv(dot) to generate 
+    // every thread read one row and do it gemv(dot) to generate
     // one element of the column of T then move to the next column
 
     // read T into shared
@@ -538,20 +564,20 @@ dlarft_recdtrmv_sm32x32_device(
     {
         sdata[tx + s*n] = Trec[tx + s * ldtrec];
     }
-    __syncthreads();  
-    
+    __syncthreads();
+
     // perform sequence of n-1 gemv
     for (int i=0; i < n; i++)
     {
         res = MAGMA_D_ZERO;
         for (int j=0; j < i; j++)
         {
-            res += sdata[tx + j * n] * Ttri[j+ i * ldttri];      
+            res += sdata[tx + j * n] * Ttri[j+ i * ldttri];
         }
         __syncthreads();   // a enlever
         sdata[tx + i * n] = -tau[i] * (sdata[tx + i * n] + res);
-        __syncthreads();  
-    } 
+        __syncthreads();
+    }
 
     // write back the updated block of k column of T  multiplying by -tau
     for (int s=0; s < n; s++)
@@ -562,7 +588,7 @@ dlarft_recdtrmv_sm32x32_device(
 
 
 /******************************************************************************/
-__global__ void 
+__global__ void
 dlarft_recdtrmv_sm32x32_kernel(
     int m, int n, double *tau,
     double *Trec, int ldtrec, double *Ttri, int ldttri)
@@ -572,7 +598,7 @@ dlarft_recdtrmv_sm32x32_kernel(
 
 
 /******************************************************************************/
-__global__ void 
+__global__ void
 dlarft_recdtrmv_sm32x32_kernel_batched(
     int m, int n, double **tau_array,
     double **Trec_array, int ldtrec, double **Ttri_array, int ldttri)
@@ -585,9 +611,9 @@ dlarft_recdtrmv_sm32x32_kernel_batched(
 /******************************************************************************/
 extern "C"
 void magmablas_dlarft_recdtrmv_sm32x32(
-    magma_int_t m, magma_int_t n, 
-    double *tau, 
-    double *Trec, magma_int_t ldtrec, 
+    magma_int_t m, magma_int_t n,
+    double *tau,
+    double *Trec, magma_int_t ldtrec,
     double *Ttri, magma_int_t ldttri,
     magma_queue_t queue )
 {
@@ -603,16 +629,23 @@ void magmablas_dlarft_recdtrmv_sm32x32(
 /******************************************************************************/
 extern "C"
 void magmablas_dlarft_recdtrmv_sm32x32_batched(
-    magma_int_t m, magma_int_t n, 
-    double **tau_array, 
-    double **Trec_array, magma_int_t ldtrec, 
+    magma_int_t m, magma_int_t n,
+    double **tau_array,
+    double **Trec_array, magma_int_t ldtrec,
     double **Ttri_array, magma_int_t ldttri,
     magma_int_t batchCount, magma_queue_t queue)
 {
-    dim3 grid(1, 1, batchCount);
     dim3 threads(max(m,1), 1, 1);
+    magma_int_t max_batchCount = queue->get_maxBatch();
     size_t shmem = sizeof(double)*(m*n);
-    dlarft_recdtrmv_sm32x32_kernel_batched
+
+    for(magma_int_t i = 0; i < batchCount; i+=max_batchCount) {
+        magma_int_t ibatch = min(max_batchCount, batchCount-i);
+        dim3 grid(1, 1, ibatch);
+
+        dlarft_recdtrmv_sm32x32_kernel_batched
         <<< grid, threads, shmem, queue->cuda_stream() >>>
-        (m, n,  tau_array, Trec_array, ldtrec, Ttri_array, ldttri);
+        (m, n,  tau_array+i, Trec_array+i, ldtrec, Ttri_array+i, ldttri);
+
+    }
 }

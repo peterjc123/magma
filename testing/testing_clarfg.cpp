@@ -1,11 +1,11 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
 
-       @generated from testing/testing_zlarfg.cpp, normal z -> c, Sun Mar 29 20:48:32 2020
+       @generated from testing/testing_zlarfg.cpp, normal z -> c, Thu Oct  8 23:05:40 2020
        @author Mark Gates
 */
 

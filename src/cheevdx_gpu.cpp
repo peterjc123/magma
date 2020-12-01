@@ -1,16 +1,16 @@
 /*
-    -- MAGMA (version 2.5.3) --
+    -- MAGMA (version 2.5.4) --
        Univ. of Tennessee, Knoxville
        Univ. of California, Berkeley
        Univ. of Colorado, Denver
-       @date March 2020
+       @date October 2020
     
        @author Raffaele Solca
        @author Stan Tomov
        @author Mark Gates
        @author Azzam Haidar
     
-       @generated from src/zheevdx_gpu.cpp, normal z -> c, Sun Mar 29 20:48:29 2020
+       @generated from src/zheevdx_gpu.cpp, normal z -> c, Thu Oct  8 23:05:27 2020
 
 */
 #include "magma_internal.h"
@@ -201,6 +201,7 @@ magma_cheevdx_gpu(
 {
     const char* uplo_  = lapack_uplo_const( uplo  );
     const char* jobz_  = lapack_vec_const( jobz  );
+    const char* range_ = lapack_range_const( range );
     magma_int_t ione = 1;
 
     float d__1;
@@ -314,15 +315,35 @@ magma_cheevdx_gpu(
         magmaFloatComplex *A;
         magma_cmalloc_cpu( &A, lda*n );
         magma_cgetmatrix( n, n, dA, ldda, A, lda, queue );
-        lapackf77_cheevd( jobz_, uplo_,
-                          &n, A, &lda,
-                          w, work, &lwork,
-                          rwork, &lrwork,
-                          iwork, &liwork, info );
+
+        float abstol = 2 * lapackf77_slamch("Safe minimum");
+        magma_int_t ldz = lda;
+        float* lapack_rwork;
+        magma_int_t* lapack_iwork;
+        magma_int_t* ifail;
+        magmaFloatComplex* Z;
+        magma_smalloc_cpu(&lapack_rwork, 7*n);
+        magma_imalloc_cpu(&lapack_iwork, 5*n);
+        magma_imalloc_cpu(&ifail, n);
+        magma_cmalloc_cpu(&Z, n*ldz);
+        lapackf77_cheevx(jobz_, range_, uplo_,
+                         &n, A, &lda, &vl, &vu, &il, &iu, &abstol, mout,
+                         w, Z, &ldz, work, &lwork,
+                         #ifdef COMPLEX
+                         lapack_rwork,
+                         #endif
+                         lapack_iwork, ifail, info);
+        if( wantz ) {
+            lapackf77_clacpy(MagmaFullStr, &n, mout, Z, &ldz, A, &lda);
+        }
+        magma_free_cpu(lapack_rwork);
+        magma_free_cpu(lapack_iwork);
+        magma_free_cpu(ifail);
+        magma_free_cpu(Z);
+
         magma_csetmatrix( n, n, A, lda, dA, ldda, queue );
         magma_free_cpu( A );
         magma_queue_destroy( queue );
-        *mout = n;
         return *info;
     }
 
