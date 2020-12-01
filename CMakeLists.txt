@@ -282,7 +282,8 @@ if (CUDA_FOUND)
         message( FATAL_ERROR "GPU_TARGET must contain one or more of Fermi, Kepler, Maxwell, Pascal, Volta, Turing, Ampere, or valid sm_[0-9][0-9]" )
     endif()
 
-    set( CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -Xcompiler -fPIC -DHAVE_CUBLAS ${NV_SM} ${NV_COMP} ${FORTRAN_CONVENTION} )
+    set( CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -DHAVE_CUBLAS -Xfatbin -compress-all -Xcompiler -fPIC -std=c++11 ${NV_SM} ${NV_COMP} ${FORTRAN_CONVENTION} )
+    MESSAGE(STATUS "CUDA_NVCC_FLAGS: ${CUDA_NVCC_FLAGS}")
     add_definitions( "-DHAVE_CUBLAS -DMIN_CUDA_ARCH=${MIN_ARCH}" )
     message( STATUS "Define -DHAVE_CUBLAS -DMIN_CUDA_ARCH=${MIN_ARCH}" )
 endif()
@@ -586,7 +587,7 @@ install( TARGETS magma ${blas_fix}
          ARCHIVE DESTINATION lib )
 file( GLOB headers include/*.h )
 if (USE_FORTRAN)
-    install( FILES ${headers} ${modules}
+    install( FILES ${headers}
              DESTINATION include )
 else()
     install( FILES ${headers} DESTINATION include )
@@ -603,9 +604,9 @@ string( REPLACE "/System/Library/Frameworks/Accelerate.framework" "-framework Ac
 string( REPLACE ";" " " LIBS
         "${blas_fix_lib} ${LAPACK_LIBS} ${CUDA_CUDART_LIBRARY} ${CUDA_CUBLAS_LIBRARIES} ${CUDA_cusparse_LIBRARY}" )
 set( MAGMA_REQUIRED "" )
-configure_file( "${pkgconfig}.in" "${pkgconfig}" @ONLY )
-install( FILES "${CMAKE_BINARY_DIR}/${pkgconfig}"
-         DESTINATION lib/pkgconfig )
+# configure_file( "${pkgconfig}.in" "${pkgconfig}" @ONLY )
+# install( FILES "${CMAKE_BINARY_DIR}/${pkgconfig}"
+#          DESTINATION lib/pkgconfig )
 
 # ----------------------------------------
 get_directory_property( compile_definitions COMPILE_DEFINITIONS )
